@@ -1,0 +1,9 @@
+*.png
+*.qmlc
+*.jpg
+*.otf
+*.ttf
+assets/*
+*.pro.*
+Makefile
+Makefile.*
