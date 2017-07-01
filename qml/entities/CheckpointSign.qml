@@ -28,20 +28,20 @@ EntityBase {
     fixtures: Box {
         width: target.width
         height: target.height
-        categories: Global.kInteractive
-        collidesWith: Global.kActor
+        categories: Utils.kInteractive
+        collidesWith: Utils.kActor
         sensor: true
 
         readonly property string type: "checkpoint"
 
         onBeginContact: {
             switch(other.categories) {
-            case Global.kActor:
+            case Utils.kActor:
                 if(other.type === "main_body") {
                     privateProperties.checked = true;
-                    console.log("Global checkpoint state? ", Global.checkpointState);
+                    console.log("Global checkpoint state? ", Global.settings.checkpointState);
                     //Global.checkpointState.level = 3;
-                    Global.checkpointState.pos = Qt.point(actor.x, actor.y);s
+                    Global.settings.checkpointState.pos = Qt.point(actor.x, actor.y);
                 }
                 break
             }
@@ -49,7 +49,7 @@ EntityBase {
 
         onEndContact: {
             switch(other.categories) {
-            case Global.kActor:
+            case Utils.kActor:
                 if(other.type === "main_body") {
                 }
                 break;

@@ -24,13 +24,13 @@ EntityBase {
         width: target.width
         height: target.height
         sensor: true
-        categories: Global.kInteractive
+        categories: Utils.kInteractive
 
         readonly property string color: doorLock.color
         readonly property string type: doorLock.type
 
         onBeginContact: {
-            if(other.categories & Global.kActor && other.type === "main_body") {
+            if(other.categories & Utils.kActor && other.type === "main_body") {
                 if(color == "blue" && actor.totalBlueKeysCollected > 0) {
                     locked = false;
                     actor.dropKey(color);

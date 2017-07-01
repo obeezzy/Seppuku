@@ -15,7 +15,7 @@ EntityBase {
     property int initialY: null
     property alias bounds: bounds
     readonly property int xOffset: actor.x - 12
-    z: Global.zDisguise
+    z: Utils.zDisguise
     type: "snowman"
 
     Item {
@@ -37,15 +37,15 @@ EntityBase {
         friction: .1
         density: .1
         restitution: .3
-        categories: Global.kCovert
-        collidesWith: Global.kActor
+        categories: Utils.kCovert
+        collidesWith: Utils.kActor
         sensor: true
 
         readonly property string type: snowman.type
 
         onBeginContact: {
             switch(other.categories) {
-            case Global.kActor:
+            case Utils.kActor:
                 if(other.type === "main_body") {
                     //console.log("Snowman: within range");
                     inRange = true;
@@ -56,7 +56,7 @@ EntityBase {
 
         onEndContact: {
             switch(other.categories) {
-            case Global.kActor:
+            case Utils.kActor:
                 if(other.type === "main_body") {
                     //console.log("Snowman: out of range");
                     inRange = false;

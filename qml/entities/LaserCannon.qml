@@ -9,14 +9,14 @@ EntityBase {
     bodyType: Body.Static
     width: 98
     height: 37
-    z: Global.zLaser
+    z: Utils.zLaser
     sender: "laser_cannon"
 
     fixtures: Box {
         width: laserCannon.width
         height: laserCannon.height
         density: .5
-        categories: Global.kGround | Global.kGroundTop
+        categories: Utils.kGround | Utils.kGroundTop
     }
 
     readonly property int laserWidth: (direction == "left" || direction == "right") ? sensorRay1.pXDiff : laserCannon.width
@@ -181,11 +181,11 @@ EntityBase {
         readonly property int pYDiff: Math.abs(p2.y - p1.y)
 
         onFixtureReported: {
-            if (fixture.categories & Global.kActor && fixture.type === "main_body") {
+            if (fixture.categories & Utils.kActor && fixture.type === "main_body") {
                 if(!actor.dead)
                     actor.stun(laserCannon.sender);
             }
-            else if(fixture.categories & Global.kGround) {
+            else if(fixture.categories & Utils.kGround) {
                 switch(direction) {
                 case "up":
                 case "down":
@@ -246,11 +246,11 @@ EntityBase {
         readonly property int pYDiff: Math.abs(p2.y - p1.y)
 
         onFixtureReported: {
-            if (fixture.categories & Global.kActor && fixture.type === "main_body") {
+            if (fixture.categories & Utils.kActor && fixture.type === "main_body") {
                 if(!actor.dead)
                     actor.stun(laserCannon.sender);
             }
-            else if(fixture.categories & Global.kGround) {
+            else if(fixture.categories & Utils.kGround) {
 //                switch(direction) {
 //                case "up":
 //                case "down":

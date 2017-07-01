@@ -65,7 +65,7 @@ Rectangle {
         anchors.centerIn: parent
         color: "white"
         font.pixelSize: 20
-        font.family: Global.tutorFont
+        font.family: Stylesheet.tutorFontFamily
         text: privateProperties.text
         width: parent.width
         height: contentHeight
@@ -136,7 +136,7 @@ Rectangle {
             anchors.bottom: parent.bottom
             verticalAlignment: Qt.AlignVCenter
             text: privateProperties.messageCount - 1
-            font.family: Global.defaultFont
+            font.family: Stylesheet.defaultFontFamily
             font.bold: true
             font.pixelSize: 13
             color: "white"

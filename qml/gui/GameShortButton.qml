@@ -34,7 +34,7 @@ Image {
         text: ""
         color: "white"
 
-        font.family: Global.defaultFont
+        font.family: Stylesheet.defaultFontFamily
         font.pixelSize: 36
 
         style: Text.Outline;

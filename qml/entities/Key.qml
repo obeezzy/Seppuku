@@ -11,7 +11,7 @@ EntityBase {
     bodyType: Body.Static
     sleepingAllowed: false
     transformOrigin: Item.Center
-    z: Global.zCollectible
+    z: Utils.zCollectible
 
     readonly property Ninja actor: parent.actor
     property string color: "blue"
@@ -27,15 +27,15 @@ EntityBase {
         width: target.width
         height: target.height
         sensor: true
-        categories: Global.kCollectible
-        collidesWith: Global.kActor
+        categories: Utils.kCollectible
+        collidesWith: Utils.kActor
 
         readonly property bool picked: privateProperties.picked
         readonly property string type: "key"
         readonly property string color: key.color
 
         onBeginContact: {
-            if(other.categories & Global.kActor) {
+            if(other.categories & Utils.kActor) {
                 if(other.type === "main_body")
                     privateProperties.picked = true;
             }

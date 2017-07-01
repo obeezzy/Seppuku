@@ -23,7 +23,7 @@ Image {
     }
 
     property alias text: buttonText.text
-    property alias pixelSize: buttonText.font.pixelSize
+    property alias font: buttonText.font
     property bool currentFocus: false
     signal clicked
 
@@ -35,10 +35,10 @@ Image {
         anchors.verticalCenterOffset: -2
         visible: iconName == ""
 
-        text: Global.icons.fa_android
+        text: Stylesheet.icons.fa_android
         color: "white"
 
-        font.family: Global.iconFont
+        font.family: Stylesheet.iconFontFamily
         font.pixelSize: 38
 
         style: Text.Outline;

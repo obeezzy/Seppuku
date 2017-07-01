@@ -190,8 +190,8 @@ Item {
             y: 0
         }
 
-        text: Global.icons.fa_pause
-        pixelSize: 24
+        text: Stylesheet.icons.fa_pause
+        font.pixelSize: 24
     }
 
     Item {
@@ -217,7 +217,7 @@ Item {
                 if(gameWindow.paused)
                     return;
 
-                headsUpDisplay.elapsedTimeString = Global.toTimeString(headsUpDisplay.elapsedSeconds++);
+                headsUpDisplay.elapsedTimeString = Utils.toTimeString(headsUpDisplay.elapsedSeconds++);
             }
         }
 

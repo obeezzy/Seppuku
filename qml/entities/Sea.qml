@@ -12,7 +12,7 @@ EntityBase {
     bodyType: Body.Static
     sleepingAllowed: false
     fixedRotation: false
-    z: Global.zLava
+    z: Utils.zLava
     sender: "sea"
 
     fixtures: [
@@ -24,12 +24,12 @@ EntityBase {
             y: 24
             width: target.width
             height: target.height - y
-            categories: Global.kLava
+            categories: Utils.kLava
 
             readonly property string sender: entity.sender
 
             onBeginContact: {
-                if(other.categories & Global.kActor) {
+                if(other.categories & Utils.kActor) {
                     if(other.type === "main_body")
                         drownSound.play();
                 }
@@ -41,7 +41,7 @@ EntityBase {
             y: 36
             width: target.width
             height: 2
-            categories: Global.kLava
+            categories: Utils.kLava
 
             readonly property string type: "fish_depth"
         }

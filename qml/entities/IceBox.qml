@@ -27,12 +27,12 @@ EntityBase {
         restitution: iceBox.restitution
         categories: {
             if(iceBox.platform)
-                Global.kGround | Global.kObstacle | Global.kGroundTop
+                Utils.kGround | Utils.kObstacle | Utils.kGroundTop
             else
-                Global.kObstacle
+                Utils.kObstacle
         }
-        collidesWith: Global.kGround | Global.kActor | Global.kObstacle |
-                      Global.kEnemy | Global.kLava
+        collidesWith: Utils.kGround | Utils.kActor | Utils.kObstacle |
+                      Utils.kEnemy | Utils.kLava
 
         readonly property string type: "ice_box"
         readonly property real damage: .5
@@ -40,7 +40,7 @@ EntityBase {
 
         onBeginContact: {
             switch(other.categories) {
-            case Global.kLava:
+            case Utils.kLava:
                 iceBox.destroy();
                 break;
             }

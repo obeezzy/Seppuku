@@ -2,6 +2,7 @@ import QtQuick 2.9
 import Bacon2D 1.0
 import QtMultimedia 5.9
 import Seppuku 1.0
+import QtGamepad 1.0
 import "../singletons"
 import "../common"
 import "../gui"
@@ -58,10 +59,10 @@ SceneBase {
             text: "Seppuku"
             color: "white"
 
-            font.family: Global.defaultFont
+            font.family: Stylesheet.defaultFontFamily
             font.pixelSize: 53
 
-            style: Text.Outline;
+            style: Text.Outline
             styleColor: "#57007f"
         }
     }
@@ -105,6 +106,15 @@ SceneBase {
                 onHomeClicked: stackView.pop();
             }
         }
+
+        Keys.onPressed: {
+            switch(event.key) {
+            case Qt.Key_Back:
+            case Qt.Key_Backspace:
+                stackView.pop();
+                break;
+            }
+        }
     }
 
     readonly property var playlist: [
@@ -141,6 +151,15 @@ SceneBase {
                 break
             }
         }
+    }
+
+    GamepadKeyNavigation {
+        id: gamepadKeyNavigation
+        gamepad: Global.gamepad
+        active: true
+        buttonAKey: Qt.Key_Return
+        buttonStartKey: Qt.Key_Escape
+        buttonBKey: Global.isMobile ? Qt.Key_Back : Qt.Key_Backspace
     }
 
     onRunningChanged: {

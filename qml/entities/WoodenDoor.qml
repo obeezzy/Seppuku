@@ -42,12 +42,12 @@ PhysicsEntity {
         width: target.width
         height: target.height
         sensor: true
-        categories: Global.kInteractive
+        categories: Utils.kInteractive
 
         readonly property string type: woodenDoort.type
 
         onBeginContact: {
-            if(other.categories & Global.kActor && other.type === "main_body") {
+            if(other.categories & Utils.kActor && other.type === "main_body") {
                 actor.inDoorRange = true;
 
                 if(!closed)
@@ -56,7 +56,7 @@ PhysicsEntity {
         }
 
         onEndContact: {
-            if(other.categories & Global.kActor && other.type === "main_body") {
+            if(other.categories & Utils.kActor && other.type === "main_body") {
                 actor.inDoorRange = false
                 privateProperties.inRange = false;
             }

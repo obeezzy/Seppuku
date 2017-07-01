@@ -64,7 +64,7 @@ WideSlate {
                 bottom: parent.bottom
             }
 
-            text: Global.icons.fa_home
+            text: Stylesheet.icons.fa_home
             onClicked: levelSelectSlate.homeClicked();
 
             Keys.onUpPressed: {

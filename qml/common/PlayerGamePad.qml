@@ -5,87 +5,96 @@ import "../singletons"
 import "../entities"
 
 Item {
-    width: 0
-    height: 0
+//    readonly property Ninja actor: parent.actor
+//    readonly property alias connected: gamePad1.connected
 
-    readonly property Ninja actor: parent.actor
-    readonly property alias connected: gamePad.connected
+//    signal pauseRequested(bool paused)
 
-    signal pauseRequested(bool paused)
+//    Gamepad {
+//        id: gamePad1
+////        deviceId: 0
 
-    Gamepad {
-        id: gamePad
-        deviceId: 0
+//        onButtonAChanged: {
+//            if(buttonA && axisLeftY > .8 && axisLeftX >= -.5 && axisLeftX <= .5)
+//                actor.slide();
+//            if(buttonA) {
+//                if(actor.isInHoverArea())
+//                    actor.hover(buttonA);
+//                else
+//                    actor.jump();
+//            }
+//            else if(actor.isInHoverArea())
+//                    actor.stopHovering();
+//        }
 
-        onButtonAChanged: {
-            if(buttonA && axisLeftY > .8 && axisLeftX >= -.5 && axisLeftX <= .5)
-                actor.slide();
-            if(buttonA) {
-                if(actor.isInHoverArea())
-                    actor.hover(buttonA);
-                else
-                    actor.jump();
-            }
-            else if(actor.isInHoverArea())
-                    actor.stopHovering();
-        }
+//        onButtonXChanged: {
+//            if(buttonX)
+//                actor.attack();
+//        }
 
-        onButtonXChanged: {
-            if(buttonX)
-                actor.attack();
-        }
+//        onButtonBChanged: {
+//            if(buttonB)
+//                actor.throwKunai();
+//        }
 
-        onButtonBChanged: {
-            if(buttonB)
-                actor.throwKunai();
-        }
+//        onButtonYChanged: {
+//            if(buttonY) {
+//                if(!actor.inDisguiseRange)
+//                    actor.use();
+//                else
+//                    actor.toggleDisguise();
+//            }
+//        }
 
-        onButtonYChanged: {
-            if(buttonY) {
-                if(!actor.inDisguiseRange)
-                    actor.use();
-                else
-                    actor.toggleDisguise();
-            }
-        }
+//        onAxisLeftXChanged: {
+//            //console.log("Axis left x:", axisLeftX)
 
-        onAxisLeftXChanged: {
-            //console.log("Axis left x:", axisLeftX)
+//            if(axisLeftX > .8)
+//                actor.moveRight();
+//            else if(axisLeftX < -.8)
+//                actor.moveLeft();
+//            else {
+//                if(actor.facingLeft)
+//                    actor.stopMovingLeft();
+//                else if(actor.facingRight)
+//                    actor.stopMovingRight();
+//            }
+//        }
 
-            if(axisLeftX > .8)
-                actor.moveRight();
-            else if(axisLeftX < -.8)
-                actor.moveLeft();
-            else {
-                if(actor.facingLeft)
-                    actor.stopMovingLeft();
-                else if(actor.facingRight)
-                    actor.stopMovingRight();
-            }
-        }
+//        onAxisLeftYChanged: {
+//            //console.log("Axis left y:", axisLeftY)
 
-        onAxisLeftYChanged: {
-            //console.log("Axis left y:", axisLeftY)
+//            if(axisLeftY < -.8) {
+//                actor.climbUp();
+//            }
+//            else if(axisLeftY > .8)
+//                actor.climbDown();
+//            else {
+//                if(actor.facingDown)
+//                    actor.stopClimbingDown();
+//                else if(actor.facingUp)
+//                    actor.stopClimbingUp();
+//            }
+//        }
 
-            if(axisLeftY < -.8) {
-                actor.climbUp();
-            }
-            else if(axisLeftY > .8)
-                actor.climbDown();
-            else {
-                if(actor.facingDown)
-                    actor.stopClimbingDown();
-                else if(actor.facingUp)
-                    actor.stopClimbingUp();
-            }
-        }
+////        onButtonStartChanged: {
+////            if(buttonStart) {
+////                gameWindow.togglePause();
+////                pauseRequested(gameWindow.paused);
+////            }
+////        }
+//    }
 
-        onButtonStartChanged: {
-            if(buttonStart) {
-                gameWindow.togglePause();
-                pauseRequested(gameWindow.paused);
-            }
-        }
-    }
+//    Connections {
+//        target: GamepadManager
+//        onGamepadConnected: gamePad1.deviceId = deviceId;
+//    }
+
+//    GamepadKeyNavigation {
+//        id: gamepadKeyNavigation
+//        gamepad: gamePad1
+//        active: true
+//        buttonStartKey: Qt.Key_Escape
+//    }
 }
 

@@ -1,6 +1,5 @@
 import QtQuick 2.9
 import Bacon2D 1.0
-import Seppuku 1.0
 import "../singletons"
 
 SceneBase {
@@ -27,7 +26,7 @@ SceneBase {
             text: qsTr("loading... ")
             color: "white"
 
-            font.family: Global.defaultFont
+            font.family: Stylesheet.defaultFontFamily
             font.pixelSize: 67
 
             style: Text.Outline

@@ -56,7 +56,7 @@ TiledScene {
         id: actor
         x: actorInitPos.x
         y: actorInitPos.y
-        z: actor.wearingDisguise ? Global.zActorDisguised : Global.zActor
+        z: actor.wearingDisguise ? Utils.zActorDisguised : Utils.zActor
 
         onXChanged: {
             if(actor.isFacingLeft())
@@ -83,7 +83,7 @@ TiledScene {
         y: viewport.yOffset + 6
         width: viewport.width
         height: 60
-        z: Global.zHUD
+        z: Utils.zHUD
 
         Behavior on x { enabled: viewportAnimationRunning; NumberAnimation {duration: viewportScrollDuration } }
         Behavior on y { enabled: viewportAnimationRunning; NumberAnimation {duration: viewportScrollDuration } }
@@ -94,7 +94,7 @@ TiledScene {
         x: viewport.xOffset
         y: hud.y + hud.height + 24
         width: viewport.width
-        z: Global.zTutor
+        z: Utils.zTutor
 
         Behavior on x { enabled: viewportAnimationRunning; NumberAnimation {duration: viewportScrollDuration } }
     }
@@ -217,7 +217,7 @@ TiledScene {
     PlayerGamePad {
         id: gamePad
 
-        onPauseRequested: levelBase.toggleLevelPause();
+        //onPauseRequested: levelBase.toggleLevelPause();
     }
 
     /*************************************** END INPUT HANDLING ***********************************************/
@@ -231,7 +231,7 @@ TiledScene {
         enabled: levelBase.debug
         width: viewport.width
         height: 60
-        z: Global.zCamera
+        z: Utils.zCamera
 
 
         Timer {
@@ -254,7 +254,7 @@ TiledScene {
         enabled: levelBase.debug
         width: viewport.width
         height: 60
-        z: Global.zCamera
+        z: Utils.zCamera
 
 
         Timer {
@@ -276,7 +276,7 @@ TiledScene {
         enabled: levelBase.debug
         width: 60
         height: viewport.height
-        z: Global.zCamera
+        z: Utils.zCamera
 
 
         Timer {
@@ -299,7 +299,7 @@ TiledScene {
         y: viewport.yOffset
         width: 60
         height: viewport.height
-        z: Global.zCamera
+        z: Utils.zCamera
 
         onPressed: console.log("Right area pressed.");
 
@@ -482,7 +482,7 @@ TiledScene {
         y: viewport.yOffset
         width: viewport.width
         height: viewport.height
-        z: Global.zPopup
+        z: Utils.zPopup
 
         Behavior on x { enabled: viewport.animationRunning; NumberAnimation { duration: viewport.scrollDuration } }
         Behavior on y { enabled: viewport.animationRunning; NumberAnimation { duration: viewport.scrollDuration } }
@@ -571,7 +571,7 @@ TiledScene {
                     density: 1
                     restitution: 0
                     friction: 1
-                    categories: Global.kGround
+                    categories: Utils.kGround
                 }
             }
         },
@@ -588,7 +588,7 @@ TiledScene {
                             density: 1
                             restitution: 0
                             friction: 1
-                            categories: Global.kGround | Global.kGroundTop
+                            categories: Utils.kGround | Utils.kGroundTop
                         },
 
                         Box {
@@ -597,7 +597,7 @@ TiledScene {
                             density: 1
                             restitution: 0
                             friction: 1
-                            categories: Global.kGround
+                            categories: Utils.kGround
                         }
                     ]
                 },
@@ -610,7 +610,7 @@ TiledScene {
                         density: 1
                         restitution: 0
                         friction: .01
-                        categories: Global.kGround
+                        categories: Utils.kGround
                     }
                 },
 
@@ -622,7 +622,7 @@ TiledScene {
                         density: 1
                         restitution: 0
                         friction: 1
-                        categories: Global.kGround | Global.kGroundTop
+                        categories: Utils.kGround | Utils.kGroundTop
                     }
                 },
 
@@ -634,7 +634,7 @@ TiledScene {
                         density: 1
                         restitution: 0
                         friction: 0.3
-                        categories: Global.kGround | Global.kGroundTop
+                        categories: Utils.kGround | Utils.kGroundTop
                     }
                 }
 
@@ -647,7 +647,7 @@ TiledScene {
                 TiledObject {
                     fixtures: Box {
                         sensor: true
-                        categories: Global.kLadder
+                        categories: Utils.kLadder
                     }
                 }
             ]
@@ -856,7 +856,7 @@ TiledScene {
                 var sea = component.createObject(levelBase);
                 sea.x = object.x;
                 sea.y = object.y;
-                sea.z = Global.zLava;
+                sea.z = Utils.zLava;
                 sea.width = object.width;
                 sea.height = object.height;
                 sea.objectName = object.getProperty("id");
@@ -1426,7 +1426,7 @@ TiledScene {
             Global.gameWindow.togglePause();
 
         scrollViewportToCenter();
-        Global.currentLevel = level;
+        Global.settings.currentLevel = level;
         Global.checkpointState = null;
 
 

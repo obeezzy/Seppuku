@@ -14,7 +14,7 @@ EntityBase {
         width: target.width //+ 12
         height: target.height
         sensor: true
-        categories: Global.kLadder
+        categories: Utils.kLadder
     }
 
     Image {

@@ -51,7 +51,7 @@ NarrowSlate {
             text: privateProperties.failureTease
             wrapMode: Text.WordWrap
             style: Text.Outline;
-            font.family: Global.hintFont
+            font.family: Stylesheet.hintFontFamily
             styleColor: "crimson" //Qt.darker("#F0C961", 1.25)
             verticalAlignment: Qt.AlignVCenter
             horizontalAlignment: Qt.AlignHCenter
@@ -69,7 +69,7 @@ NarrowSlate {
             GameIconButton {
                 id: restartButton
                 focus: true
-                text: Global.icons.fa_repeat
+                text: Stylesheet.icons.fa_repeat
                 onClicked: failSlate.restartClicked();
 
                 Keys.onUpPressed: event.accepted = true;
@@ -83,7 +83,7 @@ NarrowSlate {
 
             GameIconButton {
                 id: quitButton
-                text: Global.icons.fa_home
+                text: Stylesheet.icons.fa_home
                 onClicked: failSlate.homeClicked();
 
                 Keys.onUpPressed: event.accepted = true;

@@ -16,14 +16,14 @@ EntityBase {
     fixtures: Box {
         width: target.width
         height: target.height
-        categories: Global.kInteractive
-        collidesWith: Global.kActor
+        categories: Utils.kInteractive
+        collidesWith: Utils.kActor
         sensor: true
 
         readonly property string type: "finish_sign"
 
         onBeginContact: {
-            if(other.categories & Global.kActor) {
+            if(other.categories & Utils.kActor) {
                 if(other.type === "main_body") {
                     checked = true
                     levelComplete()

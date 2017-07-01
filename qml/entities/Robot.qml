@@ -16,7 +16,7 @@ EntityBase {
     bodyType: Body.Dynamic
     sleepingAllowed: false
     fixedRotation: true
-    z: Global.zEnemy
+    z: Utils.zEnemy
     //bullet: true
     sender: "robot"
 
@@ -72,12 +72,12 @@ EntityBase {
             x: boxXOffset
             width: target.width
             height: target.height
-            categories: Global.kEnemy
+            categories: Utils.kEnemy
             collidesWith: {
                 if(actor != null && (actor.wearingDisguise || actor.dead))
-                    Global.kGround | Global.kWall | Global.kLava;
+                    Utils.kGround | Utils.kWall | Utils.kLava;
                 else
-                    Global.kGround | Global.kActor | Global.kWall | Global.kLava;
+                    Utils.kGround | Utils.kActor | Utils.kWall | Utils.kLava;
             }
 
             readonly property string type: "main_body"
@@ -89,17 +89,17 @@ EntityBase {
                 if(robot.dead)
                     return
                 switch(other.categories) {
-                case Global.kGround:
+                case Utils.kGround:
                     privateProperties.collidingWithGround = true;
                     sprite.animation = "idle";
                     break;
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "kunai") {
                         robot.linearDamping = 50;
                         privateProperties.depleteHealth(.2);
                     }
                     break;
-                case Global.kLava:
+                case Utils.kLava:
                     robot.dead = true;
                     break;
                 }
@@ -107,7 +107,7 @@ EntityBase {
 
             onEndContact: {
                 switch(other.categories) {
-                case Global.kGround:
+                case Utils.kGround:
                     privateProperties.collidingWithGround = false;
                     break;
                 }
@@ -116,7 +116,7 @@ EntityBase {
 
         Chain {
             id: leftAttackEdge
-            collidesWith: Global.kActor
+            collidesWith: Utils.kActor
             sensor: true
 
             vertices: [
@@ -131,7 +131,7 @@ EntityBase {
                 if(robot.dead)
                     return
                 switch(other.categories) {
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (left)!")
                         withinLeftAttackingRange = true;
@@ -142,7 +142,7 @@ EntityBase {
 
             onEndContact:  {
                 switch(other.categories) {
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (left)!")
                         withinLeftAttackingRange = false;
@@ -154,7 +154,7 @@ EntityBase {
 
         Chain {
             id: rightAttackEdge
-            collidesWith: Global.kActor
+            collidesWith: Utils.kActor
             sensor: true
 
             vertices: [
@@ -169,7 +169,7 @@ EntityBase {
                 if(robot.dead)
                     return
                 switch(other.categories) {
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (right)!")
                         withinRightAttackingRange = true;
@@ -180,7 +180,7 @@ EntityBase {
 
             onEndContact:  {
                 switch(other.categories) {
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can no longer attack the ninja (right)!")
                         withinRightAttackingRange = false;
@@ -192,7 +192,7 @@ EntityBase {
 
         Chain {
             id: leftBackEdge
-            collidesWith: Global.kActor
+            collidesWith: Utils.kActor
             sensor: true
 
             vertices: [
@@ -208,7 +208,7 @@ EntityBase {
                     return;
 
                 switch(other.categories) {
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (left)!")
                         withinLeftAttackingRange = true;
@@ -228,7 +228,7 @@ EntityBase {
 
             onEndContact:  {
                 switch(other.categories) {
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (left)!")
                         withinLeftAttackingRange = false;
@@ -240,7 +240,7 @@ EntityBase {
 
         Chain {
             id: rightBackEdge
-            collidesWith: Global.kActor
+            collidesWith: Utils.kActor
             sensor: true
 
             vertices: [
@@ -255,7 +255,7 @@ EntityBase {
                 if(robot.dead)
                     return
                 switch(other.categories) {
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (right)!")
                         withinRightAttackingRange = true;
@@ -275,7 +275,7 @@ EntityBase {
 
             onEndContact:  {
                 switch(other.categories) {
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can no longer attack the ninja (right)!")
                         withinRightAttackingRange = false;
@@ -434,12 +434,12 @@ EntityBase {
         readonly property int rayMargin: 0
 
         onFixtureReported: {
-            if(fixture.categories & Global.kEnemy)
+            if(fixture.categories & Utils.kEnemy)
                 return;
 
             console.log("categories?", fixture.categories);
 
-            if (fixture.categories & Global.kActor && fixture.type === "main_body") {
+            if (fixture.categories & Utils.kActor && fixture.type === "main_body") {
                 if(!actor.dead) {
                     withinSightRange = true;
 
@@ -448,7 +448,7 @@ EntityBase {
                     }
                 }
             }
-            else if(fixture.categories & Global.kGround) {
+            else if(fixture.categories & Utils.kGround) {
                 if(point.x == undefined)
                     return;
 //                if(facingLeft)

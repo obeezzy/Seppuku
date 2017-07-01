@@ -128,7 +128,7 @@ Item {
             height: contentHeight
             text: root.countdown
             font.pixelSize: root.pixelSize
-            font.family: Global.defaultFont
+            font.family: Stylesheet.defaultFontFamily
             visible: timer.running
         }
 
@@ -137,7 +137,7 @@ Item {
             color: root.textColor
             width: contentWidth
             height: contentHeight
-            text: Global.icons.fa_clock_o //fa_hourglass_o
+            text: Stylesheet.icons.fa_clock_o //fa_hourglass_o
             font.pixelSize: root.pixelSize * 1.2
             font.family: Global.iconFont
             visible: !timer.running

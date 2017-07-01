@@ -24,14 +24,14 @@ EntityBase {
             friction: .8
             density: .8
             restitution: .01
-            categories: Global.kGround
+            categories: Utils.kGround
         },
 
         Box {
             width: target.width
             height: 1
             sensor: true
-            categories: Global.kGroundTop
+            categories: Utils.kGroundTop
         },
 
         Box {
@@ -39,17 +39,17 @@ EntityBase {
             width: target.width
             height: windHeight
             sensor: true
-            categories: Global.kHoverArea
-            collidesWith: Global.kActor
+            categories: Utils.kHoverArea
+            collidesWith: Utils.kActor
 
             onBeginContact: {
-                if(other.categories & Global.kActor) {
+                if(other.categories & Utils.kActor) {
                     privateProperties.actorPresent = true;
                 }
             }
 
             onEndContact: {
-                if(other.categories & Global.kActor) {
+                if(other.categories & Utils.kActor) {
                     privateProperties.actorPresent = false;
                 }
             }

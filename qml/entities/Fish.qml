@@ -13,7 +13,7 @@ EntityBase {
     bodyType: fish.dead || fish.striking ? Body.Dynamic : Body.Static
     sleepingAllowed: false
     fixedRotation: true
-    z: Math.max(Global.zLava, Global.zEnemy) + 1
+    z: Math.max(Utils.zLava, Utils.zEnemy) + 1
 
     sender: "fish"
 
@@ -46,12 +46,12 @@ EntityBase {
             restitution: .5
             width: target.width
             height: target.height
-            categories: Global.kEnemy
+            categories: Utils.kEnemy
             collidesWith: {
                 if(actor != null && (actor.wearingDisguise || actor.dead))
-                    Global.kGround | Global.kWall | Global.kLava
+                    Utils.kGround | Utils.kWall | Utils.kLava
                 else
-                    Global.kGround | Global.kActor | Global.kWall | Global.kLava
+                    Utils.kGround | Utils.kActor | Utils.kWall | Utils.kLava
             }
 
             readonly property string type: "main_body"
@@ -63,7 +63,7 @@ EntityBase {
                 if(fish.dead)
                     return;
 
-                if((other.categories & Global.kLava) && other.type === "fish_depth") {
+                if((other.categories & Utils.kLava) && other.type === "fish_depth") {
                     fish.striking = false;
                     console.log("Stop striking!");
                 }

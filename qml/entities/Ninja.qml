@@ -179,12 +179,12 @@ EntityBase {
             x: privateProperties.leftBoxMargin
             width: target.width - privateProperties.rightBoxMargin
             height: target.height
-            categories: Global.kActor
+            categories: Utils.kActor
             collidesWith: {
-                Global.kGround | Global.kWall | Global.kCollectible |
-                            Global.kEnemy | Global.kLadder | Global.kCovert |
-                            Global.kObstacle | Global.kInteractive | Global.kHoverArea |
-                            Global.kLava
+                Utils.kGround | Utils.kWall | Utils.kCollectible |
+                            Utils.kEnemy | Utils.kLadder | Utils.kCovert |
+                            Utils.kObstacle | Utils.kInteractive | Utils.kHoverArea |
+                            Utils.kLava
             }
 
             readonly property bool exposed: ninja.exposed
@@ -193,7 +193,7 @@ EntityBase {
             onBeginContact: {
                 if(ninja.dead)
                     return;
-                if(other.categories & Global.kEnemy) {
+                if(other.categories & Utils.kEnemy) {
                     if(other.type === "main_body") {
                         //console.log("Actor: I collided with the enemy. Ouch!")
                         if(other.dead)
@@ -209,7 +209,7 @@ EntityBase {
                         ninja.receivePain();
                     }
                 }
-                else if(other.categories & Global.kCollectible) {
+                else if(other.categories & Utils.kCollectible) {
                     if(other.type === "coin" && !other.picked)
                         addCoin();
                     else if(other.type === "kunai")
@@ -217,14 +217,14 @@ EntityBase {
                     else if(other.type === "key")
                         addKey(other.color);
                 }
-                else if(other.categories & Global.kLadder) {
+                else if(other.categories & Utils.kLadder) {
                     ninja.ladderContactCount++;
                     ninja.gravityScale = 0;
                     ninja.linearVelocity = Qt.point(0, 0);
                     ninja.clinging = true;
                     ninja.setAnimation("cling");
                 }
-                else if(other.categories & Global.kObstacle) {
+                else if(other.categories & Utils.kObstacle) {
                     if(other.type === "crystal") {
                         privateProperties.depleteHealth(other.damage, other.sender);
                         ninja.receivePain();
@@ -233,22 +233,22 @@ EntityBase {
                         // do nothing
                     }
                 }
-                else if(other.categories & Global.kCovert) {
+                else if(other.categories & Utils.kCovert) {
                     ninja.inDisguiseRange = true;
                 }
-                else if(other.categories & Global.kHoverArea) {
+                else if(other.categories & Utils.kHoverArea) {
                     ninja.hoverAreaContactCount++;
                 }
-                else if(other.categories & Global.kInteractive) {
+                else if(other.categories & Utils.kInteractive) {
                     if(other.type === "info_sign")
                         ninja.inInfoRange = true;
                     else if(other.type === "lever")
                         ninja.inLeverRange = true;
                 }
-                else if(other.categories & Global.kLava) {
+                else if(other.categories & Utils.kLava) {
                     privateProperties.depleteHealth(1, other.sender);
                 }
-                else if(other.categories & Global.kDoor) {
+                else if(other.categories & Utils.kDoor) {
 
                 }
             }
@@ -256,7 +256,7 @@ EntityBase {
             onEndContact: {
                 if(ninja.dead)
                     return
-                if(other.categories & Global.kLadder) {
+                if(other.categories & Utils.kLadder) {
                     ninja.ladderContactCount--;
 
                     if(ninja.ladderContactCount == 0) {
@@ -269,13 +269,13 @@ EntityBase {
                             ninja.setAnimation("idle");
                     }
                 }
-                else if(other.categories & Global.kCovert) {
+                else if(other.categories & Utils.kCovert) {
                     ninja.inDisguiseRange = false;
                 }
-                else if(other.categories & Global.kHoverArea) {
+                else if(other.categories & Utils.kHoverArea) {
                     ninja.hoverAreaContactCount--;
                 }
-                else if(other.categories & Global.kInteractive) {
+                else if(other.categories & Utils.kInteractive) {
                     if(other.type === "info_sign")
                         ninja.inInfoRange = false;
                     else if(other.type === "lever")
@@ -291,8 +291,8 @@ EntityBase {
             width: target.width - privateProperties.rightBoxMargin
             height: 1
             sensor: true
-            categories: Global.kActor
-            collidesWith: Global.kObstacle
+            categories: Utils.kActor
+            collidesWith: Utils.kObstacle
 
             readonly property string type: "head"
 
@@ -300,10 +300,10 @@ EntityBase {
                 if(ninja.dead)
                     return;
 
-                if(other.categories == (Global.kObstacle | Global.kGround)) {
+                if(other.categories == (Utils.kObstacle | Utils.kGround)) {
                     // Do nothing
                 }
-                else if(other.categories & Global.kObstacle) {
+                else if(other.categories & Utils.kObstacle) {
                     if(other.type === "ice_box")
                         privateProperties.depleteHealth(other.damage, other.sender);
                 }
@@ -317,8 +317,8 @@ EntityBase {
             width: target.width - 3
             height: 1
             sensor: true
-            categories: Global.kActor
-            collidesWith: Global.kGroundTop
+            categories: Utils.kActor
+            collidesWith: Utils.kGroundTop
 
             readonly property string type: "ground"
 
@@ -326,7 +326,7 @@ EntityBase {
                 if(ninja.dead)
                     return;
 
-                if(other.categories & Global.kGroundTop) {
+                if(other.categories & Utils.kGroundTop) {
                     ninja.groundContactCount++;
 
                     if(!ninja.sliding && !ninja.running && !ninja.hurting)
@@ -335,7 +335,7 @@ EntityBase {
             }
 
             onEndContact: {
-                if(other.categories & Global.kGroundTop) {
+                if(other.categories & Utils.kGroundTop) {
                     ninja.hovering = false;
                     ninja.groundContactCount--;
                 }
@@ -350,7 +350,7 @@ EntityBase {
             height: target.height - 10
 
             sensor: true
-            categories: ninja.striking ? Global.kActor : Global.kIntangible
+            categories: ninja.striking ? Utils.kActor : Utils.kIntangible
 
             readonly property string type: "left_attack"
             readonly property bool striking: ninja.striking
@@ -364,7 +364,7 @@ EntityBase {
             height: target.height - 10
 
             sensor: true
-            categories: ninja.striking ? Global.kActor : Global.kIntangible
+            categories: ninja.striking ? Utils.kActor : Utils.kIntangible
 
             readonly property string type: "right_attack"
             readonly property bool striking: ninja.striking
@@ -669,7 +669,7 @@ EntityBase {
         readonly property int pYDiff: Math.abs(p2.y - p1.y)
 
         onFixtureReported: {
-            if (fixture.categories & Global.kEnemy && fixture.type === "main_body") {
+            if (fixture.categories & Utils.kEnemy && fixture.type === "main_body") {
             }
         }
 

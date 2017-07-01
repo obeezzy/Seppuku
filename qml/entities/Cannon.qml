@@ -15,7 +15,7 @@ EntityBase {
         width: cannon.width
         height: cannon.height
         density: .5
-        categories: Global.kGround | Global.kGroundTop
+        categories: Utils.kGround | Utils.kGroundTop
     }
 
     readonly property Scene scene: parent
@@ -31,7 +31,7 @@ EntityBase {
             height: 12
             bullet: true
             bodyType: Body.Dynamic
-            z: Global.zCannonBullet
+            z: Utils.zCannonBullet
 
             fixtures: Circle {
                 radius: 6
@@ -39,8 +39,8 @@ EntityBase {
                 friction: .9
                 restitution: .2
 
-                categories: Global.kEnemy
-                collidesWith: Global.kActor | Global.kObstacle | Global.kGround
+                categories: Utils.kEnemy
+                collidesWith: Utils.kActor | Utils.kObstacle | Utils.kGround
 
                 readonly property string type: "bullet"
             }

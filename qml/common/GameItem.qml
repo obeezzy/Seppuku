@@ -73,8 +73,8 @@ Game {
 
 
     function playNextLevel() {
-        if (Object(levelScenes).hasOwnProperty(Global.currentLevel + 1))
-            playLevel(Global.currentLevel + 1);
+        if (Object(levelScenes).hasOwnProperty(Global.settings.currentLevel + 1))
+            playLevel(Global.settings.currentLevel + 1);
     }
 
     function restartLevel() {
