@@ -17,7 +17,7 @@ $ make
 ```
 
 ## Important notes
-- All assets have been stripped out of this repository. I will add them later once everything is in place.
+- All assets have been stripped out of this repository. I will add them in the nearest future.
 - Image assets were obtained from [Kenney](https://kenney.itch.io/) and [Game Art 2D](http://www.gameart2d.com/).
 
 License
