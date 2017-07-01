@@ -38,7 +38,7 @@ FocusScope {
             verticalAlignment: Qt.AlignVCenter
             wrapMode: Text.WordWrap
             style: Text.Outline;
-            font.family: Global.defaultFont
+            font.family: Stylesheet.defaultFontFamily
             styleColor: "red"
         }
 
@@ -83,8 +83,8 @@ FocusScope {
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
             wrapMode: Text.WordWrap
-            style: Text.Outline;
-            font.family: Global.defaultFont
+            style: Text.Outline
+            font.family: Stylesheet.defaultFontFamily
             styleColor: "#f0c961"
         }
 
@@ -100,8 +100,8 @@ FocusScope {
             horizontalAlignment: Qt.AlignHCenter
             verticalAlignment: Qt.AlignVCenter
             wrapMode: Text.WordWrap
-            style: Text.Outline;
-            font.family: Global.defaultFont
+            style: Text.Outline
+            font.family: Stylesheet.defaultFontFamily
             styleColor: "#f0c961"
         }
 
@@ -116,8 +116,8 @@ FocusScope {
             horizontalAlignment: Qt.AlignLeft
             verticalAlignment: Qt.AlignVCenter
             wrapMode: Text.WordWrap
-            style: Text.Outline;
-            font.family: Global.defaultFont
+            style: Text.Outline
+            font.family: Stylesheet.defaultFontFamily
             styleColor: "#f0c961"
         }
 
@@ -133,8 +133,8 @@ FocusScope {
             horizontalAlignment: Qt.AlignLeft
             verticalAlignment: Qt.AlignVCenter
             wrapMode: Text.WordWrap
-            style: Text.Outline;
-            font.family: Global.defaultFont
+            style: Text.Outline
+            font.family: Stylesheet.defaultFontFamily
             styleColor: "#f0c961"
         }
 
@@ -149,8 +149,8 @@ FocusScope {
             horizontalAlignment: Qt.AlignLeft
             verticalAlignment: Qt.AlignVCenter
             wrapMode: Text.WordWrap
-            style: Text.Outline;
-            font.family: Global.defaultFont
+            style: Text.Outline
+            font.family: Stylesheet.defaultFontFamily
             styleColor: "#f0c961"
         }
 
@@ -162,12 +162,12 @@ FocusScope {
             height: width * .5
             font.pixelSize: 29
             color: "white"
-            text: Global.toTimeString(elapsedSeconds)
+            text: Utils.toTimeString(elapsedSeconds)
             horizontalAlignment: Qt.AlignLeft
             verticalAlignment: Qt.AlignVCenter
             wrapMode: Text.WordWrap
-            style: Text.Outline;
-            font.family: Global.defaultFont
+            style: Text.Outline
+            font.family: Stylesheet.defaultFontFamily
             styleColor: "#f0c961"
         }
 
@@ -212,7 +212,7 @@ FocusScope {
             property int count: 0
             onTriggered: {
                 if(count <= elapsedSeconds)
-                    totalTimeValueText.text = Global.toTimeString(count++);
+                    totalTimeValueText.text = Utils.toTimeString(count++);
                 else
                     repeat = false;
             }
@@ -230,7 +230,7 @@ FocusScope {
 
             GameIconButton {
                 id: nextLevelButton
-                text: Global.icons.fa_play
+                text: Stylesheet.icons.fa_play
                 focus: true
 
                 onClicked: statsSlate.nextLevelClicked();
@@ -246,7 +246,7 @@ FocusScope {
 
             GameIconButton {
                 id: restartButton
-                text: Global.icons.fa_repeat
+                text: Stylesheet.icons.fa_repeat
 
                 onClicked: statsSlate.restartClicked();
 
@@ -266,7 +266,7 @@ FocusScope {
 
             GameIconButton {
                 id: achievementsButton
-                text: Global.icons.fa_trophy
+                text: Stylesheet.icons.fa_trophy
 
                 onClicked: statsSlate.achievementsClicked();
 
@@ -286,7 +286,7 @@ FocusScope {
 
             GameIconButton {
                 id: quitButton
-                text: Global.icons.fa_home
+                text: Stylesheet.icons.fa_home
 
                 onClicked: statsSlate.homeClicked();
 

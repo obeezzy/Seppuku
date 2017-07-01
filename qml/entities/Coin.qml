@@ -18,15 +18,15 @@ EntityBase {
             width: target.width
             height: target.height
             sensor: true
-            categories: Global.kCollectible
-            collidesWith: Global.kActor
+            categories: Utils.kCollectible
+            collidesWith: Utils.kActor
 
             readonly property bool picked: coin.picked
             readonly property string type: "coin"
 
             onBeginContact: {
                 switch(other.categories) {
-                case Global.kActor:
+                case Utils.kActor:
                     if(other.type === "main_body") {
                         //console.log("Coin: The actor wants to pick me up.")
                         coin.picked = true;

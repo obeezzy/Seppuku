@@ -68,7 +68,7 @@ WideSlate {
             id: doneButton
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
-            text: Global.icons.fa_check
+            text: Stylesheet.icons.fa_check
             onClicked: optionsSlate.doneClicked();
 
             Keys.onUpPressed: {

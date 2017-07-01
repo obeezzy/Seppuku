@@ -24,12 +24,12 @@ PhysicsEntity {
         density: 1
         restitution: 0
         friction: .5
-        categories: Global.kGround | Global.kGroundTop
+        categories: Utils.kGround | Utils.kGroundTop
 
         readonly property string type: root.type
 
         onBeginContact: {
-            if(other.categories & Global.kActor)
+            if(other.categories & Utils.kActor)
             {
                 if(other.type === "ground")
                 {
@@ -40,7 +40,7 @@ PhysicsEntity {
         }
 
         onEndContact: {
-            if(other.categories & Global.kActor)
+            if(other.categories & Utils.kActor)
             {
                 if(other.type === "ground")
                 {

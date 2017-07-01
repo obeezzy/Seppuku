@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick
+QT += qml quick gamepad
 
 SOURCES += src/main.cpp \
     src/seppuku.cpp
@@ -101,7 +101,9 @@ DISTFILES += \
     qml/gui/MainMenuSlate.qml \
     qml/gui/PopupStack.qml \
     qml/gui/QuestionSlate.qml \
-    qml/entities/EntityBase.qml
+    qml/entities/EntityBase.qml \
+    qml/singletons/Stylesheet.qml \
+    qml/singletons/Utils.qml
 
 HEADERS += \
     src/seppuku.h

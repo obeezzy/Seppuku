@@ -11,7 +11,7 @@ EntityBase {
     bodyType: Body.Static
     sleepingAllowed: false
     transformOrigin: Item.Center
-    z: Global.zCollectible
+    z: Utils.zCollectible
 
     property string color: "blue"
     property bool picked: false
@@ -22,15 +22,15 @@ EntityBase {
         width: target.width
         height: target.height
         sensor: true
-        categories: Global.kCollectible
-        collidesWith: Global.kActor
+        categories: Utils.kCollectible
+        collidesWith: Utils.kActor
 
         readonly property bool picked: gem.picked
         readonly property string type: "gem"
         readonly property string color: gem.color
 
         onBeginContact: {
-            if(other.categories & Global.kActor) {
+            if(other.categories & Utils.kActor) {
                 if(other.type === "main_body")
                     gem.picked = true
             }

@@ -21,8 +21,8 @@ EntityBase {
             density: .01
             friction: .3
             restitution: .4
-            categories: Global.kActor
-            collidesWith: Global.kGround | Global.kWall | Global.kEnemy | Global.kObstacle | Global.kInteractive
+            categories: Utils.kActor
+            collidesWith: Utils.kGround | Utils.kWall | Utils.kEnemy | Utils.kObstacle | Utils.kInteractive
 
 //            vertices: [
 //                Qt.point(0, target.height / 2),
@@ -36,16 +36,16 @@ EntityBase {
             readonly property real damage: .2
 
             onBeginContact: {
-                if((other.categories & Global.kGround & Global.kGroundTop & Global.kEnemy) && other.type === "main_body")
+                if((other.categories & Utils.kGround & Utils.kGroundTop & Utils.kEnemy) && other.type === "main_body")
                 {
                     kunai.bodyType = Body.Dynamic;
                     kunai.linearVelocity = Qt.point(0, 0);
-                    //collidesWith = Global.kGround | Global.kWall;
+                    //collidesWith = Utils.kGround | Utils.kWall;
                     destructionOnContactAnimation.start();
                     destructionOnTimeoutAnimation.stop();
                 }
 
-                else if((other.categories & Global.kInteractive)/* && other.type === "lever" && actor.facingRight && other.mirror*/)
+                else if((other.categories & Utils.kInteractive)/* && other.type === "lever" && actor.facingRight && other.mirror*/)
                 {
                     console.log("Hey there man!!!");
                     kunai.bodyType = Body.Dynamic;

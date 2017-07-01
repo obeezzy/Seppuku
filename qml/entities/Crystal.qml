@@ -16,7 +16,7 @@ EntityBase {
     fixtures: Polygon {
         friction: 1
         density: 1
-        categories: Global.kObstacle
+        categories: Utils.kObstacle
 
         readonly property string type: "crystal"
         readonly property real damage: .2

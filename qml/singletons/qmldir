@@ -1,2 +1,4 @@
 singleton Global 1.0 Global.qml
+singleton Stylesheet 1.0 Stylesheet.qml
+singleton Utils 1.0 Utils.qml
 

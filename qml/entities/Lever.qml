@@ -9,7 +9,7 @@ EntityBase {
     height: 55
     sleepingAllowed: false
     bodyType: Body.Static
-    z: Global.zInteractive
+    z: Utils.zInteractive
 
     readonly property string type: "lever"
     readonly property string fileLocation: Global.paths.images + "switches/"
@@ -25,17 +25,17 @@ EntityBase {
         width: target.width
         height: target.height
         sensor: true
-        categories: Global.kInteractive
+        categories: Utils.kInteractive
 
         readonly property string type: lever.type
 
         onBeginContact: {
-            if(other.categories & Global.kActor)
+            if(other.categories & Utils.kActor)
                 lever.inRange = true;
         }
 
         onEndContact: {
-            if(other.categories & Global.kActor)
+            if(other.categories & Utils.kActor)
                 lever.inRange = false;
         }
     }

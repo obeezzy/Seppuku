@@ -19,8 +19,7 @@ Image {
     }
 
     property alias text: buttonText.text
-    property alias fontFamily: buttonText.font.family
-    property bool currentFocus: false
+    property alias font: buttonText.font
     signal clicked
 
     Text {
@@ -33,7 +32,7 @@ Image {
         color: "white"
 
         font {
-            family: Global.defaultFont
+            family: Stylesheet.defaultFontFamily
             pixelSize: 36
             capitalization: Font.AllLowercase
         }
@@ -51,7 +50,7 @@ Image {
         }
 
         SequentialAnimation on color {
-            running: currentFocus
+            running: false
             loops: Animation.Infinite
 
             ColorAnimation { to: Qt.lighter("gray"); duration: 500 }

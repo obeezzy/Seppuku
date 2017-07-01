@@ -17,8 +17,8 @@ EntityBase {
         density: .01
         friction: .01
         restitution: 0.2
-        categories: Global.kEnemy
-        collidesWith: Global.kActor | Global.kGround
+        categories: Utils.kEnemy
+        collidesWith: Utils.kActor | Utils.kGround
 
         readonly property string type: "bullet"
         readonly property real damage: .2

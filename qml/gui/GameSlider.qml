@@ -35,8 +35,8 @@ Slider {
             height: contentHeight
 
             color: "white"
-            text: Global.icons.fa_angle_left + Global.icons.fa_angle_right
-            font.family: Global.iconFont
+            text: Stylesheet.icons.fa_angle_left + Stylesheet.icons.fa_angle_right
+            font.family: Stylesheet.iconFontFamily
             font.bold: true
             font.pixelSize: 34
 

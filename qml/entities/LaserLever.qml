@@ -11,7 +11,7 @@ EntityBase {
     height: 40
     bodyType: Body.Static
     sleepingAllowed: false
-    z: Global.zInteractive
+    z: Utils.zInteractive
 
     property string color: "blue"
     property string position: "off"
@@ -32,19 +32,19 @@ EntityBase {
         width: target.width
         height: target.height
         sensor: true
-        categories: Global.kInteractive
+        categories: Utils.kInteractive
 
         readonly property string type: laserLever.type
         readonly property bool mirror: laserLever.mirror
 
         onBeginContact: {
             console.log("Type? ", other.type)
-            if(other.categories & Global.kActor)
+            if(other.categories & Utils.kActor)
                 privateProperties.inRange = true;
         }
 
         onEndContact: {
-            if(other.categories & Global.kActor)
+            if(other.categories & Utils.kActor)
                 privateProperties.inRange = false;
         }
     }

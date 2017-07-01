@@ -21,7 +21,7 @@ WideSlate {
             }
 
             font {
-                family: Global.hintFont
+                family: Global.hintFontFamily
                 pixelSize: 21
             }
             color: "white"

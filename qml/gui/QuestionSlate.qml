@@ -27,7 +27,7 @@ PlainNarrowSlate {
                 color: "white"
                 wrapMode: Text.WordWrap
 
-                font.family: Global.defaultFont
+                font.family: Stylesheet.defaultFontFamily
                 font.pixelSize: 21
             }
 
@@ -38,7 +38,6 @@ PlainNarrowSlate {
                 GameButton {
                     id: closingYesButton
                     text: qsTr("yes")
-                    fontFamily: Global.defaultFont
                     anchors.horizontalCenter: parent.horizontalCenter
                     onClicked: questionSlate.yesClicked();
 
@@ -49,7 +48,6 @@ PlainNarrowSlate {
                     id: closingNoButton
                     text: qsTr("no")
                     focus: true
-                    fontFamily: Global.defaultFont
                     width: closingYesButton.width
                     anchors.horizontalCenter: parent.horizontalCenter
                     onClicked: questionSlate.noClicked();

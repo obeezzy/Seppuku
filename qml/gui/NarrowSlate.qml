@@ -29,16 +29,16 @@ FocusScope {
             width: contentWidth
             height: contentHeight
 
-            text: "normal"
+            text: qsTr("Normal")
             color: "white"
 
             font {
-                family: Global.defaultFont
+                family: Stylesheet.defaultFontFamily
                 pixelSize: 40
                 capitalization: Font.AllLowercase
             }
 
-            style: Text.Outline;
+            style: Text.Outline
             styleColor: "#009bff"
         }
 

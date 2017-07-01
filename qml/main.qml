@@ -2,6 +2,7 @@ import QtQuick 2.9
 import Bacon2D 1.0
 import Seppuku 1.0
 import QtQuick.Controls 2.2
+import QtGamepad 1.0
 import "common"
 import "scenes"
 import "singletons"
@@ -29,7 +30,7 @@ ApplicationWindow {
         }
 
         onMainMenuRequested: gameWindow.push(mainMenuScene);
-        onRestartLevelRequested: playLevel(Global.currentLevel);
+        onRestartLevelRequested: playLevel(Global.settings.currentLevel);
     }
 
     SceneLoader {

@@ -25,15 +25,15 @@ EntityBase {
     fixtures: Box {
         width: target.width
         height: target.height
-        categories: Global.kInteractive
-        collidesWith: Global.kActor
+        categories: Utils.kInteractive
+        collidesWith: Utils.kActor
         sensor: true
 
         readonly property string type: "info_sign"
 
         onBeginContact: {
             switch(other.categories) {
-            case Global.kActor:
+            case Utils.kActor:
                 if(other.type === "main_body") {
                     //console.log("InfoSign: within range")
                     inRange = true;
@@ -44,7 +44,7 @@ EntityBase {
 
         onEndContact: {
             switch(other.categories) {
-            case Global.kActor:
+            case Utils.kActor:
                 if(other.type === "main_body") {
                     //console.log("InfoSign: out of range")
                     inRange = false;
@@ -92,7 +92,7 @@ EntityBase {
 
                 infoSign.infoRequested(properties);
 
-                Global.messageVisible = infoSign.messageVisible;
+                //Global.messageVisible = infoSign.messageVisible;
                 if(infoSign.inRange)
                     infoSign.messageDisplayed(infoSign.messageVisible);
             }
@@ -105,7 +105,7 @@ EntityBase {
             if (Global.gameWindow.gameState === Bacon2D.Running && infoSign.inRange) {
                 infoSign.messageVisible = false;
 
-                Global.messageVisible = infoSign.messageVisible;
+                //Global.messageVisible = infoSign.messageVisible;
                 if(infoSign.inRange)
                     infoSign.messageDisplayed(infoSign.messageVisible);
             }

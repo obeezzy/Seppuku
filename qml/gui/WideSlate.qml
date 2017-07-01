@@ -35,7 +35,7 @@ FocusScope {
             style: Text.Outline;
             font {
                 pixelSize: 30
-                family: Global.defaultFont
+                family: Stylesheet.defaultFontFamily
                 capitalization: Font.AllLowercase
             }
             styleColor: "red"

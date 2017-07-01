@@ -34,13 +34,13 @@ Item {
                 density: linkDensity
                 restitution: 0
                 friction: 1
-                categories: Global.kObstacle
-                collidesWith: Global.kActor
+                categories: Utils.kObstacle
+                collidesWith: Utils.kActor
 
                 readonly property string type: "rope"
 
                 onBeginContact: {
-                    if(other.categories & Global.kActor) {
+                    if(other.categories & Utils.kActor) {
                         if(other.type === "kunai") {
                             //console.log("Rope: Hit by kunai!")
                             ball.destroy();

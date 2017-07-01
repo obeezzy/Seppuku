@@ -23,7 +23,7 @@ Item {
         font {
             pixelSize: 34
             capitalization: Font.AllLowercase
-            family: Global.defaultFont
+            family: Stylesheet.defaultFontFamily
         }
         styleColor: Qt.darker("#F3D792", 1.2)
     }

@@ -23,7 +23,6 @@ PlainNarrowSlate {
                 id: playButton
                 text: "play"
                 width: parent.width
-                fontFamily: Global.defaultFont
                 anchors.horizontalCenter: parent.horizontalCenter
                 focus: true
                 onClicked: mainMenuSlate.playRequested();
@@ -34,7 +33,6 @@ PlainNarrowSlate {
             GameButton {
                 id: instuctionsButton
                 text: "instructions"
-                fontFamily: Global.defaultFont
                 width: parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: mainMenuSlate.instructionsRequested();
@@ -46,7 +44,6 @@ PlainNarrowSlate {
             GameButton {
                 id: optionsButton
                 text: "options"
-                fontFamily: Global.defaultFont
                 width: parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: mainMenuSlate.optionsRequested();
@@ -58,7 +55,6 @@ PlainNarrowSlate {
             GameButton {
                 id: quitButton
                 text: "quit"
-                fontFamily: Global.defaultFont
                 width: parent.width
                 anchors.horizontalCenter: parent.horizontalCenter
                 onClicked: mainMenuSlate.quitRequested();

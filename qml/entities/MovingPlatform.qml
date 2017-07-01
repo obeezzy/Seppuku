@@ -29,7 +29,7 @@ EntityBase {
         restitution: 0
         friction: .9
         density: 1
-        categories: Global.kGround | Global.kGroundTop
+        categories: Utils.kGround | Utils.kGroundTop
     }
 
     Row {
