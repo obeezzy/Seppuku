@@ -39,7 +39,7 @@ TiledScene {
 
     readonly property point actorInitPos: Qt.point(actorPosition.x, actorPosition.y)
     //    actorInitPos: {
-    //        Global.checkpointState.level === 0 ? Qt.point(actorPosition.x, actorPosition.y) : Global.checkpointState.point
+    //        Global.settings.checkpointState.level === 0 ? Qt.point(actorPosition.x, actorPosition.y) : Global.settings.checkpointState.pos
     //    }
     property alias musicSource: bgm.source
     property bool gameOver: false
@@ -1427,7 +1427,7 @@ TiledScene {
 
         scrollViewportToCenter();
         Global.settings.currentLevel = level;
-        Global.checkpointState = null;
+        Global.settings.checkpointState = null;
 
 
         // Create entities
