@@ -35,7 +35,8 @@ Item {
         anchors.left: parent.left
         anchors.margins: 10
         source: hurting || (healthStatus == 0) ? (fileLocation + "dead_head.png") : (fileLocation + "head.png")
-        scale: 0
+        width: 70
+        fillMode: Image.PreserveAspectFit
     }
 
     HealthBar {
@@ -48,13 +49,7 @@ Item {
         radius: 5
 
         healthStatus: headsUpDisplay.healthStatus
-
-        opacity: 0
-        transform: Translate {
-            id: healthBarTransform
-            x: -healthBar.width
-            y: 0
-        }
+        transform: Translate { id: healthBarTransform }
     }
 
 
@@ -66,13 +61,8 @@ Item {
         anchors.leftMargin: 7
         anchors.topMargin: 7
         anchors.bottom: headImage.bottom
-        opacity: 0
         z: parent.z - 1
-        transform: Translate {
-            id: collectedItemsTransform
-            x: -collectedItemsRow.width
-            y: 0
-        }
+        transform: Translate { id: collectedItemsTransform }
 
         function resetTransform() { transform = null; }
 
@@ -184,11 +174,7 @@ Item {
         anchors.left: headImage.left
         anchors.topMargin: 10
         anchors.top: headImage.bottom
-        transform: Translate {
-            id: pauseButtonTransform
-            x: -pauseButton.width - 36
-            y: 0
-        }
+        transform: Translate { id: pauseButtonTransform }
 
         text: Stylesheet.icons.fa_pause
         font.pixelSize: 24
@@ -201,11 +187,7 @@ Item {
         anchors.rightMargin: 18
         anchors.top: parent.top
         width: levelTimerRow.width
-        transform: Translate {
-            id: levelTimerDisplayTransform
-            x: levelTimerDisplay.width + anchors.rightMargin + 60
-            y: 0
-        }
+        transform: Translate { id: levelTimerDisplayTransform }
 
         Timer {
             id: levelTimer
@@ -255,72 +237,32 @@ Item {
         id: startupAnimation
         running: true
 
+        PropertyAction { target: headImage; property: "scale"; value: 0 }
+        PropertyAction { target: healthBarTransform; property: "x"; value: -healthBar.width }
+        PropertyAction { target: levelTimerDisplayTransform; property: "x"; value: levelTimerDisplay.width + anchors.rightMargin + 60 }
+        PropertyAction { target: healthBar; property: "opacity"; value: 0 }
+        PropertyAction { target: collectedItemsTransform; property: "x"; value: -collectedItemsRow.width }
+        PropertyAction { target: collectedItemsRow; property: "opacity"; value: 0 }
+        PropertyAction { target: pauseButtonTransform; property: "x"; value: -pauseButton.width - 36 }
+
         PauseAnimation { duration: 1000 }
+        NumberAnimation { target: headImage; property: "scale"; to: 1; easing.type: Easing.OutBack; duration: 500 }
 
-        NumberAnimation {
-            target: headImage
-            property: "scale"
-            to: 1
-            easing.type: "OutBack"
-            duration: 500
+        ParallelAnimation {
+            NumberAnimation { target: healthBarTransform; property: "x"; to: 0; easing.type: "OutBack"; duration: 500 }
+            NumberAnimation { target: healthBar; property: "opacity"; to: 1; easing.type: "OutBack"; duration: 500 }
+            NumberAnimation { target: collectedItemsTransform; property: "x"; to: 0; easing.type: "OutBack"; duration: 700 }
+            NumberAnimation { target: collectedItemsRow; property: "opacity"; to: 1; duration: 700 }
         }
 
         ParallelAnimation {
-            NumberAnimation {
-                target: healthBarTransform
-                property: "x"
-                to: 0
-                easing.type: "OutBack"
-                duration: 500
-            }
-
-            NumberAnimation {
-                target: healthBar
-                property: "opacity"
-                to: 1
-                easing.type: "OutBack"
-                duration: 500
-            }
-
-            NumberAnimation {
-                target: collectedItemsTransform
-                property: "x"
-                to: 0
-                easing.type: "OutBack"
-                duration: 700
-            }
-
-            NumberAnimation {
-                target: collectedItemsRow
-                property: "opacity"
-                to: 1
-                duration: 700
-            }
+            NumberAnimation { target: pauseButtonTransform; property: "x"; to: 0; easing.type: "OutBack"; duration: 250 }
+            NumberAnimation { target: levelTimerDisplayTransform; property: "x"; to: 0;easing.type: "OutBack"; duration: 250 }
         }
 
-        ParallelAnimation {
-            NumberAnimation {
-                target: pauseButtonTransform
-                property: "x"
-                to: 0
-                easing.type: "OutBack"
-                duration: 250
-            }
-
-            NumberAnimation {
-                target: levelTimerDisplayTransform
-                property: "x"
-                to: 0
-                easing.type: "OutBack"
-                duration: 250
-            }
-        }
-
-        ScriptAction { script: collectedItemsRow.resetTransform() }
+        ScriptAction { script: collectedItemsRow.resetTransform(); }
     }
 
-    function stopTimer() {
-        levelTimer.stop();
-    }
+    function stopTimer() { levelTimer.stop(); }
 }
 
