@@ -14,7 +14,6 @@ Item {
 
     readonly property Scene scene: parent
     readonly property Ninja actor: parent.actor
-    readonly property string fileLocation: actor.fileLocation
 
     // Actor properties
     readonly property real healthStatus: actor.healthStatus
@@ -34,7 +33,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: 10
-        source: hurting || (healthStatus == 0) ? (fileLocation + "dead_head.png") : (fileLocation + "head.png")
+        source: hurting || (healthStatus == 0) ? (actor.filePrefix + "dead_head.png") : (actor.filePrefix + "head.png")
         width: 70
         fillMode: Image.PreserveAspectFit
     }

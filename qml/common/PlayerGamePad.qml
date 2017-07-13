@@ -18,12 +18,12 @@ Item {
 //            if(buttonA && axisLeftY > .8 && axisLeftX >= -.5 && axisLeftX <= .5)
 //                actor.slide();
 //            if(buttonA) {
-//                if(actor.isInHoverArea())
+//                if(actor.inHoverArea)
 //                    actor.hover(buttonA);
 //                else
 //                    actor.jump();
 //            }
-//            else if(actor.isInHoverArea())
+//            else if(actor.inHoverArea())
 //                    actor.stopHovering();
 //        }
 

@@ -4,7 +4,7 @@ import Seppuku 1.0
 import "../singletons"
 
 PhysicsEntity {
-    id: woodenDoort
+    id: woodenDoor
     width: 70
     height: 140
     bodyType: Body.Static
@@ -44,7 +44,7 @@ PhysicsEntity {
         sensor: true
         categories: Utils.kInteractive
 
-        readonly property string type: woodenDoort.type
+        readonly property string type: woodenDoor.type
 
         onBeginContact: {
             if(other.categories & Utils.kActor && other.type === "main_body") {
@@ -71,7 +71,7 @@ PhysicsEntity {
             id: doorTop
             anchors.left: parent.left
             anchors.right: parent.right
-            source: woodenDoort.closed ? (Global.paths.images + "doors/door_closedTop.png") : (Global.paths.images + "doors/door_openTop.png")
+            source: woodenDoor.closed ? (Global.paths.images + "doors/door_closedTop.png") : (Global.paths.images + "doors/door_openTop.png")
             height: 70
         }
 
@@ -79,8 +79,8 @@ PhysicsEntity {
             id: doorBody
             anchors.left: parent.left
             anchors.right: parent.right
-            height: woodenDoort.height - doorTop.height
-            source: woodenDoort.closed ? (Global.paths.images + "doors/door_closedMid.png") : (Global.paths.images + "doors/door_openMid.png")
+            height: woodenDoor.height - doorTop.height
+            source: woodenDoor.closed ? (Global.paths.images + "doors/door_closedMid.png") : (Global.paths.images + "doors/door_openMid.png")
             fillMode: Image.TileVertically
         }
     }
@@ -108,7 +108,7 @@ PhysicsEntity {
             return;
 
         lock.lockOpened.connect(function() {
-            woodenDoort.closed = false;
+            woodenDoor.closed = false;
         });
     }
 }
