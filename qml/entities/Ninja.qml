@@ -6,113 +6,74 @@ import "../singletons"
 
 EntityBase {
     id: ninja
-    width: 48
+    width: 40
     height: {
         if(ninja.sliding)
             38;
         else
             60;
     }
+    onHeightChanged: if(ninja.sliding) y = y + 60 - 36;
+
     bodyType: Body.Dynamic
     sleepingAllowed: false
     fixedRotation: true
     bullet: true
 
-    Rectangle {
-        anchors.fill: parent
-        color: "green"
-        opacity: 0
-    }
-
-    onHeightChanged: {
-        if(ninja.sliding)
-            y = y + 60 - 36;
-    }
-
     signal selfDestruct
     signal disguised(bool putOn)
     signal displayMessage()
     signal utilized(string type)
+    signal teleported // After you have moved through a door
 
-    // Current scene
-    readonly property Scene scene: parent
-
-    // Location of sprites
-    readonly property string fileLocation: Global.paths.images + "actor/" + name + "/"
-
+    // Where is the next door location
+    property point nextDoorLocation: Qt.point(-1, -1)
     // Name of actor
     property string name: "tomahawk"
 
+    // Current scene
+    readonly property Scene scene: parent
+    // Location of sprites
+    readonly property string filePrefix: Global.paths.images + "actor/" + name + "_"
     // What's the distance moved with each step
     readonly property int xStep: 12
 
-    // Is he in the wind area?
-    readonly property bool inHoverArea: hoverAreaContactCount > 0
+    readonly property bool inHoverArea: privateProperties.hoverAreaContactCount > 0
 
-    property int ladderContactCount: 0
-    property int groundContactCount: 0
-    property int hoverAreaContactCount: 0
-
-    // Which way is the player facing
-    readonly property bool facingRight: !facingLeft
-    property bool facingLeft: false
-
-    // While climbing a ladder...
+    readonly property bool facingRight: privateProperties.facingRight
+    readonly property bool facingLeft: privateProperties.facingLeft
     readonly property bool facingUp: !facingDown
-    property bool facingDown: false
-
-    // Check if you just finished sliding
-    property bool slidingDone: false
-
-    // Is this ninja striking another ninja (when his weapon actually touches the enemy)
-    property bool striking: false
+    readonly property bool facingDown: privateProperties.facingDown
 
     // Am I on the ground?
-    readonly property bool airborne: {
-        (sprite.animation == "rise"
-                 || sprite.animation == "fall"
-                 || sprite.animation == "freefall"
-                 || sprite.animation == "hover"
-                 || jumping)
-                && !privateProperties.collidingWithGround
-    }
+    readonly property bool airborne: !collidingWithGround
 
-    property bool running: false
-    property bool jumping: false
-    property bool falling: false
-    property bool clinging: false
-    property bool climbing: false
-    property bool hovering: false
-    readonly property bool sliding: sprite.animation == "slide"
-    readonly property bool crouching: sprite.animation == "crouch" || sprite.animation == "crouch_attack"
+    readonly property bool striking: privateProperties.striking
+    readonly property bool running: privateProperties.running
+    readonly property bool jumping: privateProperties.jumping
+    readonly property bool falling: privateProperties.falling
+    readonly property bool clinging: privateProperties.clinging
+    readonly property bool climbing: privateProperties.climbing
+    readonly property bool hovering: privateProperties.hovering
+    readonly property bool sliding: privateProperties.sliding
+    readonly property bool crouching: privateProperties.crouching
+    readonly property bool hurting: privateProperties.hurting
+    readonly property bool dead: privateProperties.dead
+    readonly property string deathCause: privateProperties.deathCause
+    readonly property real healthStatus: privateProperties.healthStatus
 
-    // Is this ninja in pain?
-    property bool hurting: false
+    readonly property int totalCoinsCollected: privateProperties.totalCoinsCollected
+    readonly property int totalKunaiCollected: privateProperties.totalKunaiCollected
+    readonly property int totalBlueKeysCollected: privateProperties.totalBlueKeysCollected
+    readonly property int totalYellowKeysCollected: privateProperties.totalYellowKeysCollected
+    readonly property int totalRedKeysCollected: privateProperties.totalRedKeysCollected
+    readonly property int totalGreenKeysCollected: privateProperties.totalGreenKeysCollected
 
-    // Is ninja dead?
-    property bool dead: false
-    // Reason for death
-    property string deathCause: ""
+    // Is the player on the ground
+    readonly property bool collidingWithGround: privateProperties.groundContactCount > 0
 
-    // health values
-    property real healthStatus: 1
-
-    // Number of coins
-    property int totalCoinsCollected: 0
-
-    // Number of kunai
-    property int totalKunaiCollected: 2
-
-    // Number of keys
-    property int totalBlueKeysCollected: 0
-    property int totalYellowKeysCollected: 0
-    property int totalRedKeysCollected: 0
-    property int totalGreenKeysCollected: 0
-
-    // Can he be disguised?
-    property bool inDisguiseRange: false
-    // Is he wearing disguise?
-    property bool wearingDisguise: false
+    readonly property bool inDisguiseRange: privateProperties.inDisguiseRange
+    readonly property bool wearingDisguise: privateProperties.wearingDisguise
     // Can the actor be seen by the enemy
     readonly property bool exposed: {
         if(!ninja.wearingDisguise)
@@ -123,31 +84,81 @@ EntityBase {
             true
     }
 
-    // Can I read any info sign close to me
-    property bool inInfoRange: false
-
-    // Am i close to a lever?
-    property bool inLeverRange: false
-
-    // Am I in front of a door?
-    property bool inDoorRange: false
-
-    // Where is the next door location
-    property point nextDoorLocation: Qt.point(-1, -1)
-
-    // After you have moved through a door
-    signal teleported
+    readonly property bool inInfoRange: privateProperties.inInfoRange
+    readonly property bool inLeverRange: privateProperties.inLeverRange
+    readonly property bool inDoorRange: privateProperties.inDoorRange
 
     QtObject {
         id: privateProperties
 
-        // Is the player on the ground
-        readonly property bool collidingWithGround: groundContactCount > 0
+        property int ladderContactCount: 0
+        property int groundContactCount: 0
+        property int hoverAreaContactCount: 0
+
+        onGroundContactCountChanged: console.log("Ground count? ", groundContactCount);
+
+        // Which way is the player facing
+        readonly property bool facingRight: !facingLeft
+        property bool facingLeft: false
+
+        // While climbing a ladder...
+        readonly property bool facingUp: !facingDown
+        property bool facingDown: false
+
+        // Is this ninja striking another ninja (when his weapon actually touches the enemy)
+        property bool striking: false
 
         // Is playing pressing "crouch"?
         property bool crouchPressed: false
 
-        //
+        property bool running: false
+        property bool jumping: false
+        property bool falling: false
+        property bool clinging: false
+        property bool climbing: false
+        property bool hovering: false
+        readonly property bool sliding: sprite.animation == "slide"
+        readonly property bool crouching: sprite.animation == "crouch" || sprite.animation == "crouch_attack"
+
+        // Is this ninja in pain?
+        property bool hurting: false
+
+        // Is ninja dead?
+        property bool dead: false
+
+        // Reason for death
+        property string deathCause: ""
+
+        // health values
+        property real healthStatus: 1
+
+        // Number of coins
+        property int totalCoinsCollected: 0
+
+        // Number of kunai
+        property int totalKunaiCollected: 2
+
+        // Number of keys
+        property int totalBlueKeysCollected: 0
+        property int totalYellowKeysCollected: 0
+        property int totalRedKeysCollected: 0
+        property int totalGreenKeysCollected: 0
+
+        // Can he be disguised?
+        property bool inDisguiseRange: false
+        // Is he wearing disguise?
+        property bool wearingDisguise: false
+
+        // Can I read any info sign close to me
+        property bool inInfoRange: false
+
+        // Am i close to a lever?
+        property bool inLeverRange: false
+
+        // Am I in front of a door?
+        property bool inDoorRange: false
+
+        // Box margins
         readonly property int leftBoxMargin: 3
         readonly property int rightBoxMargin: 9
 
@@ -157,12 +168,12 @@ EntityBase {
             if(sender === undefined)
                 sender = "";
 
-            if(healthStatus - loss > 0)
-                healthStatus -= loss;
+            if(privateProperties.healthStatus - loss > 0)
+                privateProperties.healthStatus -= loss;
             else {
-                healthStatus = 0;
-                ninja.deathCause = sender;
-                ninja.dead = true;
+                privateProperties.healthStatus = 0;
+                privateProperties.deathCause = sender;
+                privateProperties.dead = true;
             }
 
             ouchSound.play();
@@ -218,11 +229,11 @@ EntityBase {
                         addKey(other.color);
                 }
                 else if(other.categories & Utils.kLadder) {
-                    ninja.ladderContactCount++;
+                    privateProperties.ladderContactCount++;
                     ninja.gravityScale = 0;
                     ninja.linearVelocity = Qt.point(0, 0);
-                    ninja.clinging = true;
-                    ninja.setAnimation("cling");
+                    privateProperties.clinging = true;
+                    sprite.animation = "cling";
                 }
                 else if(other.categories & Utils.kObstacle) {
                     if(other.type === "crystal") {
@@ -234,16 +245,16 @@ EntityBase {
                     }
                 }
                 else if(other.categories & Utils.kCovert) {
-                    ninja.inDisguiseRange = true;
+                    privateProperties.inDisguiseRange = true;
                 }
                 else if(other.categories & Utils.kHoverArea) {
-                    ninja.hoverAreaContactCount++;
+                    privateProperties.hoverAreaContactCount++;
                 }
                 else if(other.categories & Utils.kInteractive) {
                     if(other.type === "info_sign")
-                        ninja.inInfoRange = true;
+                        privateProperties.inInfoRange = true;
                     else if(other.type === "lever")
-                        ninja.inLeverRange = true;
+                        privateProperties.inLeverRange = true;
                 }
                 else if(other.categories & Utils.kLava) {
                     privateProperties.depleteHealth(1, other.sender);
@@ -257,29 +268,29 @@ EntityBase {
                 if(ninja.dead)
                     return
                 if(other.categories & Utils.kLadder) {
-                    ninja.ladderContactCount--;
+                    privateProperties.ladderContactCount--;
 
-                    if(ninja.ladderContactCount == 0) {
+                    if(privateProperties.ladderContactCount == 0) {
                         ninja.gravityScale = 1;
-                        ninja.clinging = false;
+                        privateProperties.clinging = false;
 
                         if(!privateProperties.collidingWithGround)
-                            ninja.setAnimation("freefall");
+                            sprite.animation = "freefall";
                         else
-                            ninja.setAnimation("idle");
+                            sprite.animation = "idle";
                     }
                 }
                 else if(other.categories & Utils.kCovert) {
-                    ninja.inDisguiseRange = false;
+                    privateProperties.inDisguiseRange = false;
                 }
                 else if(other.categories & Utils.kHoverArea) {
-                    ninja.hoverAreaContactCount--;
+                    privateProperties.hoverAreaContactCount--;
                 }
                 else if(other.categories & Utils.kInteractive) {
                     if(other.type === "info_sign")
-                        ninja.inInfoRange = false;
+                        privateProperties.inInfoRange = false;
                     else if(other.type === "lever")
-                        ninja.inLeverRange = false;
+                        privateProperties.inLeverRange = false;
                 }
             }
         },
@@ -327,326 +338,228 @@ EntityBase {
                     return;
 
                 if(other.categories & Utils.kGroundTop) {
-                    ninja.groundContactCount++;
+                    privateProperties.groundContactCount++;
 
                     if(!ninja.sliding && !ninja.running && !ninja.hurting)
-                        ninja.setAnimation("idle");
+                        sprite.animation = "idle";
                 }
             }
 
             onEndContact: {
                 if(other.categories & Utils.kGroundTop) {
-                    ninja.hovering = false;
-                    ninja.groundContactCount--;
+                    privateProperties.hovering = false;
+                    privateProperties.groundContactCount--;
                 }
             }
-        },
-
-        Box {
-            id: leftStrikeSensor
-            x: ninja.striking && ninja.facingLeft ? -target.width * .6 : 0
-            y: 5
-            width: ninja.striking && ninja.facingLeft ? target.width * .6 : 0
-            height: target.height - 10
-
-            sensor: true
-            categories: ninja.striking ? Utils.kActor : Utils.kIntangible
-
-            readonly property string type: "left_attack"
-            readonly property bool striking: ninja.striking
-        },
-
-        Box {
-            id: rightStrikeSensor
-            x: target.width
-            y: 0
-            width: ninja.striking && ninja.facingRight ? target.width * .6 : 0
-            height: target.height - 10
-
-            sensor: true
-            categories: ninja.striking ? Utils.kActor : Utils.kIntangible
-
-            readonly property string type: "right_attack"
-            readonly property bool striking: ninja.striking
         }
     ]
 
     Sprite {
         id: sprite
+        y: {
+            switch (animation) {
+            case "attack_main": -10; break;
+            case "run": -25; break;
+            case "slide": -40; break;
+            case "cling":
+            case "climb": -6; break;
+            default: -17; break;
+            }
+        }
+
+        anchors.horizontalCenter: parent.horizontalCenter
         animation: "idle"
+        source: Global.paths.images + "actor/" + ninja.name + ".png"
         horizontalMirror: ninja.facingLeft
-        //x: animation == "attack" && ninja.facingLeft ? -30 : 0
-        x: -ninja.width / 2
-        y: animation == "slide" ? -ninja.height / 2 : 0
-        width: ninja.width
+        horizontalFrameCount: 10
+        verticalFrameCount: 17
+
+        Component.onCompleted: sprite.animation = "freefall";
 
         animations: [
             SpriteAnimation {
-                name: "idle"
-                source: ninja.fileLocation + "idle.png"
-                frames: 10
+                name: "attack_main"
+                finalFrame: 6
+                frameY: 0
                 duration: 500
-                loops: Animation.Infinite
-
-                //onFinished: console.log("SPRITE_ANIMATION: ", name, " done")
-            },
-
-            SpriteAnimation {
-                name: "crouch"
-                source: ninja.fileLocation + "crouch.png"
-                frames: 10
-                duration: 500
-                loops: Animation.Infinite
-            },
-
-            SpriteAnimation {
-                name: "run"
-                source: ninja.fileLocation + "run.png"
-                frames: 8
-                duration: 500
-                loops: Animation.Infinite
+                loops: 1
                 inverse: ninja.facingLeft
 
-                //onFinished: console.log("SPRITE_ANIMATION: ", name, " done")
+                onFinished: sprite.animation = "idle";
+            },
+
+            SpriteAnimation {
+                name: "attack_secondary"
+                finalFrame: 7
+                frameY: frameHeight
+                duration: 500
+                loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "climb"
-                source: ninja.fileLocation + "climb.png"
-                frames: 10
-                duration: 300
-                loops: Animation.Infinite
-                inverse: ninja.facingDown
-
-                //onFinished: console.log("SPRITE_ANIMATION: ", name, " done")
-            },
-
-            SpriteAnimation {
-                name: "cling"
-                source: ninja.fileLocation + "cling.png"
-                frames: 2
-                duration: 100
-                loops: Animation.Infinite
-
-                //onFinished: console.log("SPRITE_ANIMATION: ", name, " done")
-            },
-
-            SpriteAnimation {
-                name: "slide"
-                source: ninja.fileLocation + "slide.png"
-                frames: 10
-                duration: 1000
-                loops: 1
-                inverse: ninja.facingLeft
-
-                onFinished: {
-                    //console.log("SPRITE_ANIMATION: ", name, " done")
-                    ninja.slidingDone = true;
-
-                    if(sprite.animation == name)
-                        ninja.setAnimation("idle");
-
-                    ninja.linearVelocity = Qt.point(0, 0);
-                }
-            },
-
-            SpriteAnimation {
-                name: "jump_attack"
-                source: ninja.fileLocation + "jump_attack.png"
-                frames: 10
-                duration: 1400
-                loops: 1
-                inverse: ninja.facingLeft
-
-                onFrameChanged: {
-                    if(frame == frames / 2)
-                        ninja.striking = true;
-                }
-
-                onFinished: {
-                    //console.log("SPRITE_ANIMATION: ", name, " done")
-                    ninja.striking = false;
-                }
-            },
-
-            SpriteAnimation {
-                name: "hover"
-                source: ninja.fileLocation + "glide.png"
-                frames: 10
+                frameY: 2 * frameHeight
                 duration: 500
                 loops: Animation.Infinite
-                inverse: ninja.facingLeft
-
-//                onFrameChanged: {
-//                    console.log("This can go on forever!!! ", running)
-//                }
-
-                onFinished: ninja.hovering = false;
-                //onFinished: console.log("SPRITE_ANIMATION: ", name, " done")
             },
 
             SpriteAnimation {
-                name: "attack"
-                source: ninja.fileLocation + "attack.png"
-                frames: 7
+                name: "crouch"
+                frameY: 4 * frameHeight
                 duration: 500
-                loops: 1
-                inverse: ninja.facingLeft
-
-                onFrameChanged: {
-                    if(frame == frames / 2)
-                        ninja.striking = true;
-                }
-
-                onFinished: {
-                    if(sprite.animation == name)
-                        ninja.setAnimation("idle");
-
-                    ninja.striking = false;
-                    //console.log(name, "done")
-                }
+                loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "crouch_attack"
-                source: ninja.fileLocation + "crouchattack.png"
-                frames: 8
-                loops: 1
-                duration: 500
-
-                onFinished: ninja.setAnimation(privateProperties.crouchPressed ? "crouch" : "idle");
-            },
-
-            SpriteAnimation {
-                name: "throw"
-                source: ninja.fileLocation + "throw.png"
-                frames: 6
-                loops: 1
-                duration: 250
-                //inverse: ninja.facingLeft
-
-                onFrameChanged: {
-                    if(frame == frames / 2) {
-                        createKunai();
-
-                        if(totalKunaiCollected > 0)
-                            totalKunaiCollected--;
-                    }
-                }
-
-                onFinished: {
-                    //console.log("SPRITE_ANIMATION: ", name, " done")
-
-                    throwSound.play();
-                    if(sprite.animation == name)
-                        ninja.setAnimation("idle");
-                }
-            },
-
-            SpriteAnimation {
-                name: "rise"
-                source: ninja.fileLocation + "rising.png"
-                frames: 5
-                duration: 1000
-                loops: 1
-
-                onFinished: {
-                    //console.log("SPRITE_ANIMATION: ", name, " done")
-                    ninja.jumping = false;
-                    ninja.facingDown = false;
-
-                    if(ninja.airborne && sprite.animation == name)
-                        ninja.setAnimation("fall");
-                }
-            },
-
-            SpriteAnimation {
-                name: "fall"
-                source: ninja.fileLocation + "falling.png"
-                frames: 5
+                finalFrame: 7
+                frameY: 3 * frameHeight
                 duration: 500
                 loops: 1
-                //inverse: ninja.facingLeft
 
-                onFinished: {
-                    //console.log("SPRITE_ANIMATION: ", name, " done")
-                    ninja.facingDown = true;
-
-                    if(ninja.airborne && sprite.animation == name)
-                        ninja.setAnimation("freefall");
-                }
+                onFinished: sprite.animation = privateProperties.crouchPressed ? "crouch" : "idle";
             },
 
             SpriteAnimation {
-                name: "freefall"
-                source: ninja.fileLocation + "freefall.png"
-                frames: 2
-                duration: 2000
-                loops: Animation.Infinite
-                inverse: ninja.facingLeft
+                name: "crouch_throw"
+                finalFrame: 5
+                frameY: 5 * frameHeight
+                duration: 500
+                loops: 1
 
-                onFrameChanged: {
-                    ninja.facingDown = true;
-                }
-
-                onFinished: {
-                    //console.log("SPRITE_ANIMATION: ", name, " done")
-                    ninja.facingDown = true;
-                }
+                onFinished: sprite.animation = privateProperties.crouchPressed ? "crouch" : "idle";
             },
 
             SpriteAnimation {
                 name: "die"
-                source: ninja.fileLocation + "die.png"
-                frames: 10
-                duration: 1000
+                frameY: 6 * frameHeight
+                frameWidth: .08102981029 * sprite.sourceSize.width
+                duration: 500
                 loops: 1
 
-                onFinished: {
-                    //console.log("SPRITE_ANIMATION: ", name, " done")
-                    if(sprite.animation == name)
-                        ninja.setAnimation("dead");
-                }
+                onFinished: sprite.animation = "dead";
             },
 
             SpriteAnimation {
-                name: "dead"
-                source: ninja.fileLocation + "dead.png"
-                frames: 2
-                duration: 2000
+                name: "hover"
+                frameY: 7 * frameHeight
+                duration: 500
                 loops: Animation.Infinite
-
-                //onFinished: console.log("SPRITE_ANIMATION: ", name, " done")
             },
 
             SpriteAnimation {
                 name: "hurt"
-                source: ninja.fileLocation + "hurt.png"
-                frames: 8 // 2
-                duration: 1000
+                finalFrame: 7
+                frameY: 8 * frameHeight
+                duration: 500
                 loops: 1
 
-                onFinished: {
-                    //console.log("SPRITE_ANIMATION: ", name, " done")
-                    if(sprite.animation == name) {
-                        if(healthStatus <= 0)
-                            ninja.setAnimation("die");
-                        else
-                            ninja.setAnimation("idle");
-                    }
+                onRunningChanged: if (!running) privateProperties.hurting = false;
+                onFinished: sprite.animation = "idle";
+            },
 
-                    ninja.hurting = false;
-                }
+            SpriteAnimation {
+                name: "idle"
+                frameY: 9 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "jump"
+                frameY: 11 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "jump_attack"
+                finalFrame: 6
+                frameY: 10 * frameHeight
+                duration: 500
+                loops: 1
+
+                onFinished: if(!ninja.dead) sprite.animation = "freefall";
+            },
+
+            SpriteAnimation {
+                name: "jump_throw"
+                finalFrame: 5
+                frameY: 12 * frameHeight
+                duration: 500
+                loops: 1
+
+                onFinished: if(!ninja.dead) sprite.animation = "freefall";
+            },
+
+            SpriteAnimation {
+                name: "run"
+                finalFrame: 7
+                frameY: 13 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
+                inverse: ninja.facingLeft
+            },
+
+            SpriteAnimation {
+                name: "slide"
+                frameY: 14 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "throw"
+                finalFrame: 5
+                frameY: 15 * frameHeight
+                duration: 500
+                loops: 1
+                onRunningChanged: if(!running) sprite.animation = "idle";
+            },
+
+            SpriteAnimation {
+                name: "walk"
+                frameY: 16 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "freefall"
+                frameY: 11 * frameHeight
+                initialFrame: 9
+                duration: 250
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "rise"
+                frameY: 11 * frameHeight
+                finalFrame: 8
+                duration: 500
+                loops: 1
+
+                onFinished: if(!ninja.dead) sprite.animation = "freefall";
+            },
+
+            SpriteAnimation {
+                name: "dead"
+                frameY: 6 * frameHeight
+                frameWidth: .08102981029 * sprite.sourceSize.width
+                initialFrame: 9
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "cling"
+                initialFrame: 9
+                frameY: 2 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
             }
         ]
-
-        onAnimationChanged: {
-            //console.log("Ninja animation: ", animation)
-            ninja.striking = false;
-            if(sprite.animation != "hurt")
-                ninja.hurting = false;
-        }
-    }
+    } // end of Sprite
 
     RayCast {
         id: attackRay
@@ -674,6 +587,9 @@ EntityBase {
         }
 
         function cast() {
+            if(ninja.dead)
+                return;
+
             scene.rayCast(this, p1, p2);
         }
     }
@@ -683,7 +599,6 @@ EntityBase {
         interval: 50
         repeat: true
         triggeredOnStart: true
-
         onTriggered: ninja.rMoveLeft();
     }
 
@@ -692,7 +607,6 @@ EntityBase {
         interval: 50
         repeat: true
         triggeredOnStart: true
-
         onTriggered: ninja.rMoveRight();
     }
 
@@ -702,7 +616,6 @@ EntityBase {
         interval: 59
         repeat: false
         running: ninja.climbing
-
         onTriggered: ninja.rClimbUp();
     }
 
@@ -711,7 +624,6 @@ EntityBase {
         interval: 50
         repeat: false
         running: ninja.climbing
-
         onTriggered: ninja.rClimbDown();
     }
 
@@ -719,7 +631,6 @@ EntityBase {
         id: rHoverTimer
         interval: 50
         repeat: true
-
         onTriggered: ninja.rHover();
     }
 
@@ -727,10 +638,7 @@ EntityBase {
         id: hoveringFreefallDelayTimer
         interval: 200
         repeat: false
-
-        onTriggered: {
-            ninja.setAnimation("freefall");
-        }
+        onTriggered: if(!ninja.dead) sprite.animation = "freefall";
     }
 
     Timer {
@@ -738,11 +646,7 @@ EntityBase {
         interval: 200
         repeat: true
         triggeredOnStart: true
-
-        onTriggered: {
-            ninja.setAnimation("crouch");
-            console.log("Amen!!!");
-        }
+        onTriggered: sprite.animation = "crouch";
     }
 
     Timer {
@@ -751,7 +655,6 @@ EntityBase {
         repeat: true
         triggeredOnStart: true
         running: ninja.striking
-
         onTriggered: attackRay.cast();
     }
 
@@ -802,14 +705,9 @@ EntityBase {
             Global.paths.sounds + "ouch2.wav"
         ]
 
-        onPlayingChanged: {
-            if(!playing)
-                source = getRandomSource();
-        }
+        onPlayingChanged: if(!playing) source = getRandomSource();
 
-        function getRandomSource() {
-            return sourceList[Math.floor(Math.random() * sourceList.length)];
-        }
+        function getRandomSource() { return sourceList[Math.floor(Math.random() * sourceList.length)]; }
     }
 
     /*********************** END SOUNDS *********************************************/
@@ -853,8 +751,8 @@ EntityBase {
         if(ninja.sliding)
             return;
 
-        ninja.x -= ninja.xStep
-        ninja.facingLeft = true
+        ninja.x -= ninja.xStep;
+        ninja.facingLeft = true;
 
         if(ninja.clinging)
             return;
@@ -862,14 +760,13 @@ EntityBase {
             return;
 
         if(!ninja.airborne) {
-            ninja.running = true;
-            //console.log("Calling run!")
-            ninja.setAnimation("run");
+            privateProperties.running = true;
+            sprite.animation = "run";
         }
         else {
-            ninja.running = false;
-            if(sprite.animation != "rise" || sprite.animation != "fall")
-                ninja.setAnimation("freefall");
+            privateProperties.running = false;
+            if (sprite.animation != "freefall")
+                sprite.animation = "rise";
         }
     }
 
@@ -891,13 +788,13 @@ EntityBase {
             return;
 
         if(!ninja.airborne) {
-            ninja.running = true;
-            ninja.setAnimation("run");
+            privateProperties.running = true;
+            sprite.animation = "run";
         }
         else {
-            ninja.running = false;
-            if(sprite.animation != "rise" || sprite.animation != "fall")
-                ninja.setAnimation("freefall");
+            privateProperties.running = false;
+            if (sprite.animation != "freefall")
+                sprite.animation = "rise";
         }
     }
 
@@ -907,7 +804,7 @@ EntityBase {
 
         rMoveLeftTimer.stop()
         ninja.facingLeft = true;
-        ninja.running = false;
+        privateProperties.running = false;
 
         if(ninja.clinging)
             return;
@@ -915,7 +812,7 @@ EntityBase {
             return;
 
         if(!ninja.airborne && !ninja.hurting)
-            ninja.setAnimation("idle");
+            sprite.animation = "idle";
     }
 
     function stopMovingRight() {
@@ -924,7 +821,7 @@ EntityBase {
 
         rMoveRightTimer.stop();
         ninja.facingLeft = false;
-        ninja.running = false;
+        privateProperties.running = false;
 
         if(ninja.clinging)
             return;
@@ -932,7 +829,7 @@ EntityBase {
             return;
 
         if(!ninja.airborne && !ninja.hurting)
-            ninja.setAnimation("idle");
+            sprite.animation = "idle";
     }
 
     function jump() {
@@ -944,14 +841,14 @@ EntityBase {
             return;
         if(ninja.clinging)
             return;
-        if(!privateProperties.collidingWithGround)
+        if(ninja.airborne)
             return;
 
         if(ninja.wearingDisguise)
             toggleDisguise();
 
-        if(sprite.animation == "idle" || ninja.running/*sprite.animation == "run"*/)
-            ninja.setAnimation("rise");
+        if(sprite.animation == "idle" || privateProperties.running)
+            sprite.animation = "rise";
         else
             return;
 
@@ -975,13 +872,14 @@ EntityBase {
             toggleDisguise();
 
         if(sprite.animation == "idle")
-            ninja.setAnimation("crouch");
+            sprite.animation = "crouch";
 
         privateProperties.crouchPressed = true;
     }
 
     function stopCrouching() {
-        ninja.setAnimation("idle");
+        if(!ninja.dead)
+            sprite.animation = "idle";
         privateProperties.crouchPressed = false;
     }
 
@@ -1017,10 +915,10 @@ EntityBase {
         if(ninja.inHoverArea) {
             ninja.gravityScale = 0;
             ninja.linearVelocity = Qt.point(0, -5);
-            ninja.setAnimation("hover");
-            ninja.facingDown = false;
+            sprite.animation = "hover";
+            privateProperties.facingDown = false;
             //privateProperties.collidingWithGround = false;
-            ninja.hovering = true;
+            privateProperties.hovering = true;
             hoveringFreefallDelayTimer.stop();
         }
         else {
@@ -1040,9 +938,9 @@ EntityBase {
     function stopHovering() {
         ninja.gravityScale = 1;
         ninja.linearVelocity = Qt.point(0, 0);
-        ninja.facingDown = true;
-        ninja.hovering = false;
-        hoveringFreefallDelayTimer.restart();
+        privateProperties.facingDown = true;
+        privateProperties.hovering = false;
+        hoveringFreefallDelayTimer.stop();
         rHoverTimer.stop();
     }
 
@@ -1060,7 +958,7 @@ EntityBase {
         if(!ninja.running)
             return false;
 
-        ninja.setAnimation("slide");
+        sprite.animation = "slide";
 
         // Stop privateProperties.rightBoxMargin if he was moving before
         linearVelocity.x = linearVelocity.x > 5 ? 0: linearVelocity.x;
@@ -1099,44 +997,48 @@ EntityBase {
     function rClimbUp() {
         if(Global.gameWindow.paused)
             return;
+        if(ninja.dead)
+            return;
         if(ninja.linearVelocity == Qt.point(0, 0))
             ninja.applyLinearImpulse(Qt.point(0, -ninja.getMass() * 3), ninja.getWorldCenter());
 
-        ninja.climbing = true;
-        ninja.facingDown = false;
-        ninja.setAnimation("climb");
+        privateProperties.climbing = true;
+        privateProperties.facingDown = false;
+        sprite.animation = "climb";
     }
 
     function rClimbDown() {
         if(Global.gameWindow.paused)
             return;
+        if(ninja.dead)
+            return;
         if(ninja.linearVelocity == Qt.point(0, 0))
             ninja.applyLinearImpulse(Qt.point(0, ninja.getMass() * 3), ninja.getWorldCenter());
-        ninja.climbing = true;
-        ninja.facingDown = true;
-        ninja.setAnimation("climb");
+        privateProperties.climbing = true;
+        privateProperties.facingDown = true;
+        sprite.animation = "climb";
     }
 
     function stopClimbingUp() {
         if(ninja.dead)
             return;
-        if(!ninja.isClinging())
+        if(!ninja.clinging)
             return;
 
         rClimbUpTimer.stop();
         ninja.linearVelocity = Qt.point(0, 0);
-        ninja.setAnimation("cling");
+        sprite.animation = "cling";
     }
 
     function stopClimbingDown() {
         if(ninja.dead)
             return;
-        if(!ninja.isClinging())
+        if(!ninja.clinging)
             return;
 
         rClimbDownTimer.stop();
         ninja.linearVelocity = Qt.point(0, 0);
-        ninja.setAnimation("cling");
+        sprite.animation = "cling";
     }
 
     function attack() {
@@ -1150,15 +1052,23 @@ EntityBase {
             return;
         if(ninja.hovering)
             return;
+        if(sprite.animation == "attack_main")
+            return;
+        if(sprite.animation == "attack_secondary")
+            return;
+        if(sprite.animation == "jump_attack")
+            return;
+        if(sprite.animation == "crouch_attack")
+            return;
 
         if(wearingDisguise)
             toggleDisguise();
-        if(ninja.airborne)
-            ninja.setAnimation("jump_attack");
-        if(ninja.crouching)
-            ninja.setAnimation("crouch_attack");
+        else if(ninja.airborne)
+            sprite.animation = "jump_attack";
+        else if(ninja.crouching)
+            sprite.animation = "crouch_attack";
         else
-            ninja.setAnimation("attack");
+            sprite.animation = "attack_main";
 
         swordSwingSound.play();
     }
@@ -1174,6 +1084,8 @@ EntityBase {
             return;
         if(ninja.clinging)
             return;
+        if(sprite.animation == "throw")
+            return;
         if(totalKunaiCollected == 0) {
             dryFireSound.play();
             return;
@@ -1181,7 +1093,7 @@ EntityBase {
         if(wearingDisguise)
             toggleDisguise();
 
-        ninja.setAnimation("throw");
+        sprite.animation = "throw";
     }
 
     function createKunai() {
@@ -1207,6 +1119,8 @@ EntityBase {
     }
 
     function use() {
+        if(ninja.dead)
+            return;
         if(ninja.inDisguiseRange)
             ninja.toggleDisguise();
         else if(ninja.inInfoRange)
@@ -1227,41 +1141,12 @@ EntityBase {
         ninja.disguised(ninja.wearingDisguise);
     }
 
-
-    function isClinging() {
-        return ninja.clinging;
-    }
-
-    function isInHoverArea() {
-        return ninja.inHoverArea;
-    }
-
-    function isFacingLeft() {
-        return ninja.facingLeft;
-    }
-
-    function isFacingRight() {
-        return ninja.facingRight;
-    }
-
-    function isFacingUp() {
-        return ninja.facingUp;
-    }
-
-    function isFacingDown() {
-        return ninja.facingDown;
-    }
-
-    function isAirborne() {
-        return ninja.airborne;
-    }
-
     function receivePain() {
         if(ninja.dead)
             return;
 
-        ninja.hurting = true;
-        ninja.setAnimation("hurt");
+        privateProperties.hurting = true;
+        sprite.animation = "hurt";
         linearVelocity = Qt.point(0, 0);
     }
 
@@ -1271,27 +1156,23 @@ EntityBase {
         ninja.stopHovering();
     }
 
-    function addCoin() {
-        totalCoinsCollected++;
-    }
+    function addCoin() { privateProperties.totalCoinsCollected++; }
 
-    function addKunai() {
-        totalKunaiCollected++;
-    }
+    function addKunai() { privateProperties.totalKunaiCollected++; }
 
     function addKey(color) {
         switch(color) {
         case "yellow":
-            totalYellowKeysCollected++;
+            privateProperties.totalYellowKeysCollected++;
             break;
         case "red":
-            totalRedKeysCollected++;
+            privateProperties.totalRedKeysCollected++;
             break;
         case "green":
-            totalGreenKeysCollected++;
+            privateProperties.totalGreenKeysCollected++;
             break;
         default:
-            totalBlueKeysCollected++;
+            privateProperties.totalBlueKeysCollected++;
             break;
         }
     }
@@ -1299,27 +1180,25 @@ EntityBase {
     function dropKey(color) {
         switch(color) {
         case "yellow":
-            if(totalYellowKeysCollected > 0)
-                totalYellowKeysCollected--;
+            if(privateProperties.totalYellowKeysCollected > 0)
+                privateProperties.totalYellowKeysCollected--;
             break;
         case "red":
-            if(totalRedKeysCollected > 0)
-                totalRedKeysCollected--;
+            if(privateProperties.totalRedKeysCollected > 0)
+                privateProperties.totalRedKeysCollected--;
             break;
         case "green":
-            if(totalGreenKeysCollected > 0)
-                totalGreenKeysCollected--;
+            if(privateProperties.totalGreenKeysCollected > 0)
+                privateProperties.totalGreenKeysCollected--;
             break
         default:
-            if(totalBlueKeysCollected > 0)
-                totalBlueKeysCollected--;
+            if(privateProperties.totalBlueKeysCollected > 0)
+                privateProperties.totalBlueKeysCollected--;
             break;
         }
     }
 
-    function comment() {
-        commentSound.play();
-    }
+    function comment() { commentSound.play(); }
 
     function stopAllActions() {
         ninja.stopMovingLeft();
@@ -1330,101 +1209,15 @@ EntityBase {
         ninja.stopCrouching();
     }
 
-    function setAnimation(name) {
-        var oldName = sprite.animation;
-
-        switch(name) {
-        case "attack":
-            if(privateProperties.collidingWithGround)
-                sprite.animation = name;
-            else
-                sprite.animation = "jump_attack";
-            break;
-        case "climb":
-            sprite.animation = name;
-            break;
-        case "cling":
-            sprite.animation = name;
-            break;
-        case "crouch":
-            sprite.animation = name;
-            break;
-        case "dead":
-            sprite.animation = name;
-            break;
-        case "die":
-            sprite.animation = name;
-            break;
-        case "fall":
-            sprite.animation = name;
-            break;
-        case "freefall":
-            if(ninja.dead)
-                sprite.animation = "dead"
-            else if(privateProperties.collidingWithGround)
-                sprite.animation = "idle"
-            else
-                sprite.animation = name;
-            break;
-        case "hover":
-            sprite.animation = name;
-            break;
-        case "hurt":
-            sprite.animation = name;
-            break;
-        case "jump_attack":
-            if(!privateProperties.collidingWithGround)
-                sprite.animation = name;
-            else
-                sprite.animation = "attack";
-            break;
-        case "jump_throw":
-            if(!privateProperties.collidingWithGround)
-                sprite.animation = name;
-            else
-                sprite.animation = "throw";
-            break;
-        case "idle":
-            if(privateProperties.collidingWithGround)
-                sprite.animation = name;
-            else
-                sprite.animation = "freefall";
-            break;
-        case "rise":
-            sprite.animation = name;
-            break;
-        case "run":
-            if(privateProperties.collidingWithGround)
-                sprite.animation = name;
-            else
-                sprite.animation = "freefall";
-            break;
-        case "slide":
-            sprite.animation = name;
-            break
-        case "throw":
-            if(privateProperties.collidingWithGround)
-                sprite.animation = name;
-            else
-                sprite.animation = "jump_throw";
-            break
-        case "crouch_attack":
-            sprite.animation = name;
-            break;
-        default:
-            console.log("UNHANDLED ANIMATION CASE:", name)
-            sprite.animation = name;
-            break
-        }
-    }
-
     function goToDoor() {
+        if(ninja.daed)
+            return;
         if(nextDoorLocation == Qt.point(-1, -1))
             return;
 
         ninja.x = nextDoorLocation.x;
         ninja.y = nextDoorLocation.y;
-        teleported();
+        ninja.teleported();
     }
 
     onDeadChanged: {
@@ -1433,13 +1226,10 @@ EntityBase {
 
         rMoveLeftTimer.stop();
         rMoveRightTimer.stop();
-        ninja.setAnimation("die");
+        sprite.animation = "die";
         ninja.gravityScale = 1;
-        healthStatus = 0;
-        console.log("Actor: I'm dead!!!");
+        privateProperties.healthStatus = 0;
         selfDestruct();
     }
-
-    Component.onCompleted: ninja.setAnimation("freefall");
 }
 

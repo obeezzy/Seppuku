@@ -59,14 +59,14 @@ TiledScene {
         z: actor.wearingDisguise ? Utils.zActorDisguised : Utils.zActor
 
         onXChanged: {
-            if(actor.isFacingLeft())
+            if(actor.facingLeft)
                 scrollViewportLeft();
             else
                 scrollViewportRight();
         }
 
         onYChanged: {
-            if(actor.isFacingUp())
+            if(actor.facingUp)
                 scrollViewportUp();
             else
                 scrollViewportDown();
@@ -118,15 +118,15 @@ TiledScene {
             actor.moveRight();
             break;
         case Qt.Key_Up:
-            if(actor.isClinging())
+            if(actor.clinging)
                 actor.climbUp();
-            else if(actor.isInHoverArea())
+            else if(actor.inHoverArea)
                 actor.hover();
             else if(!event.isAutoRepeat)
                 actor.jump();
             break;
         case Qt.Key_Down:
-            if(actor.isClinging())
+            if(actor.clinging)
                 actor.climbDown();
             else if(!event.isAutoRepeat && actor.running)
                 actor.slide();
@@ -137,7 +137,7 @@ TiledScene {
             if(!event.isAutoRepeat)
                 actor.attack();
             break;
-        case Qt.Key_Alt:
+        case Qt.Key_Shift:
             if(!event.isAutoRepeat)
                 actor.throwKunai();
                 event.accepted = true;
@@ -185,7 +185,7 @@ TiledScene {
             break;
         case Qt.Key_Up:
             if(!event.isAutoRepeat) {
-                if(actor.isInHoverArea())
+                if(actor.inHoverArea)
                     actor.stopHovering();
                 else
                     actor.stopClimbingUp();
