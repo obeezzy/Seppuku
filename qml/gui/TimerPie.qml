@@ -139,7 +139,7 @@ Item {
             height: contentHeight
             text: Stylesheet.icons.fa_clock_o //fa_hourglass_o
             font.pixelSize: root.pixelSize * 1.2
-            font.family: Global.iconFont
+            font.family: Stylesheet.iconFontFamily
             visible: !timer.running
         }
     }

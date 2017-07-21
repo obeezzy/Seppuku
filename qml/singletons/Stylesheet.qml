@@ -10,6 +10,7 @@ Item {
     readonly property string hintFontFamily: hintFontLoader.name
     readonly property string tutorFontFamily: tutorFontLoader.name
     readonly property string iconFontFamily: iconFontLoader.name
+    readonly property string splashFontFamily: splashFontLoader.name
     readonly property var icons: icons
 
     /*************** FONT LOADERS ****************************/
@@ -31,6 +32,11 @@ Item {
     FontLoader {
         id: iconFontLoader
         source: fontLocation + "fontawesome/fontawesome-webfont.ttf"
+    }
+
+    FontLoader {
+        id: splashFontLoader
+        source: fontLocation + "Grundschrift-Normal.otf"
     }
 
     /*********** END FONT LOADERS ****************************/

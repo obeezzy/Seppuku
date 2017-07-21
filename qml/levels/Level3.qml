@@ -5,12 +5,11 @@ import "../singletons"
 import "../levels"
 
 LevelBase {
-    id: scene
+    id: level3
     //debug: true
     source: Global.paths.levels + "3.tmx"
     level: 3
     levelTitle: "Trial level..."
-    background: Rectangle { color: "lightsteelblue"; Rectangle { anchors.centerIn: parent; color: "red"; width: 500; height: 500 } }
 
     function displayInstructions() {
         tutor.clearAll();

@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
-    app.setWindowIcon(QIcon("../Seppuku/icons/head.png"));
+    app.setWindowIcon(QIcon("../Seppuku/icons/seppuku.png"));
 
     registerTypes();
     QQmlApplicationEngine engine;

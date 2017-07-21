@@ -1,6 +1,6 @@
 # Seppuku
 
-![dagger-head](https://github.com/obeezzy/Seppuku/blob/master/icons/head.png?raw=true)
+![dagger-head](https://github.com/obeezzy/Seppuku/blob/master/icons/seppuku.png?raw=true)
 
 Seppuku, a 2D stealth platformer built with the [Bacon2D](https://github.com/Bacon2D/Bacon2D) game engine. 
 

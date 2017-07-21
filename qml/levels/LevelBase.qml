@@ -33,6 +33,12 @@ TiledScene {
         readonly property real camY: actor.crouching ? actor.standingY : actor.y - height / 2 + 100
     }
 
+    background: ImageLayer {
+        source: Global.paths.images + "backgrounds/background.png"
+        layerType: Layer.Mirrored
+        horizontalOffset: levelBase.viewport.xOffset * .01
+    }
+
     // Level information
     property int level: 0
     property string levelTitle: ""
@@ -59,7 +65,6 @@ TiledScene {
         z: actor.wearingDisguise ? Utils.zActorDisguised : Utils.zActor
 
         onDeadChanged: terminateLevel();
-        //onTeleported: scrollViewportToCenter();
     }
 
     /*************************************** Heads Up Display (HUD) *********************************************/
