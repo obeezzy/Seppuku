@@ -5,8 +5,8 @@ import "../scenes"
 
 Game {
     id: gameItem
-    width: 800
-    height: 600
+    implicitWidth: 800
+    implicitHeight: 600
     objectName: "Game"
     gameName: "com.geckogames.seppuku"
     ups: 30
@@ -43,13 +43,9 @@ Game {
         }
     }
 
-    function pause() {
-        gameState = Bacon2D.Paused;
-    }
+    function pause() { gameState = Bacon2D.Paused; }
 
-    function resume() {
-        gameState = Bacon2D.Running;
-    }
+    function resume() { gameState = Bacon2D.Running; }
 
     function push(sceneLoader) {
         sceneLoader.active = true;
@@ -62,9 +58,7 @@ Game {
             });
     }
 
-    function pop() {
-        return gameItem.popScene();
-    }
+    function pop() { return gameItem.popScene(); }
 
     function playLevel(level) {
         gameItem.push(loadingScene);

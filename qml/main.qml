@@ -12,6 +12,8 @@ ApplicationWindow {
     width: 800
     height: 600
     title: "Seppuku"
+    visibility: Global.isMobile ? ApplicationWindow.FullScreen : ApplicationWindow.Maximized
+    visible: true
 
     readonly property var levelScenes: {
         1: level1,
@@ -64,12 +66,5 @@ ApplicationWindow {
         id: level3
         asynchronous: true
         source: "levels/Level3.qml"
-    }
-
-    Component.onCompleted: {
-        if(Global.isMobile)
-            showFullScreen();
-        else
-            showNormal();
     }
 }

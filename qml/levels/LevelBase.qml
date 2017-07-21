@@ -85,8 +85,8 @@ TiledScene {
         height: 60
         z: Utils.zHUD
 
-        Behavior on x { enabled: viewportAnimationRunning; NumberAnimation {duration: viewportScrollDuration } }
-        Behavior on y { enabled: viewportAnimationRunning; NumberAnimation {duration: viewportScrollDuration } }
+        Behavior on x { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
+        Behavior on y { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
     }
 
     TutorText {
