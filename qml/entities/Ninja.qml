@@ -8,12 +8,12 @@ EntityBase {
     id: ninja
     width: 40
     height: {
-        if(ninja.sliding)
-            38;
+        if(ninja.sliding || ninja.crouching)
+            ninja.crouchingHeight;
         else
-            60;
+            ninja.standingHeight;
     }
-    onHeightChanged: if(ninja.sliding) y = y + 60 - 36;
+    onHeightChanged: if(ninja.sliding || ninja.crouching) y = y + ninja.crouchingYDelta;
 
     bodyType: Body.Dynamic
     sleepingAllowed: false
@@ -47,6 +47,11 @@ EntityBase {
 
     // Am I on the ground?
     readonly property bool airborne: !collidingWithGround
+
+    readonly property real standingY: ninja.crouching ? ninja.y - 24 : y
+    readonly property real standingHeight: 60
+    readonly property real crouchingHeight: 38
+    readonly property real crouchingYDelta: 24
 
     readonly property bool striking: privateProperties.striking
     readonly property bool running: privateProperties.running

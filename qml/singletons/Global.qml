@@ -48,6 +48,7 @@ Item {
     }
 
     property var gameWindow: undefined
+    property bool fullscreenEnabled: false
 
     /********************* PATHS *******************************/
     QtObject {

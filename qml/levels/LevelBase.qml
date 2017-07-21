@@ -15,22 +15,22 @@ TiledScene {
     pixelsPerMeter: 33
     gravity: Qt.point(0, 12);
 
-    readonly property int viewportScrollDuration: 350
-    property bool viewportAnimationRunning: true
-
     viewport: Viewport {
         id: sceneViewport
-        animationDuration: viewportAnimationRunning ? viewportScrollDuration : 0
-        yOffset: height
         width: Global.gameWindow.width
         height: Global.gameWindow.height
+        contentWidth: levelBase.width
+        contentHeight: levelBase.height
+        xOffset: camX > offsetMaxX ? (camX < offsetMinX ? offsetMinX : offsetMaxX) : camX
+        yOffset: camY > offsetMaxY ? (camY < offsetMinY ? offsetMinY : offsetMaxY) : camY
+        animationDuration: 0
 
-        readonly property int deltaX: 6
-        readonly property int deltaY: 6
-        readonly property real widthRatio: (1 / 20)
-        readonly property real heightRatio: (1 / 20)
-        readonly property bool animationRunning: viewportAnimationRunning
-        readonly property int scrollDuration: viewportScrollDuration
+        readonly property real offsetMaxX: levelBase.width - width
+        readonly property real offsetMaxY: levelBase.height - height
+        readonly property real offsetMinX: 0
+        readonly property real offsetMinY: 0
+        readonly property real camX: actor.x - width / 2
+        readonly property real camY: actor.crouching ? actor.standingY : actor.y - height / 2 + 100
     }
 
     // Level information
@@ -58,22 +58,8 @@ TiledScene {
         y: actorInitPos.y
         z: actor.wearingDisguise ? Utils.zActorDisguised : Utils.zActor
 
-        onXChanged: {
-            if(actor.facingLeft)
-                scrollViewportLeft();
-            else
-                scrollViewportRight();
-        }
-
-        onYChanged: {
-            if(actor.facingUp)
-                scrollViewportUp();
-            else
-                scrollViewportDown();
-        }
-
         onDeadChanged: terminateLevel();
-        onTeleported: scrollViewportToCenter();
+        //onTeleported: scrollViewportToCenter();
     }
 
     /*************************************** Heads Up Display (HUD) *********************************************/
@@ -84,9 +70,6 @@ TiledScene {
         width: viewport.width
         height: 60
         z: Utils.zHUD
-
-        Behavior on x { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
-        Behavior on y { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
     }
 
     TutorText {
@@ -95,8 +78,6 @@ TiledScene {
         y: hud.y + hud.height + 24
         width: viewport.width
         z: Utils.zTutor
-
-        Behavior on x { enabled: viewportAnimationRunning; NumberAnimation {duration: viewportScrollDuration } }
     }
 
     /***************************** END HEADS-UP DISPLAY *********************************************************/
@@ -147,21 +128,12 @@ TiledScene {
                 actor.use();
             break;
         case Qt.Key_F11:
-            if(!event.isAutoRepeat) {
-                if(mainWindow.visibility !== Window.FullScreen) {
-                    mainWindow.showFullScreen();
-                    scrollViewportToCenter();
-                }
-                else {
-                    mainWindow.showNormal();
-                    scrollViewportToCenter();
-                }
-            }
+            if(!event.isAutoRepeat)
+                Global.fullscreenEnabled = !Global.fullscreenEnabled;
             break;
         case Qt.Key_Escape:
-            if(!event.isAutoRepeat) {
+            if(!event.isAutoRepeat)
                 levelBase.toggleLevelPause();
-            }
             break;
         }
 
@@ -194,9 +166,8 @@ TiledScene {
         case Qt.Key_Down:
             if(!event.isAutoRepeat && actor.clinging)
                 actor.stopClimbingDown();
-            else if(!event.isAutoRepeat) {
+            else if(!event.isAutoRepeat)
                 actor.stopCrouching();
-            }
             break;
         }
 
@@ -209,8 +180,6 @@ TiledScene {
         y: viewport.yOffset + viewport.height - height
         width: viewport.width
 
-        animationRunning: viewportAnimationRunning
-        scrollDuration: viewportScrollDuration
         actor: actor
     }
 
@@ -242,9 +211,6 @@ TiledScene {
 
             onTriggered: viewport.vScroll(viewport.yOffset - positionDelta);
         }
-
-        Behavior on x { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
-        Behavior on y { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
     }
 
     MouseArea {
@@ -264,9 +230,6 @@ TiledScene {
             triggeredOnStart: true
             onTriggered: viewport.vScroll(viewport.yOffset + positionDelta);
         }
-
-        Behavior on x { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
-        Behavior on y { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
     }
 
     MouseArea {
@@ -287,9 +250,6 @@ TiledScene {
 
             onTriggered: viewport.hScroll(viewport.xOffset - positionDelta);
         }
-
-        Behavior on x { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
-        Behavior on y { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
     }
 
     MouseArea {
@@ -301,8 +261,6 @@ TiledScene {
         height: viewport.height
         z: Utils.zCamera
 
-        onPressed: console.log("Right area pressed.");
-
         Timer {
             running: parent.pressed
             repeat: true
@@ -311,47 +269,10 @@ TiledScene {
 
             onTriggered: viewport.hScroll(viewport.xOffset + positionDelta);
         }
-
-        Behavior on x { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
-        Behavior on y { enabled: viewportAnimationRunning; NumberAnimation { duration: viewportScrollDuration } }
     }
 
     /************************ END VIEWPORT POSITIONING ***********************************/
 
-    function scrollViewportLeft() {
-//            if(actor.x <= sceneViewport.xOffset)
-//                sceneViewport.hScroll(sceneViewport.xOffset - gameWindow.width / 2)
-
-            if(actor.x <= sceneViewport.xOffset + sceneViewport.width / 2)
-                sceneViewport.hScroll(sceneViewport.xOffset - (sceneViewport.width * sceneViewport.widthRatio));
-    }
-
-    function scrollViewportRight() {
-//            if(actor.x + actor.width >= sceneViewport.xOffset + gameWindow.width)
-//                sceneViewport.hScroll(sceneViewport.xOffset + (gameWindow.width / 2));
-
-        // Hscroll = giving a new value for the viewport x offset!
-        if(actor.x >= (sceneViewport.xOffset + sceneViewport.width / 2))
-            sceneViewport.hScroll(sceneViewport.xOffset + (sceneViewport.width * sceneViewport.widthRatio));
-    }
-
-    function scrollViewportUp() {
-        if(actor.y <= sceneViewport.yOffset + sceneViewport.height / 2)
-            sceneViewport.vScroll(sceneViewport.yOffset - (sceneViewport.height * sceneViewport.heightRatio));
-    }
-
-    function scrollViewportDown() {
-        if(actor.y >= (sceneViewport.yOffset + sceneViewport.height / 2))
-            sceneViewport.vScroll(sceneViewport.yOffset + (sceneViewport.height * sceneViewport.heightRatio));
-    }
-
-    function scrollViewportToCenter() {
-        viewportAnimationRunning = false;
-        sceneViewport.hScroll(actor.x - sceneViewport.width / 2);
-        sceneViewport.vScroll(actor.y - sceneViewport.height / 2);
-        //viewport.yOffset = (levelBase.height - viewport.height);
-        viewportAnimationRunning = true;
-    }
 
     // When pause is requested by the user . . .
     function toggleLevelPause() {
@@ -361,17 +282,11 @@ TiledScene {
             popupStack.clear();
     }
 
-    function playNextLevel() {
-        Global.gameWindow.playNextLevel();
-    }
+    function playNextLevel() { Global.gameWindow.playNextLevel(); }
 
-    function restartLevel() {
-        Global.gameWindow.restartLevel();
-    }
+    function restartLevel() { Global.gameWindow.restartLevel(); }
 
-    function returnToMainMenu() {
-        Global.gameWindow.returnToMainMenu();
-    }
+    function returnToMainMenu() { Global.gameWindow.returnToMainMenu(); }
 
     /************************************************************************************/
 
@@ -442,8 +357,6 @@ TiledScene {
                 break;
             }
         }
-
-        onHeightChanged:  scrollViewportToCenter();
     }
 
     Connections {
@@ -483,9 +396,6 @@ TiledScene {
         width: viewport.width
         height: viewport.height
         z: Utils.zPopup
-
-        Behavior on x { enabled: viewport.animationRunning; NumberAnimation { duration: viewport.scrollDuration } }
-        Behavior on y { enabled: viewport.animationRunning; NumberAnimation { duration: viewport.scrollDuration } }
 
         onEnabledChanged: {
             if (enabled)
@@ -819,11 +729,7 @@ TiledScene {
     Component {
         id: warningSignComponent
 
-        WarningSign {
-            y: viewport.yOffset + 6
-
-            Behavior on y { PropertyAnimation { duration: viewportScrollDuration } }
-        }
+        WarningSign { y: viewport.yOffset + 6 }
     }
 
     /***************** END COMPONENTS **************************/
@@ -835,9 +741,8 @@ TiledScene {
         interval: 2000
 
         onTriggered: {
-            if(Global.gameWindow.paused) {
+            if(Global.gameWindow.paused)
                 repeat = true;
-            }
             else {
                 repeat = false;
                 createIceBox();
@@ -1425,7 +1330,6 @@ TiledScene {
         if(Global.gameWindow.paused)
             Global.gameWindow.togglePause();
 
-        scrollViewportToCenter();
         Global.settings.currentLevel = level;
         Global.settings.checkpointState = null;
 

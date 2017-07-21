@@ -12,7 +12,7 @@ ApplicationWindow {
     width: 800
     height: 600
     title: "Seppuku"
-    visibility: Global.isMobile ? ApplicationWindow.FullScreen : ApplicationWindow.Maximized
+    visibility: Global.isMobile || Global.fullscreenEnabled ? ApplicationWindow.FullScreen : ApplicationWindow.Maximized
     visible: true
 
     readonly property var levelScenes: {
