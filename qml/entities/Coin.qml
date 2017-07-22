@@ -37,7 +37,7 @@ EntityBase {
         }
     ]
 
-    Sprite {
+    AnimatedSprite {
         id: sprite
         animation: "default"
 

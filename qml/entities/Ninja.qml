@@ -359,7 +359,7 @@ EntityBase {
         }
     ]
 
-    Sprite {
+    AnimatedSprite {
         id: sprite
         y: {
             switch (animation) {
@@ -1226,15 +1226,17 @@ EntityBase {
     }
 
     onDeadChanged: {
-        if(wearingDisguise)
-            toggleDisguise();
+        if (privateProperties.dead) {
+            if(wearingDisguise)
+                toggleDisguise();
 
-        rMoveLeftTimer.stop();
-        rMoveRightTimer.stop();
-        sprite.animation = "die";
-        ninja.gravityScale = 1;
-        privateProperties.healthStatus = 0;
-        selfDestruct();
+            rMoveLeftTimer.stop();
+            rMoveRightTimer.stop();
+            sprite.animation = "die";
+            ninja.gravityScale = 1;
+            privateProperties.healthStatus = 0;
+            selfDestruct();
+        }
     }
 }
 

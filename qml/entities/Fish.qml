@@ -71,8 +71,10 @@ EntityBase {
         }
     ]
 
-    Sprite {
+    AnimatedSprite {
         id: sprite
+        source: Global.paths.images + "pests/fish_swim.png"
+//      source: Global.paths.images + "pests/fish_dead.png"
         horizontalMirror: privateProperties.facingRight
         animation: "swim"
         anchors.horizontalCenter: parent.horizontalCenter
@@ -80,7 +82,6 @@ EntityBase {
         animations: [
             SpriteAnimation {
                 name: "swim"
-                source: Global.paths.images + "pests/fish_swim.png"
                 frames: 2
                 duration: 500
                 loops: Animation.Infinite
@@ -88,7 +89,6 @@ EntityBase {
 
             SpriteAnimation {
                 name: "dead"
-                source: Global.paths.images + "pests/fish_dead.png"
                 frames: 2
                 duration: 500
                 loops: Animation.Infinite

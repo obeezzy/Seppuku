@@ -478,23 +478,22 @@ EntityBase {
         onTriggered: sensorRay1.cast();
     }
 
-    Sprite {
+    AnimatedSprite {
         id: sprite
         horizontalMirror: robot.facingLeft
+        horizontalFrameCount: 10
+        source: Global.paths.images + "robot.png"
 
         animations: [
             SpriteAnimation {
                 name: "idle"
-                source: Global.paths.images + "robot/idle.png"
-                frames: 10
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "run"
-                source: Global.paths.images + "robot/run.png"
-                frames: 8
+                finalFrame: 7
                 duration: 1000
                 loops: Animation.Infinite
                 inverse: robot.facingLeft
@@ -502,8 +501,7 @@ EntityBase {
 
             SpriteAnimation {
                 name: "melee_attack"
-                source: Global.paths.images + "robot/melee_attack.png"
-                frames: 8
+                finalFrame: 7
                 duration: 700
                 loops: 1
                 inverse: robot.facingLeft
@@ -513,8 +511,7 @@ EntityBase {
 
             SpriteAnimation {
                 name: "shoot"
-                source: Global.paths.images + "robot/shoot.png"
-                frames: 4
+                finalFrame: 3
                 duration: 700
                 loops: 1
                 inverse: robot.facingLeft
@@ -529,8 +526,7 @@ EntityBase {
 
             SpriteAnimation {
                 name: "rise"
-                source: Global.paths.images + "robot/rise.png"
-                frames: 5
+                finalFrame: 4
                 duration: 1000
                 loops: 1
 
@@ -539,8 +535,7 @@ EntityBase {
 
             SpriteAnimation {
                 name: "fall"
-                source: Global.paths.images + "robot/fall.png"
-                frames: 5
+                finalFrame: 4
                 duration: 500
                 loops: 1
 
@@ -549,16 +544,12 @@ EntityBase {
 
             SpriteAnimation {
                 name: "freefall"
-                source: Global.paths.images + "robot/freefall.png"
-                frames: 1
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "die"
-                source: Global.paths.images + "robot/die.png"
-                frames: 10
                 duration: 1000
                 loops: 1
 
@@ -567,8 +558,6 @@ EntityBase {
 
             SpriteAnimation {
                 name: "dead"
-                source: Global.paths.images + "robot/dead.png"
-                frames: 1
                 duration: 1000
                 loops: 1
 

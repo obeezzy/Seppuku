@@ -47,7 +47,7 @@ EntityBase {
     }
 
     property bool facingLeft: false
-    Sprite {
+    AnimatedSprite {
         id: sprite
         animation: "moving"
         horizontalMirror: facingLeft
