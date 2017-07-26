@@ -38,7 +38,7 @@ EntityBase {
         id: privateProperties
 
         property bool firing: lever != null && lever.position == "on"
-        property real maxFraction: -1
+        property real maxFraction: 1
     }
 
     Image {
@@ -189,11 +189,12 @@ EntityBase {
                     actor.stun(laserCannon.sender);
 
                 sensorRay1.maxFraction = fraction;
+                privateProperties.maxFraction = Math.abs(fraction);
             }
-            else if(fixture.categories & Utils.kGround)
+            else if(fixture.categories & Utils.kGround) {
                 sensorRay1.maxFraction = fraction;
-
-            privateProperties.maxFraction = fraction;
+                privateProperties.maxFraction = Math.abs(fraction);
+            }
         }
 
         function cast() { scene.rayCast(this, p1, p2); }
@@ -246,8 +247,6 @@ EntityBase {
             }
             else if(fixture.categories & Utils.kGround) {
             }
-
-            privateProperties.maxFraction = fraction;
         }
 
         function cast() { scene.rayCast(this, p1, p2); }

@@ -100,8 +100,6 @@ EntityBase {
         property int groundContactCount: 0
         property int hoverAreaContactCount: 0
 
-        onGroundContactCountChanged: console.log("Ground count? ", groundContactCount);
-
         // Which way is the player facing
         readonly property bool facingRight: !facingLeft
         property bool facingLeft: false
