@@ -14,6 +14,7 @@ EntityBase {
     fixedRotation: false
     z: Utils.zLava
     sender: "sea"
+    entityType: "sea"
 
     fixtures: [
         Box {

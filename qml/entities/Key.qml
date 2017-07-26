@@ -13,8 +13,9 @@ EntityBase {
     transformOrigin: Item.Center
     z: Utils.zCollectible
 
-    readonly property Ninja actor: parent.actor
     property string color: "blue"
+
+    EntityManager { id: entityManager; parentScene: key.scene }
 
     QtObject {
         id: privateProperties
@@ -73,7 +74,7 @@ EntityBase {
             script: {
                 pickupSound.play();
                 console.log("Key: Picked ", actor.totalRedKeysCollected);
-                key.destroy();
+                entityManager.removeEntity(key.entityId);
             }
         }
     }

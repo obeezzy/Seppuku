@@ -100,7 +100,7 @@ SceneBase {
         id: startupTimer
         running: true
         repeat: false
-        interval: 5000
+        interval: 3000
 
         onTriggered: root.timeout();
     }

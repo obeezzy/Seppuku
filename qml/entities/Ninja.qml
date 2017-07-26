@@ -75,7 +75,7 @@ EntityBase {
     readonly property int totalGreenKeysCollected: privateProperties.totalGreenKeysCollected
 
     // Is the player on the ground
-    readonly property bool collidingWithGround: privateProperties.groundContactCount > 0
+    readonly property bool collidingWithGround: privateProperties.groundContactCount > 0 && !privateProperties.clinging
 
     readonly property bool inDisguiseRange: privateProperties.inDisguiseRange
     readonly property bool wearingDisguise: privateProperties.wearingDisguise

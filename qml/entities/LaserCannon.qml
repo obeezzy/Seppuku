@@ -11,6 +11,7 @@ EntityBase {
     height: 37
     z: Utils.zLaser
     sender: "laser_cannon"
+    entityType: "laserCannon"
 
     fixtures: Box {
         width: laserCannon.width
@@ -19,8 +20,8 @@ EntityBase {
         categories: Utils.kGround | Utils.kGroundTop
     }
 
-    readonly property int laserWidth: (direction == "left" || direction == "right") ? sensorRay1.pXDiff : laserCannon.width
-    readonly property int laserHeight: (direction == "up" || direction == "down") ? sensorRay1.pYDiff : laserCannon.height
+    readonly property int laserWidth: (direction == "left" || direction == "right") ? sensorRay1.pXDiff * privateProperties.maxFraction : laserCannon.width
+    readonly property int laserHeight: (direction == "up" || direction == "down") ? sensorRay1.pYDiff * privateProperties.maxFraction: laserCannon.height
     readonly property int rayMargin: 4
     readonly property string laserFileLocation: ""
     readonly property string fileName: ""
@@ -37,6 +38,7 @@ EntityBase {
         id: privateProperties
 
         property bool firing: lever != null && lever.position == "on"
+        property real maxFraction: -1
     }
 
     Image {
@@ -143,6 +145,11 @@ EntityBase {
 
     RayCast {
         id: sensorRay1
+
+        readonly property int multiplier: 8
+        readonly property int pXDiff: Math.abs(p2.x - p1.x)
+        readonly property int pYDiff: Math.abs(p2.y - p1.y)
+
         property point p1: {
             switch(direction) {
             case "up":
@@ -176,38 +183,29 @@ EntityBase {
             }
         }
 
-        readonly property int multiplier: 8
-        readonly property int pXDiff: Math.abs(p2.x - p1.x)
-        readonly property int pYDiff: Math.abs(p2.y - p1.y)
-
         onFixtureReported: {
             if (fixture.categories & Utils.kActor && fixture.type === "main_body") {
                 if(!actor.dead)
                     actor.stun(laserCannon.sender);
+
+                sensorRay1.maxFraction = fraction;
             }
-            else if(fixture.categories & Utils.kGround) {
-                switch(direction) {
-                case "up":
-                case "down":
-                    p2.y = point.y;
-                    break;
-                default:
-                    if(fixture.x === undefined)
-                        p2.x = point.x - 6;
-                    else
-                        p2.x = fixture.x + point.x - 6;
-                    break;
-                }
-            }
+            else if(fixture.categories & Utils.kGround)
+                sensorRay1.maxFraction = fraction;
+
+            privateProperties.maxFraction = fraction;
         }
 
-        function cast() {
-            scene.rayCast(this, p1, p2);
-        }
+        function cast() { scene.rayCast(this, p1, p2); }
     }
 
     RayCast {
         id: sensorRay2
+
+        readonly property int multiplier: 6
+        readonly property int pXDiff: Math.abs(p2.x - p1.x)
+        readonly property int pYDiff: Math.abs(p2.y - p1.y)
+
         property point p1: {
             switch(direction) {
             case "up":
@@ -241,32 +239,18 @@ EntityBase {
             }
         }
 
-        readonly property int multiplier: 6
-        readonly property int pXDiff: Math.abs(p2.x - p1.x)
-        readonly property int pYDiff: Math.abs(p2.y - p1.y)
-
         onFixtureReported: {
             if (fixture.categories & Utils.kActor && fixture.type === "main_body") {
                 if(!actor.dead)
                     actor.stun(laserCannon.sender);
             }
             else if(fixture.categories & Utils.kGround) {
-//                switch(direction) {
-//                case "up":
-//                case "down":
-//                    break;
-//                default:
-//                    p2.x = fixture.x + point.x - 6;
-//                    break;
-//                }
             }
+
+            privateProperties.maxFraction = fraction;
         }
 
-        function cast() {
-            scene.rayCast(this, p1, p2);
-//            console.log("p1=", p1);
-//            console.log("p2=", p2);
-        }
+        function cast() { scene.rayCast(this, p1, p2); }
     }
 
     Timer {
@@ -321,7 +305,7 @@ EntityBase {
     }
 
     Image {
-        id: image
+        id: laserCannonImage
         anchors.fill: parent
         source: {
             switch(direction) {

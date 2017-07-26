@@ -11,6 +11,9 @@ EntityBase {
     bullet: true
     sleepingAllowed: false
     sender: "ice_box"
+    entityType: "IceBox"
+
+    EntityManager { id: entityManager; parentScene: iceBox.scene }
 
     property real density: .8
     property real restitution: .5
@@ -41,7 +44,7 @@ EntityBase {
         onBeginContact: {
             switch(other.categories) {
             case Utils.kLava:
-                iceBox.destroy();
+                entityManager.removeEntity(iceBox.entityId);
                 break;
             }
         }

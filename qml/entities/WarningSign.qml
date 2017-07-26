@@ -3,13 +3,14 @@ import Seppuku 1.0
 import "../singletons"
 
 Image {
-    id: image
+    id: warningSign
     source: Global.paths.images + "signs/warning.png"
 
     Behavior on rotation { enabled: !anim.running; PropertyAnimation { duration: 100 } }
 
     SequentialAnimation on rotation {
         id: anim
+        running: true
         loops: 8
 
         PropertyAnimation {
@@ -24,9 +25,7 @@ Image {
             duration: 50
         }
 
-        onRunningChanged: if(!running) image.rotation = 0;
+        PropertyAction { value: 0 }
     }
-
-    Component.onCompleted: anim.start();
 }
 
