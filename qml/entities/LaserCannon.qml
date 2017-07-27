@@ -23,8 +23,6 @@ EntityBase {
     readonly property int laserWidth: (direction == "left" || direction == "right") ? sensorRay1.pXDiff * privateProperties.maxFraction : laserCannon.width
     readonly property int laserHeight: (direction == "up" || direction == "down") ? sensorRay1.pYDiff * privateProperties.maxFraction: laserCannon.height
     readonly property int rayMargin: 4
-    readonly property string laserFileLocation: ""
-    readonly property string fileName: ""
 
     property string direction: "right";
     property string laserColor: "red"
@@ -271,7 +269,7 @@ EntityBase {
         id: startupDelayTimer
         running: laserCannon.lever == null
         repeat: false
-        interval: startupDelay
+        interval: laserCannon.startupDelay
 
         onTriggered: {
             fireTimer.start();
@@ -283,7 +281,7 @@ EntityBase {
         id: fireTimer
         running: false
         repeat: false
-        interval: fireInterval
+        interval: laserCannon.fireInterval
 
         onTriggered: {
             privateProperties.firing = false;
@@ -295,7 +293,7 @@ EntityBase {
         id: ceaseTimer
         running: false
         repeat: false
-        interval: ceaseInterval
+        interval: laserCannon.ceaseInterval
 
         onTriggered: {
             privateProperties.firing = true;

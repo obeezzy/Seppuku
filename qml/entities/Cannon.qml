@@ -10,6 +10,8 @@ EntityBase {
     width: 148
     height: 57
 
+    EntityManager { id: entityManager; parentScene: cannon.scene }
+
     fixtures: Box {
         id: cannonFixture
         width: cannon.width
@@ -58,7 +60,7 @@ EntityBase {
                 repeat: false
                 interval: cannon.bulletLifeSpan
 
-                onTriggered: ballEntity.destroy();
+                onTriggered: entityManager.removeEntity(cannon.entityId);
             }
 
             Component.onCompleted: destructionTimer.start();

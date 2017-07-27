@@ -13,6 +13,8 @@ EntityBase {
 
     property bool picked: false
 
+    EntityManager { id: entityManager; parentScene: coin.scene }
+
     fixtures: [
         Box {
             width: target.width
@@ -40,11 +42,11 @@ EntityBase {
     AnimatedSprite {
         id: sprite
         animation: "default"
+        source: Global.paths.images + "collectibles/coin.png"
 
         animations: [
             SpriteAnimation {
                 name: "default"
-                source: Global.paths.images + "collectibles/coin.png"
                 frames: 10
                 duration: 500
                 loops: Animation.Infinite
@@ -60,7 +62,7 @@ EntityBase {
             NumberAnimation { target: coin; property: "opacity"; to: 0; duration: 350 }
         }
 
-        ScriptAction { script: coin.destroy(); }
+        ScriptAction { script: entityManager.removeEntity(coin.entityId); }
     }
 
     onPickedChanged: if(picked) pickAnimation.start();

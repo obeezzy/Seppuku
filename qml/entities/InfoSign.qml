@@ -77,9 +77,9 @@ EntityBase {
     }
 
     Connections {
-        target: actor
+        target: infoSign.actor
 
-        onDisplayMessage: {
+        onInfoRequested: {
             if(!infoSign.messageVisible && infoSign.inRange) {
                 if(Global.gameWindow.paused)
                     return;
@@ -92,7 +92,6 @@ EntityBase {
 
                 infoSign.infoRequested(properties);
 
-                //Global.messageVisible = infoSign.messageVisible;
                 if(infoSign.inRange)
                     infoSign.messageDisplayed(infoSign.messageVisible);
             }
@@ -105,7 +104,6 @@ EntityBase {
             if (Global.gameWindow.gameState === Bacon2D.Running && infoSign.inRange) {
                 infoSign.messageVisible = false;
 
-                //Global.messageVisible = infoSign.messageVisible;
                 if(infoSign.inRange)
                     infoSign.messageDisplayed(infoSign.messageVisible);
             }

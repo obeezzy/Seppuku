@@ -18,6 +18,8 @@ EntityBase {
 
     signal selfDestruct
 
+    EntityManager { id: entityManager; parentScene: gem.scene }
+
     fixtures: Box {
         width: target.width
         height: target.height
@@ -64,7 +66,7 @@ EntityBase {
             NumberAnimation { target: gem; property: "opacity"; to: 0; duration: 350 }
         }
 
-        ScriptAction { script: gem.destroy(); }
+        ScriptAction { script: entityManager.removeEntity(gem.entityId); }
     }
 
     onPickedChanged: if (picked) pickAnimation.start();

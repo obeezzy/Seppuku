@@ -12,6 +12,8 @@ EntityBase {
 
     readonly property string sender: "robot"
 
+    EntityManager { id: entityManager; parentScene: bulletEntity.scene }
+
     fixtures: Circle {
         radius: 6
         density: .01
@@ -35,7 +37,7 @@ EntityBase {
         repeat: false
         interval: 5
 
-        onTriggered: bulletEntity.destroy();
+        onTriggered: entityManager.removeEntity(bullet.entityId);
     }
 
     Timer {
@@ -43,7 +45,7 @@ EntityBase {
         repeat: false
         interval: 3000
 
-        onTriggered: bulletEntity.destroy();
+        onTriggered: entityManager.removeEntity(entityId);
     }
 
     property bool facingLeft: false

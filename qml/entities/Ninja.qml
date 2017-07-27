@@ -22,7 +22,7 @@ EntityBase {
 
     signal selfDestruct
     signal disguised(bool putOn)
-    signal displayMessage()
+    signal infoRequested
     signal utilized(string type)
     signal teleported // After you have moved through a door
 
@@ -1127,7 +1127,7 @@ EntityBase {
         if(ninja.inDisguiseRange)
             ninja.toggleDisguise();
         else if(ninja.inInfoRange)
-            ninja.displayMessage();
+            ninja.infoRequested();
         else if(ninja.inLeverRange)
             utilized("lever");
         else if(ninja.inDoorRange)

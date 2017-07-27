@@ -17,6 +17,8 @@ Item {
     property real linkDensity: 1
     property int length: 3
 
+    EntityManager { id: entityManager; parentScene: chainRope.scene }
+
     Component {
         id: linkComponent
 
@@ -43,7 +45,7 @@ Item {
                     if(other.categories & Utils.kActor) {
                         if(other.type === "kunai") {
                             //console.log("Rope: Hit by kunai!")
-                            ball.destroy();
+                            entityManager.removeEntity(chainRope.entityId);
                         }
                     }
                 }

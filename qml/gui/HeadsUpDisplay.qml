@@ -113,8 +113,9 @@ Item {
                 Image {
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
-                    width: height
-                    source: Global.paths.images + "collectibles/kunai.png"
+                    width: 40
+                    fillMode: Image.PreserveAspectFit
+                    source: Global.paths.images + "hud/kunai.png"
                 }
 
                 Text {

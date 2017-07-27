@@ -13,6 +13,8 @@ EntityBase {
     fixedRotation: false
     type: "kunai"
 
+    EntityManager { id: entityManager; parentScene: kunai.scene }
+
     fixtures: [
         Box {
             //y: (target.height / 2)
@@ -68,7 +70,7 @@ EntityBase {
         running: true
 
         PauseAnimation { duration: 5000 }
-        ScriptAction { script: kunai.destroy(); }
+        ScriptAction { script: entityManager.removeEntity(kunai); }
     }
 
     SequentialAnimation {
@@ -76,12 +78,12 @@ EntityBase {
 
         PauseAnimation { duration: 100 }
         NumberAnimation { target: kunai; property: "opacity"; to: 0; duration: 250 }
-        ScriptAction { script: kunai.destroy(); }
+        ScriptAction { script: entityManager.removeEntity(kunai.entityId); }
     }
 
     onYChanged: {
         if(y > scene.height)
-            destroy();
+            entityManager.removeEntity(kunai);
     }
 }
 

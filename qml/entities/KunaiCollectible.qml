@@ -15,6 +15,8 @@ EntityBase {
 
     property bool picked: false
 
+    EntityManager { id: entityManager; parentScene: kunaiCollectible.scene }
+
     fixtures: [
         Box {
             width: target.width
@@ -39,11 +41,11 @@ EntityBase {
     AnimatedSprite {
         id: sprite
         animation: "default"
+        source: Global.paths.images + "collectibles/kunai.png"
 
         animations: [
             SpriteAnimation {
                 name: "default"
-                source: Global.paths.images + "collectibles/kunai.png"
                 frames: 1
                 duration: 500
                 loops: Animation.Infinite
@@ -51,8 +53,8 @@ EntityBase {
         ]
     }
 
-    Behavior on opacity {NumberAnimation {duration: 350} }
-    Behavior on scale {NumberAnimation {duration: 250} }
+    Behavior on opacity { NumberAnimation {duration: 350 } }
+    Behavior on scale { NumberAnimation {duration: 250 } }
 
     SequentialAnimation {
         id: pickAnimation
@@ -63,7 +65,7 @@ EntityBase {
             NumberAnimation { target: kunaiCollectible; property: "opacity"; to: 0; duration: 350 }
         }
 
-        ScriptAction { script: kunaiCollectible.destroy(); }
+        ScriptAction { script: entityManager.removeEntity(kunaiCollectible.entityId); }
     }
 
     onPickedChanged: if (picked) pickAnimation.start();

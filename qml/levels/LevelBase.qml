@@ -209,7 +209,6 @@ TiledScene {
         height: 60
         z: Utils.zCamera
 
-
         Timer {
             running: parent.pressed
             repeat: true
@@ -229,7 +228,6 @@ TiledScene {
         height: 60
         z: Utils.zCamera
 
-
         Timer {
             running: parent.pressed
             repeat: true
@@ -247,7 +245,6 @@ TiledScene {
         width: 60
         height: viewport.height
         z: Utils.zCamera
-
 
         Timer {
             running: parent.pressed
@@ -713,21 +710,6 @@ TiledScene {
         }
     ]
 
-    /***************** COMPONENTS **************************/
-    Component {
-        id: iceBoxComponent
-
-        IceBox { }
-    }
-
-    Component {
-        id: warningSignComponent
-
-        WarningSign { }
-    }
-
-    /***************** END COMPONENTS **************************/
-
     /*************** ITEMS ***************/
     Timer {
         id: iceBoxDropTimer
@@ -955,8 +937,8 @@ TiledScene {
     }
 
     function createIceBox() {
-        var object = iceBoxLayer.objects[0]
-        object.index = Math.floor(Math.random() * object.count)
+        var object = iceBoxLayer.objects[0];
+        object.index = Math.floor(Math.random() * object.count);
 
         var iceBox = entityManager.createEntity(Qt.resolvedUrl("../entities/IceBox.qml"));
         iceBox.x = object.x;
@@ -965,6 +947,7 @@ TiledScene {
         iceBox.height = object.height;
         iceBox.objectName = object.getProperty("id");
 
+        var warningSignComponent = Qt.createComponent(Qt.resolvedUrl("../entities/WarningSign.qml"));
         var warningSign = warningSignComponent.createObject(levelBase);
         warningSign.x = iceBox.x;
         warningSign.y = Qt.binding(function() { return viewport.yOffset + 6; });

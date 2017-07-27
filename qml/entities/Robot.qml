@@ -63,6 +63,8 @@ EntityBase {
         }
     }
 
+    EntityManager { id: entityManager; parentScene: robot.scene }
+
     fixtures: [
         Box {
             id: mainBody
@@ -677,7 +679,7 @@ EntityBase {
         ScriptAction {
             script: {
                 actor.comment();
-                robot.destroy();
+                entityManager.removeEntity(robot.entityId);
             }
         }
     }

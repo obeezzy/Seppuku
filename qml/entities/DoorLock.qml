@@ -10,15 +10,16 @@ EntityBase {
     bodyType: Body.Static
     sleepingAllowed: false
     transformOrigin: Item.Center
+    entityType: "doorLock"
 
     property string color: "blue"
     property bool locked: true
     readonly property string type: "door_lock"
-    readonly property Ninja actor: parent.actor
-    readonly property string fileLocation: Global.paths.images + "doors/"
-    readonly property string fileName: fileLocation + "lock_" + color + ".png"
+    readonly property string fileName: Global.paths.images + "doors/lock_" + color + ".png"
 
     signal lockOpened
+
+    EntityManager { id: entityManager; parentScene: doorLock.scene }
 
     fixtures: Box {
         width: target.width
@@ -63,7 +64,7 @@ EntityBase {
             NumberAnimation { target: doorLock; property: "scale"; to: 5; duration: 500 }
         }
 
-        ScriptAction { script: { doorLock.destroy(); console.log("Key stuff!"); } }
+        ScriptAction { script: { entityManager.removeEntity(doorLock.entityId); } }
     }
 
     Image {
