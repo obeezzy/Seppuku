@@ -260,44 +260,24 @@ EntityBase {
             if(privateProperties.firing)
             {
                 sensorRay1.cast();
-                sensorRay2.cast();
+                //sensorRay2.cast();
             }
         }
     }
 
-    Timer {
-        id: startupDelayTimer
-        running: laserCannon.lever == null
-        repeat: false
-        interval: laserCannon.startupDelay
+    SequentialAnimation {
+        id: fireAnimation
+        running: true
 
-        onTriggered: {
-            fireTimer.start();
-            privateProperties.firing = true;
-        }
-    }
+        PauseAnimation { duration: laserCannon.startupDelay }
 
-    Timer {
-        id: fireTimer
-        running: false
-        repeat: false
-        interval: laserCannon.fireInterval
+        SequentialAnimation {
+            loops: Animation.Infinite
 
-        onTriggered: {
-            privateProperties.firing = false;
-            ceaseTimer.start();
-        }
-    }
-
-    Timer {
-        id: ceaseTimer
-        running: false
-        repeat: false
-        interval: laserCannon.ceaseInterval
-
-        onTriggered: {
-            privateProperties.firing = true;
-            fireTimer.start();
+            PropertyAction { target: privateProperties; property: "firing"; value: true }
+            PauseAnimation { duration: laserCannon.fireInterval }
+            PropertyAction { target: privateProperties; property: "firing"; value: false }
+            PauseAnimation { duration: laserCannon.ceaseInterval }
         }
     }
 
@@ -411,7 +391,16 @@ EntityBase {
 
     Connections {
         target: lever
-
         onPositionChanged: privateProperties.firing = lever.position == "on";
+    }
+
+    Connections {
+        target: Global.gameWindow
+        onPausedChanged: {
+            if (Global.gameWindow.paused)
+                fireAnimation.pause();
+            else
+                fireAnimation.resume();
+        }
     }
 }

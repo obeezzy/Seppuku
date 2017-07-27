@@ -713,17 +713,11 @@ TiledScene {
     /*************** ITEMS ***************/
     Timer {
         id: iceBoxDropTimer
+        running: !Global.gameWindow.paused
         repeat: false
         interval: 2000
 
-        onTriggered: {
-            if(Global.gameWindow.paused)
-                repeat = true;
-            else {
-                repeat = false;
-                createIceBox();
-            }
-        }
+        onTriggered: createIceBox();
     }
     /**************** END ITEMS ***************/
 
@@ -1169,20 +1163,17 @@ TiledScene {
         {
             object = cannonLayer.objects[i];
             object.reset();
-            while(object.next())
+            if(object.name === "")
             {
-                if(object.name === "")
-                {
-                    var cannon = entityManager.createEntity(Qt.resolvedUrl("../entities/Cannon.qml"));
-                    cannon.x = object.x;
-                    cannon.y = object.y;
-                    cannon.mirror = object.getProperty("mirror");
+                var cannon = entityManager.createEntity(Qt.resolvedUrl("../entities/Cannon.qml"));
+                cannon.x = object.x;
+                cannon.y = object.y;
+                cannon.mirror = object.getProperty("mirror");
 
-                    link = object.getProperty("link");
+                link = object.getProperty("link");
 
-                    if(link > 0)
-                        cannon.sensor = sensors[link];
-                }
+                if(link > 0)
+                    cannon.sensor = sensors[link];
             }
         }
     }
@@ -1274,7 +1265,6 @@ TiledScene {
 
     }
 
-    onResumed: createIceBox();
     /*********************************************************************************/
 
     Component.onCompleted: {
@@ -1290,7 +1280,6 @@ TiledScene {
         createKeys();
         createDoors();
         createSigns();
-        createIceBox();
         createFish();
 
         createRobots();
