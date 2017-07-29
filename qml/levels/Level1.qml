@@ -6,10 +6,10 @@ import "../levels"
 
 LevelBase {
     id: scene
-    //debug: true
     source: Global.paths.levels + "1.tmx"
     level: 1
-    levelTitle: "Tutorial"
+    levelTitle: "Ninja Gaiden"
+    background: Rectangle { color: "lightsteelblue" }
 
     function displayInstructions() {
         tutor.clearAll()

@@ -6,7 +6,6 @@ import "../levels"
 
 LevelBase {
     id: scene
-    //debug: true
     source: Global.paths.levels + "2.tmx"
     level: 2
     levelTitle: "Robots..."

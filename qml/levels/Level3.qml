@@ -6,7 +6,6 @@ import "../levels"
 
 LevelBase {
     id: level3
-    //debug: true
     source: Global.paths.levels + "3.tmx"
     level: 3
     levelTitle: "Trial level..."

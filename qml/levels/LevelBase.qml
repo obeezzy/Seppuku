@@ -46,9 +46,9 @@ TiledScene {
     property int level: 0
     property string levelTitle: ""
 
-    readonly property point actorInitPos: Qt.point(actorPosition.x, actorPosition.y)
+    readonly property point actorInitPos: Qt.point(heroPosition.x, heroPosition.y)
     //    actorInitPos: {
-    //        Global.settings.checkpointState.level === 0 ? Qt.point(actorPosition.x, actorPosition.y) : Global.settings.checkpointState.pos
+    //        Global.settings.checkpointState.level === 0 ? Qt.point(heroPosition.x, heroPosition.y) : Global.settings.checkpointState.pos
     //    }
     property alias musicSource: bgm.source
     property bool gameOver: false
@@ -465,23 +465,17 @@ TiledScene {
     /************************** END POPUP HANDLING **************************************/
 
 
-
-
-
-
     /******************************** LEVEL ENTITIES *********************************/
     layers: [
         TiledLayer {
-            name: "Actor"
-            objects: TiledObject {
-                id: actorPosition
-            }
+            name: "Hero"
+            objects: TiledObject { id: heroPosition }
         },
 
         TiledLayer {
-            name: "Walls"
+            name: "Boundaries"
             objects: TiledObject {
-                fixtures: Box {
+                fixtures: Chain {
                     density: 1
                     restitution: 0
                     friction: 1
@@ -491,68 +485,64 @@ TiledScene {
         },
 
         TiledLayer {
-            name: "Ground"
-            objects: [
-                TiledObject {
-                    id: groundObject
-
-                    fixtures: [
-                        Box {
-                            height: groundObject.height * .1
-                            density: 1
-                            restitution: 0
-                            friction: 1
-                            categories: Utils.kGround | Utils.kGroundTop
-                        },
-
-                        Box {
-                            y: groundObject.height * .1
-                            height: groundObject.height * .9
-                            density: 1
-                            restitution: 0
-                            friction: 1
-                            categories: Utils.kGround
-                        }
-                    ]
-                },
-
-                TiledObject {
-                    id: slopeObject
-                    name: "slope"
-
-                    fixtures: Polygon {
-                        density: 1
-                        restitution: 0
-                        friction: .01
-                        categories: Utils.kGround
-                    }
-                },
-
-                TiledObject {
-                    id: polygroundObject
-                    name: "polyground"
-
-                    fixtures: Polygon {
+            name: "Block Ground"
+            objects: TiledObject {
+                id: groundObject
+                fixtures: [
+                    Box {
+                        height: groundObject.height * .1
                         density: 1
                         restitution: 0
                         friction: 1
                         categories: Utils.kGround | Utils.kGroundTop
-                    }
-                },
+                    },
 
-                TiledObject {
-                    id: frictionlessObject
-                    name: "frictionless"
-
-                    fixtures: Box {
+                    Box {
+                        y: groundObject.height * .1
+                        height: groundObject.height * .9
                         density: 1
                         restitution: 0
-                        friction: 0.3
-                        categories: Utils.kGround | Utils.kGroundTop
+                        friction: 1
+                        categories: Utils.kGround
                     }
-                }
+                ]
+            }
+        },
 
-            ]
+        TiledLayer {
+            name: "Slope Ground"
+            objects: TiledObject {
+                fixtures: Polygon {
+                    density: 1
+                    restitution: 0
+                    friction: .01
+                    categories: Utils.kGround
+                }
+            }
+        },
+
+        TiledLayer {
+            name: "Pentagon Ground"
+            objects: TiledObject {
+                fixtures: Polygon {
+                    density: 1
+                    restitution: 0
+                    friction: 1
+                    categories: Utils.kGround | Utils.kGroundTop
+                }
+            }
+        },
+
+        TiledLayer {
+            name: "Frictionless Ground"
+            objects: TiledObject {
+                fixtures: Box {
+                    density: 1
+                    restitution: 0
+                    friction: 0.3
+                    categories: Utils.kGround | Utils.kGroundTop
+                }
+            }
         },
 
         TiledLayer {
@@ -586,22 +576,21 @@ TiledScene {
         },
 
         TiledLayer {
-            id: signLayer
-            name: "Signs"
-            objects: [
-                TiledObject {
-                    name: "info"
-                },
+            id: infoSignLayer
+            name: "Info Signs"
+            objects: TiledObject {}
+        },
 
-                TiledObject {
-                    name: "near_finish"
-                },
+        TiledLayer {
+            id: nearFinishSignLayer
+            name: "Near Finish Signs"
+            objects: TiledObject {}
+        },
 
-                TiledObject {
-                    name: "finish"
-                }
-
-            ]
+        TiledLayer {
+            id: finishSignLayer
+            name: "Finish Signs"
+            objects: TiledObject {}
         },
 
         TiledLayer {
@@ -727,7 +716,7 @@ TiledScene {
             var object = lavaLayer.objects[i];
             while(object.next())
             {
-                var sea = entityManager.createEntity(Qt.resolvedUrl("../entities/Sea.qml"));
+                var sea = entityManager.createEntity("../entities/Sea.qml");
                 sea.x = object.x;
                 sea.y = object.y;
                 sea.z = Utils.zLava;
@@ -744,7 +733,7 @@ TiledScene {
             var object = movingPlatformLayer.objects[i];
             while(object.next())
             {
-                var platform = entityManager.createEntity(Qt.resolvedUrl("../entities/MovingPlatform.qml"));
+                var platform = entityManager.createEntity("../entities/MovingPlatform.qml");
                 platform.x = object.x;
                 platform.y = object.y;
                 platform.width = object.width;
@@ -765,7 +754,7 @@ TiledScene {
             var object = coinLayer.objects[i];
             while(object.next())
             {
-                var coin = entityManager.createEntity(Qt.resolvedUrl("../entities/Coin.qml"));
+                var coin = entityManager.createEntity("../entities/Coin.qml");
                 coin.x = object.x;
                 coin.y = object.y;
                 coin.width = object.width;
@@ -784,7 +773,7 @@ TiledScene {
                 if(object.name !== "")
                     continue;
 
-                var snowman = entityManager.createEntity(Qt.resolvedUrl("../entities/Snowman.qml"));
+                var snowman = entityManager.createEntity("../entities/Snowman.qml");
                 snowman.x = object.x;
                 snowman.y = object.y;
                 snowman.initialY = object.y;
@@ -804,7 +793,7 @@ TiledScene {
             {
                 while(object.next())
                 {
-                    var robot = entityManager.createEntity(Qt.resolvedUrl("../entities/Robot.qml"));
+                    var robot = entityManager.createEntity("../entities/Robot.qml");
                     robot.x = object.x
                     robot.y = object.y
                     robot.objectName = object.getProperty("id")
@@ -825,7 +814,7 @@ TiledScene {
             {
                 while(object.next())
                 {
-                    var fish = entityManager.createEntity(Qt.resolvedUrl("../entities/Fish.qml"));
+                    var fish = entityManager.createEntity("../entities/Fish.qml");
                     fish.x = object.x;
                     fish.y = object.y;
                     fish.objectName = object.getProperty("id");
@@ -843,7 +832,7 @@ TiledScene {
             var object = kunaiLayer.objects[i];
             while(object.next())
             {
-                var kunai = entityManager.createEntity(Qt.resolvedUrl("../entities/Kunai.qml"));
+                var kunai = entityManager.createEntity("../entities/Kunai.qml");
                 kunai.x = object.x;
                 kunai.y = object.y;
                 kunai.objectName = object.getProperty("id");
@@ -857,7 +846,7 @@ TiledScene {
             var object = keyLayer.objects[i];
             while(object.next())
             {
-                var key = entityManager.createEntity(Qt.resolvedUrl("../entities/Key.qml"));
+                var key = entityManager.createEntity("../entities/Key.qml");
                 key.x = object.x;
                 key.y = object.y;
                 key.width = object.width;
@@ -874,7 +863,7 @@ TiledScene {
             var object = gemLayer.objects[i];
             while(object.next())
             {
-                var gem = entityManager.createEntity(Qt.resolvedUrl("../entities/Gem.qml"));
+                var gem = entityManager.createEntity("../entities/Gem.qml");
                 gem.x = object.x;
                 gem.y = object.y;
                 gem.objectName = object.getProperty("id");
@@ -904,7 +893,7 @@ TiledScene {
             var object = leverLayer.objects[i];
             while(object.next())
             {
-                var lever = entityManager.createEntity(Qt.resolvedUrl("../entities/Lever.qml"));
+                var lever = entityManager.createEntity("../entities/Lever.qml");
                 lever.x = object.x;
                 lever.y = object.y;
                 lever.objectName = object.getProperty("id");
@@ -919,7 +908,7 @@ TiledScene {
             var object = crystalLayer.objects[i];
             while(object.next())
             {
-                var crystal = entityManager.createEntity(Qt.resolvedUrl("../entities/Crystal.qml"));
+                var crystal = entityManager.createEntity("../entities/Crystal.qml");
                 crystal.x = object.x;
                 crystal.y = object.y;
                 crystal.width = object.width;
@@ -934,14 +923,14 @@ TiledScene {
         var object = iceBoxLayer.objects[0];
         object.index = Math.floor(Math.random() * object.count);
 
-        var iceBox = entityManager.createEntity(Qt.resolvedUrl("../entities/IceBox.qml"));
+        var iceBox = entityManager.createEntity("../entities/IceBox.qml");
         iceBox.x = object.x;
         iceBox.y = object.y;
         iceBox.width = object.width;
         iceBox.height = object.height;
         iceBox.objectName = object.getProperty("id");
 
-        var warningSignComponent = Qt.createComponent(Qt.resolvedUrl("../entities/WarningSign.qml"));
+        var warningSignComponent = Qt.createComponent("../entities/WarningSign.qml");
         var warningSign = warningSignComponent.createObject(levelBase);
         warningSign.x = iceBox.x;
         warningSign.y = Qt.binding(function() { return viewport.yOffset + 6; });
@@ -951,15 +940,15 @@ TiledScene {
         iceBoxDropTimer.start();
     }
 
-    function createSigns() {
-        for(var i = 0; i < signLayer.objects.length; ++i)
+    function createInfoSigns() {
+        for(var i = 0; i < infoSignLayer.objects.length; ++i)
         {
-            var object = signLayer.objects[i];
+            var object = infoSignLayer.objects[i];
             while(object.next())
             {
-                if(object.name === "info")
+                if(object.name === "")
                 {
-                    var sign = entityManager.createEntity(Qt.resolvedUrl("../entities/InfoSign.qml"));
+                    var sign = entityManager.createEntity("../entities/InfoSign.qml");
                     sign.x = object.x;
                     sign.y = object.y;
                     sign.objectName = object.getProperty("id");
@@ -969,18 +958,38 @@ TiledScene {
                     sign.tutorTextArray = object.getProperty("tutor_text").toString().split("; ");
                     sign.tutorDurationArray = object.getProperty("tutor_duration").toString().split("; ");
                 }
-                else if(object.name === "near_finish")
+            }
+        }
+    }
+
+    function createNearFinishSigns() {
+        for(var i = 0; i < nearFinishSignLayer.objects.length; ++i)
+        {
+            var object = nearFinishSignLayer.objects[i];
+            while(object.next())
+            {
+                if(object.name === "")
                 {
-                    sign = entityManager.createEntity(Qt.resolvedUrl("../entities/NearFinishSign.qml"));
+                    sign = entityManager.createEntity("../entities/NearFinishSign.qml");
                     sign.x = object.x;
                     sign.y = object.y;
                     sign.width = object.width;
                     sign.height = object.height;
                     sign.objectName = object.getProperty("id");
                 }
-                else if(object.name === "finish")
+            }
+        }
+    }
+
+    function createFinishSigns() {
+        for(var i = 0; i < finishSignLayer.objects.length; ++i)
+        {
+            var object = finishSignLayer.objects[i];
+            while(object.next())
+            {
+                if(object.name === "")
                 {
-                    sign = entityManager.createEntity(Qt.resolvedUrl("../entities/FinishSign.qml"));
+                    sign = entityManager.createEntity("../entities/FinishSign.qml");
                     sign.x = object.x;
                     sign.y = object.y;
                     sign.width = object.width;
@@ -989,9 +998,19 @@ TiledScene {
 
                     sign.levelComplete.connect(levelBase.completeLevel);
                 }
-                else if(object.name === "checkpoint")
+            }
+        }
+    }
+
+    function createCheckpointSigns() {
+        for(var i = 0; i < checkpointSignLayer.objects.length; ++i)
+        {
+            var object = checkpointSignLayer.objects[i];
+            while(object.next())
+            {
+                if(object.name === "")
                 {
-                    sign = entityManager.createEntity(Qt.resolvedUrl("../entities/CheckpointSign.qml"));
+                    sign = entityManager.createEntity("../entities/CheckpointSign.qml");
                     sign.x = object.x;
                     sign.y = object.y;
                     sign.width = object.width;
@@ -1013,7 +1032,7 @@ TiledScene {
             {
                 if(object.name === "lock")
                 {
-                    var lock = entityManager.createEntity(Qt.resolvedUrl("../entities/DoorLock.qml"));
+                    var lock = entityManager.createEntity("../entities/DoorLock.qml");
                     lock.x = object.x;
                     lock.y = object.y;
                     lock.width = object.width;
@@ -1036,7 +1055,7 @@ TiledScene {
             {
                 if(object.name === "")
                 {
-                    var door = entityManager.createEntity(Qt.resolvedUrl("../entities/WoodenDoor.qml"));
+                    var door = entityManager.createEntity("../entities/WoodenDoor.qml");
                     door.x = object.x;
                     door.y = object.y;
                     door.width = object.width;
@@ -1082,7 +1101,7 @@ TiledScene {
             {
                 if(object.name === "lever")
                 {
-                    var lever = entityManager.createEntity(Qt.resolvedUrl("../entities/LaserLever.qml"));
+                    var lever = entityManager.createEntity("../entities/LaserLever.qml");
                     lever.x = object.x;
                     lever.y = object.y;
                     lever.width = object.width;
@@ -1109,7 +1128,7 @@ TiledScene {
             {
                 if(object.name === "")
                 {
-                    var cannon = entityManager.createEntity(Qt.resolvedUrl("../entities/LaserCannon.qml"));
+                    var cannon = entityManager.createEntity("../entities/LaserCannon.qml");
                     cannon.x = object.x;
                     cannon.y = object.y;
                     cannon.width = object.width;
@@ -1141,7 +1160,7 @@ TiledScene {
             {
                 if(object.name === "sensor")
                 {
-                    var sensor = entityManager.createEntity(Qt.resolvedUrl("../entities/Sensor.qml"));
+                    var sensor = entityManager.createEntity("../entities/Sensor.qml");
                     sensor.x = object.x;
                     sensor.y = object.y;
                     sensor.width = object.width;
@@ -1165,7 +1184,7 @@ TiledScene {
             object.reset();
             if(object.name === "")
             {
-                var cannon = entityManager.createEntity(Qt.resolvedUrl("../entities/Cannon.qml"));
+                var cannon = entityManager.createEntity("../entities/Cannon.qml");
                 cannon.x = object.x;
                 cannon.y = object.y;
                 cannon.mirror = object.getProperty("mirror");
@@ -1184,7 +1203,7 @@ TiledScene {
             var object = pipeLayer.objects[i];
             while(object.next())
             {
-                var pipe = entityManager.createEntity(Qt.resolvedUrl("../entities/Pipe.qml"));
+                var pipe = entityManager.createEntity("../entities/Pipe.qml");
                 pipe.x = object.x;
                 pipe.y = object.y;
                 pipe.width = object.width;
@@ -1206,7 +1225,7 @@ TiledScene {
             {
                 if(object.name === "sensor")
                 {
-                    var sensor = entityManager.createEntity(Qt.resolvedUrl("../entities/Sensor.qml"));
+                    var sensor = entityManager.createEntity("../entities/Sensor.qml");
                     sensor.x = object.x;
                     sensor.y = object.y;
                     sensor.width = object.width;
@@ -1232,7 +1251,7 @@ TiledScene {
             {
                 if(object.name === "cannon")
                 {
-                    var cannon = entityManager.createEntity(Qt.resolvedUrl("../entities/Cannon.qml"));
+                    var cannon = entityManager.createEntity("../entities/Cannon.qml");
                     cannon.x = object.x;
                     cannon.y = object.y;
                     cannon.mirror = object.getProperty("mirror");
@@ -1245,7 +1264,7 @@ TiledScene {
 
                 else if(object.name === "laser_cannon")
                 {
-                    cannon = entityManager.createEntity(Qt.resolvedUrl("../entities/LaserCannon.qml"));
+                    cannon = entityManager.createEntity("../entities/LaserCannon.qml");
                     cannon.x = object.x;
                     cannon.y = object.y;
                     cannon.width = object.width;
@@ -1279,7 +1298,10 @@ TiledScene {
         createLasers();
         createKeys();
         createDoors();
-        createSigns();
+        createInfoSigns();
+        createNearFinishSigns();
+        createFinishSigns();
+        createCheckpointSigns();
         createFish();
 
         createRobots();

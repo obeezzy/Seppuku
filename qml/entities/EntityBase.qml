@@ -4,9 +4,8 @@ import Bacon2D 1.0
 PhysicsEntity {
     id: entityBase
 
-    readonly property Scene scene: parent
-    readonly property var actor: parent.actor
-    readonly property var tutor: parent.tutor
+    readonly property var actor: scene.actor
+    readonly property var tutor: scene.tutor
     property string sender: ""
     property string type: ""
 }

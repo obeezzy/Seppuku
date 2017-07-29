@@ -9,7 +9,7 @@ EntityBase {
     width: 60
     height: 60
     bullet: true
-    sleepingAllowed: false
+    sleepingAllowed: true
     sender: "ice_box"
     entityType: "IceBox"
 

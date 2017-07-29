@@ -32,7 +32,7 @@ WideSlate {
                 GameShortButton {
                     focus: levelGrid.currentIndex == index
                     text: index + 1
-                    enabled: index <= 2
+                    enabled: index < Global.settings.levelCount
                     onClicked: levelSelectSlate.levelSelected(index + 1);
                 }
             }

@@ -33,10 +33,10 @@ Item {
         }
     }
 
-    readonly property var settings: Settings {
+    readonly property Settings settings: Settings {
         id: settings
 
-        readonly property int levelCount: 3
+        readonly property int levelCount: 1
         property int highScore: 0
         property bool noSound: false
         property real sfxVolume: .4

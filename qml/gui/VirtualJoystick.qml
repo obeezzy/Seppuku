@@ -18,7 +18,7 @@ Item {
         property real angle : 0
         property real distance : 0
 
-        source: Global.paths.images + "joystick/background.png"
+        source: Global.paths.images + "input/joystick/background.png"
         anchors.centerIn: parent
 
         ParallelAnimation {
@@ -84,7 +84,7 @@ Item {
             id: thumb
             width: root.width  * parentRatio
             height: root.height * parentRatio
-            source: Global.paths.images + "joystick/finger.png"
+            source: Global.paths.images + "input/joystick/finger.png"
             anchors.centerIn: parent
             smooth: true
 
