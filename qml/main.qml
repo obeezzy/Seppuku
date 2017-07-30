@@ -25,11 +25,7 @@ ApplicationWindow {
         id: gameWindow
         anchors.fill: parent
         currentScene: splashScene.item
-        levelScenes: {
-            1: level1,
-                    2: level2,
-                    3: level3
-        }
+        levelScenes: mainWindow.levelScenes
 
         onMainMenuRequested: gameWindow.push(mainMenuScene);
         onRestartLevelRequested: playLevel(Global.settings.currentLevel);
@@ -37,13 +33,13 @@ ApplicationWindow {
 
     SceneLoader {
         id: splashScene
+        asynchronous: false
         active: true
         sourceComponent: SplashScene { onTimeout: gameWindow.push(mainMenuScene); }
     }
 
     SceneLoader {
         id: mainMenuScene
-        asynchronous: true
         sourceComponent: MainMenuScene {
             onLevelSelected: gameWindow.playLevel(level);
             onCloseRequested: mainWindow.close();
@@ -52,19 +48,16 @@ ApplicationWindow {
 
     SceneLoader {
         id: level1
-        asynchronous: true
         source: "levels/Level1.qml"
     }
 
     SceneLoader {
         id: level2
-        asynchronous: true
         source: "levels/Level2.qml"
     }
 
     SceneLoader {
         id: level3
-        asynchronous: true
         source: "levels/Level3.qml"
     }
 }

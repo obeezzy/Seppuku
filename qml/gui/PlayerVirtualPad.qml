@@ -9,7 +9,7 @@ Item {
     width: 210
     height: 210
 
-    property Ninja actor
+    property Ninja actor: parent.actor
     property bool animationRunning: false
     property int scrollDuration: 250
 

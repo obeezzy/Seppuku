@@ -12,9 +12,9 @@ LevelBase {
     background: Rectangle { color: "lightsteelblue" }
 
     function displayInstructions() {
-        tutor.clearAll()
-        tutor.queueText("Level One: Here We Go", 3000)
-        tutor.queueText("Follow these instructions to survive!", 3000)
-        tutor.startDisplay()
+        tutor.clearAll();
+        tutor.queueText("Level One: Here We Go", 3000);
+        tutor.queueText("Follow these instructions to survive!", 3000);
+        tutor.startDisplay();
     }
 }

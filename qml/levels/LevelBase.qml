@@ -186,13 +186,10 @@ TiledScene {
         x: viewport.xOffset
         y: viewport.yOffset + viewport.height - height
         width: viewport.width
-
-        actor: actor
     }
 
     PlayerGamePad {
         id: gamePad
-
         //onPauseRequested: levelBase.toggleLevelPause();
     }
 
@@ -1298,10 +1295,10 @@ TiledScene {
         createLasers();
         createKeys();
         createDoors();
-        createInfoSigns();
-        createNearFinishSigns();
-        createFinishSigns();
-        createCheckpointSigns();
+        //createInfoSigns();
+        //createNearFinishSigns();
+        //createFinishSigns();
+        //createCheckpointSigns();
         createFish();
 
         createRobots();

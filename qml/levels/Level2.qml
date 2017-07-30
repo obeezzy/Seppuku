@@ -11,9 +11,9 @@ LevelBase {
     levelTitle: "Robots..."
 
     function displayInstructions() {
-        tutor.clearAll()
-        tutor.queueText("Level Two: Do The Robot", 3000)
-        tutor.queueText("In this level, you would meet one of your greatest foes, the ROBOT.", 5000)
-        tutor.startDisplay()
+        tutor.clearAll();
+        tutor.queueText("Level Two: Do The Robot", 3000);
+        tutor.queueText("In this level, you would meet one of your greatest foes, the ROBOT.", 5000);
+        tutor.startDisplay();
     }
 }
