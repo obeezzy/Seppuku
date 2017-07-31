@@ -20,7 +20,7 @@ EntityBase {
         friction: .01
         restitution: 0.2
         categories: Utils.kEnemy
-        collidesWith: Utils.kActor | Utils.kGround
+        collidesWith: Utils.kHero | Utils.kGround
 
         readonly property string type: "bullet"
         readonly property real damage: .2

@@ -47,7 +47,7 @@ PhysicsEntity {
         readonly property string type: woodenDoor.type
 
         onBeginContact: {
-            if(other.categories & Utils.kActor && other.type === "main_body") {
+            if(other.categories & Utils.kHero && other.type === "main_body") {
                 hero.inDoorRange = true;
 
                 if(!closed)
@@ -56,7 +56,7 @@ PhysicsEntity {
         }
 
         onEndContact: {
-            if(other.categories & Utils.kActor && other.type === "main_body") {
+            if(other.categories & Utils.kHero && other.type === "main_body") {
                 hero.inDoorRange = false
                 privateProperties.inRange = false;
             }
