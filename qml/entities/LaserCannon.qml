@@ -182,9 +182,9 @@ EntityBase {
         }
 
         onFixtureReported: {
-            if (fixture.categories & Utils.kActor && fixture.type === "main_body") {
-                if(!actor.dead)
-                    actor.stun(laserCannon.sender);
+            if (fixture.categories & Utils.kHero && fixture.type === "main_body") {
+                if(!hero.dead)
+                    hero.stun(laserCannon.sender);
 
                 sensorRay1.maxFraction = fraction;
                 privateProperties.maxFraction = Math.abs(fraction);
@@ -239,9 +239,9 @@ EntityBase {
         }
 
         onFixtureReported: {
-            if (fixture.categories & Utils.kActor && fixture.type === "main_body") {
-                if(!actor.dead)
-                    actor.stun(laserCannon.sender);
+            if (fixture.categories & Utils.kHero && fixture.type === "main_body") {
+                if(!hero.dead)
+                    hero.stun(laserCannon.sender);
             }
             else if(fixture.categories & Utils.kGround) {
             }

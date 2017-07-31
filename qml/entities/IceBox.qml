@@ -34,7 +34,7 @@ EntityBase {
             else
                 Utils.kObstacle
         }
-        collidesWith: Utils.kGround | Utils.kActor | Utils.kObstacle |
+        collidesWith: Utils.kGround | Utils.kHero | Utils.kObstacle |
                       Utils.kEnemy | Utils.kLava
 
         readonly property string type: "ice_box"

@@ -21,16 +21,16 @@ EntityBase {
             height: target.height
             sensor: true
             categories: Utils.kCollectible
-            collidesWith: Utils.kActor
+            collidesWith: Utils.kHero
 
             readonly property bool picked: coin.picked
             readonly property string type: "coin"
 
             onBeginContact: {
                 switch(other.categories) {
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "main_body") {
-                        //console.log("Coin: The actor wants to pick me up.")
+                        //console.log("Coin: The hero wants to pick me up.")
                         coin.picked = true;
                     }
                     break;

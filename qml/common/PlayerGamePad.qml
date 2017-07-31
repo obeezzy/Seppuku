@@ -5,7 +5,7 @@ import "../singletons"
 import "../entities"
 
 Item {
-//    readonly property Ninja actor: parent.actor
+//    readonly property Ninja hero: parent.hero
 //    readonly property alias connected: gamePad1.connected
 
 //    signal pauseRequested(bool paused)
@@ -16,33 +16,33 @@ Item {
 
 //        onButtonAChanged: {
 //            if(buttonA && axisLeftY > .8 && axisLeftX >= -.5 && axisLeftX <= .5)
-//                actor.slide();
+//                hero.slide();
 //            if(buttonA) {
-//                if(actor.inHoverArea)
-//                    actor.hover(buttonA);
+//                if(hero.inHoverArea)
+//                    hero.hover(buttonA);
 //                else
-//                    actor.jump();
+//                    hero.jump();
 //            }
-//            else if(actor.inHoverArea())
-//                    actor.stopHovering();
+//            else if(hero.inHoverArea())
+//                    hero.stopHovering();
 //        }
 
 //        onButtonXChanged: {
 //            if(buttonX)
-//                actor.attack();
+//                hero.attack();
 //        }
 
 //        onButtonBChanged: {
 //            if(buttonB)
-//                actor.throwKunai();
+//                hero.throwKunai();
 //        }
 
 //        onButtonYChanged: {
 //            if(buttonY) {
-//                if(!actor.inDisguiseRange)
-//                    actor.use();
+//                if(!hero.inDisguiseRange)
+//                    hero.use();
 //                else
-//                    actor.toggleDisguise();
+//                    hero.toggleDisguise();
 //            }
 //        }
 
@@ -50,14 +50,14 @@ Item {
 //            //console.log("Axis left x:", axisLeftX)
 
 //            if(axisLeftX > .8)
-//                actor.moveRight();
+//                hero.moveRight();
 //            else if(axisLeftX < -.8)
-//                actor.moveLeft();
+//                hero.moveLeft();
 //            else {
-//                if(actor.facingLeft)
-//                    actor.stopMovingLeft();
-//                else if(actor.facingRight)
-//                    actor.stopMovingRight();
+//                if(hero.facingLeft)
+//                    hero.stopMovingLeft();
+//                else if(hero.facingRight)
+//                    hero.stopMovingRight();
 //            }
 //        }
 
@@ -65,15 +65,15 @@ Item {
 //            //console.log("Axis left y:", axisLeftY)
 
 //            if(axisLeftY < -.8) {
-//                actor.climbUp();
+//                hero.climbUp();
 //            }
 //            else if(axisLeftY > .8)
-//                actor.climbDown();
+//                hero.climbDown();
 //            else {
-//                if(actor.facingDown)
-//                    actor.stopClimbingDown();
-//                else if(actor.facingUp)
-//                    actor.stopClimbingUp();
+//                if(hero.facingDown)
+//                    hero.stopClimbingDown();
+//                else if(hero.facingUp)
+//                    hero.stopClimbingUp();
 //            }
 //        }
 

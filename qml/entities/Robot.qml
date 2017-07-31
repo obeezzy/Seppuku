@@ -30,15 +30,15 @@ EntityBase {
     // Is this enemy dead
     property bool dead: false
 
-    // Have i seen the actor
-    property bool actorSpotted: false
+    // Have i seen the hero
+    property bool heroSpotted: false
 
     // Check ranges
     property bool withinSightRange: false
     property bool withinLeftAttackingRange: false
     property bool withinRightAttackingRange: false
 
-    // Am I striking the actor
+    // Am I striking the hero
     property bool striking: false
 
     readonly property int boxXOffset: 18
@@ -76,10 +76,10 @@ EntityBase {
             height: target.height
             categories: Utils.kEnemy
             collidesWith: {
-                if(actor != null && (actor.wearingDisguise || actor.dead))
+                if(hero != null && (hero.wearingDisguise || hero.dead))
                     Utils.kGround | Utils.kWall | Utils.kLava;
                 else
-                    Utils.kGround | Utils.kActor | Utils.kWall | Utils.kLava;
+                    Utils.kGround | Utils.kHero | Utils.kWall | Utils.kLava;
             }
 
             readonly property string type: "main_body"
@@ -95,7 +95,7 @@ EntityBase {
                     privateProperties.collidingWithGround = true;
                     sprite.animation = "idle";
                     break;
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "kunai") {
                         robot.linearDamping = 50;
                         privateProperties.depleteHealth(.2);
@@ -118,7 +118,7 @@ EntityBase {
 
         Chain {
             id: leftAttackEdge
-            collidesWith: Utils.kActor
+            collidesWith: Utils.kHero
             sensor: true
 
             vertices: [
@@ -133,7 +133,7 @@ EntityBase {
                 if(robot.dead)
                     return
                 switch(other.categories) {
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (left)!")
                         withinLeftAttackingRange = true;
@@ -144,7 +144,7 @@ EntityBase {
 
             onEndContact:  {
                 switch(other.categories) {
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (left)!")
                         withinLeftAttackingRange = false;
@@ -156,7 +156,7 @@ EntityBase {
 
         Chain {
             id: rightAttackEdge
-            collidesWith: Utils.kActor
+            collidesWith: Utils.kHero
             sensor: true
 
             vertices: [
@@ -171,7 +171,7 @@ EntityBase {
                 if(robot.dead)
                     return
                 switch(other.categories) {
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (right)!")
                         withinRightAttackingRange = true;
@@ -182,7 +182,7 @@ EntityBase {
 
             onEndContact:  {
                 switch(other.categories) {
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can no longer attack the ninja (right)!")
                         withinRightAttackingRange = false;
@@ -194,7 +194,7 @@ EntityBase {
 
         Chain {
             id: leftBackEdge
-            collidesWith: Utils.kActor
+            collidesWith: Utils.kHero
             sensor: true
 
             vertices: [
@@ -210,7 +210,7 @@ EntityBase {
                     return;
 
                 switch(other.categories) {
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (left)!")
                         withinLeftAttackingRange = true;
@@ -230,7 +230,7 @@ EntityBase {
 
             onEndContact:  {
                 switch(other.categories) {
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (left)!")
                         withinLeftAttackingRange = false;
@@ -242,7 +242,7 @@ EntityBase {
 
         Chain {
             id: rightBackEdge
-            collidesWith: Utils.kActor
+            collidesWith: Utils.kHero
             sensor: true
 
             vertices: [
@@ -257,7 +257,7 @@ EntityBase {
                 if(robot.dead)
                     return
                 switch(other.categories) {
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can attack the ninja (right)!")
                         withinRightAttackingRange = true;
@@ -277,7 +277,7 @@ EntityBase {
 
             onEndContact:  {
                 switch(other.categories) {
-                case Utils.kActor:
+                case Utils.kHero:
                     if(other.type === "main_body") {
 //                        console.log("Robot: I can no longer attack the ninja (right)!")
                         withinRightAttackingRange = false;
@@ -292,15 +292,15 @@ EntityBase {
             script: {
                 if(robot.dead)
                     return;
-                // Don't attack while the actor is hurting
-                if(actor.hurting)
+                // Don't attack while the hero is hurting
+                if(hero.hurting)
                     return;
 
-                // Set the "actor spotted" flag
-                Ai.setActorSpotted(withinSightRange /*actorSpotted*/);
+                // Set the "hero spotted" flag
+                Ai.setHeroSpotted(withinSightRange /*heroSpotted*/);
 
-                // If actor is not spotted . . .
-                if(!Ai.actorSpotted || actor.dead)  {
+                // If hero is not spotted . . .
+                if(!Ai.heroSpotted || hero.dead)  {
                     // Reset shot counter
                     Ai.resetShots();
                     Ai.resetTicks("shot");
@@ -344,9 +344,9 @@ EntityBase {
                     }
                 }
 
-                // If actor is spotted . . .
+                // If hero is spotted . . .
                 else {
-                    // The robot has left alert mode. He is ready to attack the actor!
+                    // The robot has left alert mode. He is ready to attack the hero!
                     if(Ai.getTicks("alert") >= Ai.getAlertDelay())
                     {
                         // The robot stops shooting after the maximum shots have been reached
@@ -357,22 +357,22 @@ EntityBase {
                                 Ai.tick("shot");
 
                             // After the delay has been reached, the shot timer and shot counter is reset.
-                            // The robot shoots the actor again (which increases the shot counter by 1).
+                            // The robot shoots the hero again (which increases the shot counter by 1).
                             else {
                                 Ai.resetTicks("shot");
                                 Ai.resetShots();
 
-                                // Only increment shots if the actor was actually shot
-                                if(shootActor())
+                                // Only increment shots if the hero was actually shot
+                                if(shootHero())
                                     Ai.incrementShots();
                             }
                         }
 
-                        // The robot shoots at the actor.
+                        // The robot shoots at the hero.
                         else
                         {
-                            // Only increment shots if the actor was actually shot
-                            if(shootActor())
+                            // Only increment shots if the hero was actually shot
+                            if(shootHero())
                                 Ai.incrementShots();
                         }
                     }
@@ -441,12 +441,12 @@ EntityBase {
 
             console.log("categories?", fixture.categories);
 
-            if (fixture.categories & Utils.kActor && fixture.type === "main_body") {
-                if(!actor.dead) {
+            if (fixture.categories & Utils.kHero && fixture.type === "main_body") {
+                if(!hero.dead) {
                     withinSightRange = true;
 
-                    if(actor.exposed) {
-                        actorSpotted = true;
+                    if(hero.exposed) {
+                        heroSpotted = true;
                     }
                 }
             }
@@ -460,7 +460,7 @@ EntityBase {
             }
             else {
                 withinSightRange = false;
-                //actorSpotted = false;
+                //heroSpotted = false;
             }
         }
 
@@ -602,12 +602,12 @@ EntityBase {
             attack();
         }
         else {
-            runTowardsActor();
+            runTowardsHero();
         }
     }
 
-    function runTowardsActor() {
-        if((actor.x + actor.width) < robot.x + robot.boxXOffset) {
+    function runTowardsHero() {
+        if((hero.x + hero.width) < robot.x + robot.boxXOffset) {
             robot.facingLeft = true;
             sprite.animation = "run";
             moveLeft();
@@ -637,7 +637,7 @@ EntityBase {
         sprite.animation = "melee_attack";
     }
 
-    function shootActor() {
+    function shootHero() {
         if(sprite.animation == "shoot")
             return false;
 
@@ -678,24 +678,24 @@ EntityBase {
         NumberAnimation { target: robot; property: "opacity"; to: 0; duration: 250 }
         ScriptAction {
             script: {
-                actor.comment();
+                hero.comment();
                 entityManager.removeEntity(robot.entityId);
             }
         }
     }
 
-//    onActorSpottedChanged: {
-//        if(actorSpotted)
-//            console.log("Robot: Actor has been spotted!")
+//    onHeroSpottedChanged: {
+//        if(heroSpotted)
+//            console.log("Robot: Hero has been spotted!")
 //        else
-//            console.log("Robot: Actor has left my sight.")
+//            console.log("Robot: Hero has left my sight.")
 //    }
 
     Connections {
-        target: actor
+        target: hero
         onExposedChanged: {
-            if(actor.exposed && robot.withinSightRange)
-                robot.actorSpotted = true;
+            if(hero.exposed && robot.withinSightRange)
+                robot.heroSpotted = true;
         }
     }
 

@@ -29,14 +29,14 @@ EntityBase {
         height: target.height
         sensor: true
         categories: Utils.kCollectible
-        collidesWith: Utils.kActor
+        collidesWith: Utils.kHero
 
         readonly property bool picked: privateProperties.picked
         readonly property string type: "key"
         readonly property string color: key.color
 
         onBeginContact: {
-            if(other.categories & Utils.kActor) {
+            if(other.categories & Utils.kHero) {
                 if(other.type === "main_body")
                     privateProperties.picked = true;
             }
@@ -73,7 +73,7 @@ EntityBase {
         ScriptAction {
             script: {
                 pickupSound.play();
-                console.log("Key: Picked ", actor.totalRedKeysCollected);
+                console.log("Key: Picked ", hero.totalRedKeysCollected);
                 entityManager.removeEntity(key.entityId);
             }
         }

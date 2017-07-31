@@ -10,9 +10,6 @@ EntityBase {
     height: 60
     sleepingAllowed: false
 
-    readonly property Scene scene: parent
-    readonly property Ninja actor: parent.actor
-
     QtObject {
         id: privateProperties
 
@@ -29,19 +26,19 @@ EntityBase {
         width: target.width
         height: target.height
         categories: Utils.kInteractive
-        collidesWith: Utils.kActor
+        collidesWith: Utils.kHero
         sensor: true
 
         readonly property string type: "checkpoint"
 
         onBeginContact: {
             switch(other.categories) {
-            case Utils.kActor:
+            case Utils.kHero:
                 if(other.type === "main_body") {
                     privateProperties.checked = true;
                     console.log("Global checkpoint state? ", Global.settings.checkpointState);
                     //Global.checkpointState.level = 3;
-                    Global.settings.checkpointState.pos = Qt.point(actor.x, actor.y);
+                    Global.settings.checkpointState.pos = Qt.point(hero.x, hero.y);
                 }
                 break
             }
@@ -49,7 +46,7 @@ EntityBase {
 
         onEndContact: {
             switch(other.categories) {
-            case Utils.kActor:
+            case Utils.kHero:
                 if(other.type === "main_body") {
                 }
                 break;

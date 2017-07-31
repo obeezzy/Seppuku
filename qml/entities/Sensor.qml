@@ -29,7 +29,7 @@ PhysicsEntity {
         readonly property string type: root.type
 
         onBeginContact: {
-            if(other.categories & Utils.kActor)
+            if(other.categories & Utils.kHero)
             {
                 if(other.type === "ground")
                 {
@@ -40,11 +40,11 @@ PhysicsEntity {
         }
 
         onEndContact: {
-            if(other.categories & Utils.kActor)
+            if(other.categories & Utils.kHero)
             {
                 if(other.type === "ground")
                 {
-                    console.log("Actor detected!!!");
+                    console.log("Hero detected!!!");
                     opacity = 1;
                 }
             }

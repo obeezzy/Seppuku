@@ -30,7 +30,7 @@ EntityBase {
             readonly property string sender: entity.sender
 
             onBeginContact: {
-                if(other.categories & Utils.kActor) {
+                if(other.categories & Utils.kHero) {
                     if(other.type === "main_body")
                         drownSound.play();
                 }

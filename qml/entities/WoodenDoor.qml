@@ -29,11 +29,11 @@ PhysicsEntity {
 
         onInRangeChanged: {
             if(privateProperties.inRange && nextDoor != null) {
-                actor.nextDoorLocation = Qt.point(nextDoor.x + nextDoor.width / 2,
-                                                  nextDoor.y + nextDoor.height - actor.height);
+                hero.nextDoorLocation = Qt.point(nextDoor.x + nextDoor.width / 2,
+                                                  nextDoor.y + nextDoor.height - hero.height);
             }
             else if(!privateProperties.inRange) {
-                actor.nextDoorLocation = Qt.point(-1, -1);
+                hero.nextDoorLocation = Qt.point(-1, -1);
             }
         }
     }
@@ -48,7 +48,7 @@ PhysicsEntity {
 
         onBeginContact: {
             if(other.categories & Utils.kActor && other.type === "main_body") {
-                actor.inDoorRange = true;
+                hero.inDoorRange = true;
 
                 if(!closed)
                     privateProperties.inRange = true;
@@ -57,7 +57,7 @@ PhysicsEntity {
 
         onEndContact: {
             if(other.categories & Utils.kActor && other.type === "main_body") {
-                actor.inDoorRange = false
+                hero.inDoorRange = false
                 privateProperties.inRange = false;
             }
         }

@@ -13,17 +13,17 @@ Item {
     z: 1
 
     readonly property Scene scene: parent
-    readonly property Ninja actor: parent.actor
+    readonly property Ninja hero: parent.hero
 
-    // Actor properties
-    readonly property real healthStatus: actor.healthStatus
-    readonly property bool hurting: actor.hurting
-    readonly property int totalCoins: actor.totalCoinsCollected
-    readonly property int totalKunai: actor.totalKunaiCollected
-    readonly property int totalBlueKeysCollected: actor.totalBlueKeysCollected
-    readonly property int totalYellowKeysCollected: actor.totalYellowKeysCollected
-    readonly property int totalRedKeysCollected: actor.totalRedKeysCollected
-    readonly property int totalGreenKeysCollected: actor.totalGreenKeysCollected
+    // Hero properties
+    readonly property real healthStatus: hero.healthStatus
+    readonly property bool hurting: hero.hurting
+    readonly property int totalCoins: hero.totalCoinsCollected
+    readonly property int totalKunai: hero.totalKunaiCollected
+    readonly property int totalBlueKeysCollected: hero.totalBlueKeysCollected
+    readonly property int totalYellowKeysCollected: hero.totalYellowKeysCollected
+    readonly property int totalRedKeysCollected: hero.totalRedKeysCollected
+    readonly property int totalGreenKeysCollected: hero.totalGreenKeysCollected
 
     property int elapsedSeconds: 0
     property string elapsedTimeString: "00:00"
@@ -33,7 +33,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: 10
-        source: hurting || (healthStatus == 0) ? (actor.filePrefix + "dead_head.png") : (actor.filePrefix + "head.png")
+        source: hurting || (healthStatus == 0) ? (hero.filePrefix + "dead_head.png") : (hero.filePrefix + "head.png")
         width: 70
         fillMode: Image.PreserveAspectFit
     }

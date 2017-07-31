@@ -31,25 +31,25 @@ EntityBase {
         readonly property string type: doorLock.type
 
         onBeginContact: {
-            if(other.categories & Utils.kActor && other.type === "main_body") {
-                if(color == "blue" && actor.totalBlueKeysCollected > 0) {
+            if(other.categories & Utils.kHero && other.type === "main_body") {
+                if(color == "blue" && hero.totalBlueKeysCollected > 0) {
                     locked = false;
-                    actor.dropKey(color);
+                    hero.dropKey(color);
                     lockOpened();
                 }
-                else if(color == "green" && actor.totalGreenKeysCollected > 0) {
+                else if(color == "green" && hero.totalGreenKeysCollected > 0) {
                     locked = false;
-                    actor.dropKey(color);
+                    hero.dropKey(color);
                     lockOpened();
                 }
-                else if(color == "red" && actor.totalRedKeysCollected > 0) {
+                else if(color == "red" && hero.totalRedKeysCollected > 0) {
                     locked = false;
-                    actor.dropKey(color);
+                    hero.dropKey(color);
                     lockOpened();
                 }
-                else if(color == "yellow" && actor.totalYellowKeysCollected > 0) {
+                else if(color == "yellow" && hero.totalYellowKeysCollected > 0) {
                     locked = false;
-                    actor.dropKey(color);
+                    hero.dropKey(color);
                     lockOpened();
                 }
             }

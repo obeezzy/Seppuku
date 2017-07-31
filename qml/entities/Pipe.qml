@@ -14,7 +14,7 @@ EntityBase {
 
     QtObject {
         id: privateProperties
-        property bool actorPresent: false
+        property bool heroPresent: false
     }
 
     fixtures: [
@@ -40,17 +40,17 @@ EntityBase {
             height: windHeight
             sensor: true
             categories: Utils.kHoverArea
-            collidesWith: Utils.kActor
+            collidesWith: Utils.kHero
 
             onBeginContact: {
-                if(other.categories & Utils.kActor) {
-                    privateProperties.actorPresent = true;
+                if(other.categories & Utils.kHero) {
+                    privateProperties.heroPresent = true;
                 }
             }
 
             onEndContact: {
-                if(other.categories & Utils.kActor) {
-                    privateProperties.actorPresent = false;
+                if(other.categories & Utils.kHero) {
+                    privateProperties.heroPresent = false;
                 }
             }
         }
@@ -73,7 +73,7 @@ EntityBase {
 
     Rectangle {
         id: indicator
-        visible: !privateProperties.actorPresent
+        visible: !privateProperties.heroPresent
         color: "transparent"
         //border.color: "#004bfc"
         border.color: "white"

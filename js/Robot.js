@@ -10,7 +10,7 @@ var ticks = 0, shotTicks = 0
 var updateInterval = 50, waitDelay = 1000, alertDelay = 500, shotDelay = 3000
 
 // booleans
-var actorSpotted = false
+var heroSpotted = false
 
 function resetTicks(clockName) {
     switch(clockName) {
@@ -55,9 +55,9 @@ function tick(clockName) {
     }
 }
 
-function setActorSpotted(spotted) {
-    if(actorSpotted !== spotted)
-        actorSpotted = spotted
+function setHeroSpotted(spotted) {
+    if(heroSpotted !== spotted)
+        heroSpotted = spotted
 }
 
 function setUpdateInterval(interval) {

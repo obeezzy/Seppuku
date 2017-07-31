@@ -28,13 +28,13 @@ EntityBase {
 
     // Where is the next door location
     property point nextDoorLocation: Qt.point(-1, -1)
-    // Name of actor
+    // Name of hero
     property string name: "tomahawk"
 
     // Current scene
     readonly property Scene scene: parent
     // Location of sprites
-    readonly property string filePrefix: Global.paths.images + "actor/" + name + "_"
+    readonly property string filePrefix: Global.paths.images + "hero/" + name + "_"
     // What's the distance moved with each step
     readonly property int xStep: 12
 
@@ -79,7 +79,7 @@ EntityBase {
 
     readonly property bool inDisguiseRange: privateProperties.inDisguiseRange
     readonly property bool wearingDisguise: privateProperties.wearingDisguise
-    // Can the actor be seen by the enemy
+    // Can the hero be seen by the enemy
     readonly property bool exposed: {
         if(!ninja.wearingDisguise)
             true
@@ -193,7 +193,7 @@ EntityBase {
             x: privateProperties.leftBoxMargin
             width: target.width - privateProperties.rightBoxMargin
             height: target.height
-            categories: Utils.kActor
+            categories: Utils.kHero
             collidesWith: {
                 Utils.kGround | Utils.kWall | Utils.kCollectible |
                             Utils.kEnemy | Utils.kLadder | Utils.kCovert |
@@ -209,7 +209,7 @@ EntityBase {
                     return;
                 if(other.categories & Utils.kEnemy) {
                     if(other.type === "main_body") {
-                        //console.log("Actor: I collided with the enemy. Ouch!")
+                        //console.log("Hero: I collided with the enemy. Ouch!")
                         if(other.dead)
                             return;
                         privateProperties.depleteHealth(other.damage, other.sender);
@@ -305,7 +305,7 @@ EntityBase {
             width: target.width - privateProperties.rightBoxMargin
             height: 1
             sensor: true
-            categories: Utils.kActor
+            categories: Utils.kHero
             collidesWith: Utils.kObstacle
 
             readonly property string type: "head"
@@ -331,7 +331,7 @@ EntityBase {
             width: target.width - 3
             height: 1
             sensor: true
-            categories: Utils.kActor
+            categories: Utils.kHero
             collidesWith: Utils.kGroundTop
 
             readonly property string type: "ground"
@@ -372,7 +372,7 @@ EntityBase {
 
         anchors.horizontalCenter: parent.horizontalCenter
         animation: "idle"
-        source: Global.paths.images + "actor/" + ninja.name + ".png"
+        source: Global.paths.images + "hero/" + ninja.name + ".png"
         horizontalMirror: ninja.facingLeft
         horizontalFrameCount: 10
         verticalFrameCount: 17
@@ -613,7 +613,7 @@ EntityBase {
         onTriggered: ninja.rMoveRight();
     }
 
-    // After climb up/down is called, it waits for the actor to move up a bit then stops him
+    // After climb up/down is called, it waits for the hero to move up a bit then stops him
     Timer {
         id: rClimbUpTimer
         interval: 59

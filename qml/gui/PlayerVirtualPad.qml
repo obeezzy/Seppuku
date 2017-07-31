@@ -9,7 +9,7 @@ Item {
     width: 210
     height: 210
 
-    property Ninja actor: parent.actor
+    property Ninja hero: parent.hero
     property bool animationRunning: false
     property int scrollDuration: 250
 
@@ -28,14 +28,14 @@ Item {
         onJoystickMoved: {
             // console.log("Joystick -> (", x, ", ", y)
             if(x < 0)
-                actor.moveLeft();
+                hero.moveLeft();
             else if(x > 0)
-                actor.moveRight();
+                hero.moveRight();
             else {
-                if(actor.facingLeft)
-                    actor.stopMovingLeft();
-                else if(actor.facingRight)
-                    actor.stopMovingRight();
+                if(hero.facingLeft)
+                    hero.stopMovingLeft();
+                else if(hero.facingRight)
+                    hero.stopMovingRight();
             }
         }
     }
@@ -48,11 +48,11 @@ Item {
         anchors.bottomMargin: 6
         width: 210
 
-        onJumpTriggered: actor.jump();
-        onSlideTriggered: actor.slide();
-        onThrowTriggered: actor.throwKunai();
-        onAttackTriggered: actor.attack();
-        onToggleDisguiseTriggered: actor.toggleDisguise();
+        onJumpTriggered: hero.jump();
+        onSlideTriggered: hero.slide();
+        onThrowTriggered: hero.throwKunai();
+        onAttackTriggered: hero.attack();
+        onToggleDisguiseTriggered: hero.toggleDisguise();
     }
 }
 

@@ -26,7 +26,7 @@ EntityBase {
     // Is this enemy dead
     property bool dead: false
 
-    // Am I striking the actor
+    // Am I striking the hero
     property bool striking: false
 
     property real healthStatus: 1
@@ -48,10 +48,10 @@ EntityBase {
             height: target.height
             categories: Utils.kEnemy
             collidesWith: {
-                if(actor != null && (actor.wearingDisguise || actor.dead))
+                if(hero != null && (hero.wearingDisguise || hero.dead))
                     Utils.kGround | Utils.kWall | Utils.kLava
                 else
-                    Utils.kGround | Utils.kActor | Utils.kWall | Utils.kLava
+                    Utils.kGround | Utils.kHero | Utils.kWall | Utils.kLava
             }
 
             readonly property string type: "main_body"

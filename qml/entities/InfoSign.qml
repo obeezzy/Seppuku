@@ -26,14 +26,14 @@ EntityBase {
         width: target.width
         height: target.height
         categories: Utils.kInteractive
-        collidesWith: Utils.kActor
+        collidesWith: Utils.kHero
         sensor: true
 
         readonly property string type: "info_sign"
 
         onBeginContact: {
             switch(other.categories) {
-            case Utils.kActor:
+            case Utils.kHero:
                 if(other.type === "main_body") {
                     //console.log("InfoSign: within range")
                     inRange = true;
@@ -44,7 +44,7 @@ EntityBase {
 
         onEndContact: {
             switch(other.categories) {
-            case Utils.kActor:
+            case Utils.kHero:
                 if(other.type === "main_body") {
                     //console.log("InfoSign: out of range")
                     inRange = false;
@@ -77,7 +77,7 @@ EntityBase {
     }
 
     Connections {
-        target: infoSign.actor
+        target: infoSign.hero
 
         onInfoRequested: {
             if(!infoSign.messageVisible && infoSign.inRange) {

@@ -39,12 +39,12 @@ EntityBase {
 
         onBeginContact: {
             console.log("Type? ", other.type)
-            if(other.categories & Utils.kActor)
+            if(other.categories & Utils.kHero)
                 privateProperties.inRange = true;
         }
 
         onEndContact: {
-            if(other.categories & Utils.kActor)
+            if(other.categories & Utils.kHero)
                 privateProperties.inRange = false;
         }
     }
@@ -95,7 +95,7 @@ EntityBase {
     }
 
     Connections {
-        target: actor
+        target: hero
         onUtilized: {
             if(type == laserLever.type && privateProperties.inRange)
             {

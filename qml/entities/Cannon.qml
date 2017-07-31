@@ -42,7 +42,7 @@ EntityBase {
                 restitution: .2
 
                 categories: Utils.kEnemy
-                collidesWith: Utils.kActor | Utils.kObstacle | Utils.kGround
+                collidesWith: Utils.kHero | Utils.kObstacle | Utils.kGround
 
                 readonly property string type: "bullet"
             }

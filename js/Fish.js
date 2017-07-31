@@ -8,7 +8,7 @@ var ticks = 0
 var updateInterval = 50, waitDelay = 3000
 
 // booleans
-var actorSpotted = false
+var heroSpotted = false
 
 function resetTicks(clockName) {
     switch(clockName) {

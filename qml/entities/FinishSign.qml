@@ -17,13 +17,13 @@ EntityBase {
         width: target.width
         height: target.height
         categories: Utils.kInteractive
-        collidesWith: Utils.kActor
+        collidesWith: Utils.kHero
         sensor: true
 
         readonly property string type: "finish_sign"
 
         onBeginContact: {
-            if(other.categories & Utils.kActor) {
+            if(other.categories & Utils.kHero) {
                 if(other.type === "main_body") {
                     checked = true
                     levelComplete()

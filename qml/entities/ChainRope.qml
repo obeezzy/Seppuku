@@ -37,12 +37,12 @@ Item {
                 restitution: 0
                 friction: 1
                 categories: Utils.kObstacle
-                collidesWith: Utils.kActor
+                collidesWith: Utils.kHero
 
                 readonly property string type: "rope"
 
                 onBeginContact: {
-                    if(other.categories & Utils.kActor) {
+                    if(other.categories & Utils.kHero) {
                         if(other.type === "kunai") {
                             //console.log("Rope: Hit by kunai!")
                             entityManager.removeEntity(chainRope.entityId);

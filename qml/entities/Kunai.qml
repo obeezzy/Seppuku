@@ -23,7 +23,7 @@ EntityBase {
             density: .01
             friction: .3
             restitution: .4
-            categories: Utils.kActor
+            categories: Utils.kHero
             collidesWith: Utils.kGround | Utils.kWall | Utils.kEnemy | Utils.kObstacle | Utils.kInteractive
 
 //            vertices: [
@@ -47,12 +47,12 @@ EntityBase {
                     destructionOnTimeoutAnimation.stop();
                 }
 
-                else if((other.categories & Utils.kInteractive)/* && other.type === "lever" && actor.facingRight && other.mirror*/)
+                else if((other.categories & Utils.kInteractive)/* && other.type === "lever" && hero.facingRight && other.mirror*/)
                 {
                     console.log("Hey there man!!!");
                     kunai.bodyType = Body.Dynamic;
                     kunai.linearVelocity = Qt.point(0, 0);
-                    actor.utilized("lever");
+                    hero.utilized("lever");
                     destructionOnContactAnimation.start();
                     destructionOnTimeoutAnimation.stop();
                 }

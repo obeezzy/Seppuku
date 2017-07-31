@@ -30,12 +30,12 @@ EntityBase {
         readonly property string type: lever.type
 
         onBeginContact: {
-            if(other.categories & Utils.kActor)
+            if(other.categories & Utils.kHero)
                 lever.inRange = true;
         }
 
         onEndContact: {
-            if(other.categories & Utils.kActor)
+            if(other.categories & Utils.kHero)
                 lever.inRange = false;
         }
     }
@@ -64,7 +64,7 @@ EntityBase {
     }
 
     Connections {
-        target: actor
+        target: hero
         onUtilized: {
             if(type == lever.type && lever.inRange) {
                 console.log("The lever got the signal.")

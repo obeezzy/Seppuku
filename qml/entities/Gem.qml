@@ -25,14 +25,14 @@ EntityBase {
         height: target.height
         sensor: true
         categories: Utils.kCollectible
-        collidesWith: Utils.kActor
+        collidesWith: Utils.kHero
 
         readonly property bool picked: gem.picked
         readonly property string type: "gem"
         readonly property string color: gem.color
 
         onBeginContact: {
-            if(other.categories & Utils.kActor) {
+            if(other.categories & Utils.kHero) {
                 if(other.type === "main_body")
                     gem.picked = true
             }

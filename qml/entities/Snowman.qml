@@ -14,7 +14,7 @@ EntityBase {
     property bool worn: false
     property int initialY: null
     property alias bounds: bounds
-    readonly property int xOffset: actor.x - 12
+    readonly property int xOffset: hero.x - 12
     z: Utils.zDisguise
     type: "snowman"
 
@@ -38,14 +38,14 @@ EntityBase {
         density: .1
         restitution: .3
         categories: Utils.kCovert
-        collidesWith: Utils.kActor
+        collidesWith: Utils.kHero
         sensor: true
 
         readonly property string type: snowman.type
 
         onBeginContact: {
             switch(other.categories) {
-            case Utils.kActor:
+            case Utils.kHero:
                 if(other.type === "main_body") {
                     //console.log("Snowman: within range");
                     inRange = true;
@@ -56,7 +56,7 @@ EntityBase {
 
         onEndContact: {
             switch(other.categories) {
-            case Utils.kActor:
+            case Utils.kHero:
                 if(other.type === "main_body") {
                     //console.log("Snowman: out of range");
                     inRange = false;
@@ -90,7 +90,7 @@ EntityBase {
     }
 
     Connections {
-        target: actor
+        target: hero
         onDisguised: {
             if(!inRange)
                 return;
@@ -113,23 +113,23 @@ EntityBase {
 //    Binding {
 //        when: worn
 //        target: snowman
-//        value: actor.y - 12
+//        value: hero.y - 12
 //        property: "y"
 //    }
 
-    // Animation when actor is stationary
+    // Animation when hero is stationary
     PropertyAnimation on y {
         loops: 1
-        running: !actor.running && worn
+        running: !hero.running && worn
         to: snowman.initialY
         duration: 250
     }
 
-    // Animation when actor is moving
+    // Animation when hero is moving
     PropertyAnimation on y {
         loops: 1
-        running: actor.running && worn
-        to: actor.y - 18
+        running: hero.running && worn
+        to: hero.y - 18
         duration: 100
     }
 
@@ -147,12 +147,12 @@ EntityBase {
     function wearDisguise(putOn) {
         worn = putOn;
         if(worn)
-           snowman.z = actor.z + 1;
+           snowman.z = hero.z + 1;
         else
            snowman.z = 0;
 
-        if(actor.wearingDisguise !== putOn)
-            actor.toggleDisguise();
+        if(hero.wearingDisguise !== putOn)
+            hero.toggleDisguise();
     }
 
     Component.onCompleted: {

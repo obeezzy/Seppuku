@@ -23,14 +23,14 @@ EntityBase {
             height: target.height
             sensor: true
             categories: Utils.kCollectible
-            collidesWith: Utils.kActor
+            collidesWith: Utils.kHero
 
             readonly property string type: "kunai"
 
             onBeginContact: {
-                if(other.categories & Utils.kActor) {
+                if(other.categories & Utils.kHero) {
                     if(other.type === "main_body") {
-                        //console.log("Kunai: The actor wants to pick me up.")
+                        //console.log("Kunai: The hero wants to pick me up.")
                         kunaiCollectible.picked = true
                     }
                 }

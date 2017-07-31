@@ -32,29 +32,23 @@ TiledScene {
         readonly property real offsetMaxY: levelBase.height - height
         readonly property real offsetMinX: 0
         readonly property real offsetMinY: 0
-        readonly property real camX: actor.x - width / 2
-        readonly property real camY: actor.crouching ? actor.standingY : actor.y - height / 2 + 100
-    }
-
-    background: ImageLayer {
-        source: Global.paths.images + "backgrounds/background.png"
-        layerType: Layer.Mirrored
-        horizontalOffset: -levelBase.viewport.xOffset * .2
+        readonly property real camX: hero.x - width / 2
+        readonly property real camY: hero.crouching ? hero.standingY : hero.y - height / 2 + 100
     }
 
     // Level information
     property int level: 0
     property string levelTitle: ""
 
-    readonly property point actorInitPos: Qt.point(heroPosition.x, heroPosition.y)
-    //    actorInitPos: {
+    readonly property point heroInitPos: Qt.point(heroPosition.x, heroPosition.y)
+    //    heroInitPos: {
     //        Global.settings.checkpointState.level === 0 ? Qt.point(heroPosition.x, heroPosition.y) : Global.settings.checkpointState.pos
     //    }
     property alias musicSource: bgm.source
     property bool gameOver: false
 
     readonly property TutorText tutor: tutor
-    readonly property Ninja actor: actor
+    readonly property Ninja hero: hero
 
     signal nextLevelRequested
     signal restartRequested
@@ -62,10 +56,10 @@ TiledScene {
     signal resumed
 
     Ninja {
-        id: actor
-        x: actorInitPos.x
-        y: actorInitPos.y
-        z: actor.wearingDisguise ? Utils.zActorDisguised : Utils.zActor
+        id: hero
+        x: heroInitPos.x
+        y: heroInitPos.y
+        z: hero.wearingDisguise ? Utils.zHeroDisguised : Utils.zHero
 
         onSelfDestruct: terminateLevel();
     }
@@ -95,44 +89,44 @@ TiledScene {
     // Key handling
     Keys.onPressed: {
         if(popupStack.enabled || levelBase.gameOver) {
-            actor.stopAllActions();
+            hero.stopAllActions();
             return;
         }
 
         switch(event.key) {
         case Qt.Key_Left:
-            actor.moveLeft();
+            hero.moveLeft();
             break;
         case Qt.Key_Right:
-            actor.moveRight();
+            hero.moveRight();
             break;
         case Qt.Key_Up:
-            if(actor.clinging)
-                actor.climbUp();
-            else if(actor.inHoverArea)
-                actor.hover();
+            if(hero.clinging)
+                hero.climbUp();
+            else if(hero.inHoverArea)
+                hero.hover();
             else if(!event.isAutoRepeat)
-                actor.jump();
+                hero.jump();
             break;
         case Qt.Key_Down:
-            if(actor.clinging)
-                actor.climbDown();
-            else if(!event.isAutoRepeat && actor.running)
-                actor.slide();
+            if(hero.clinging)
+                hero.climbDown();
+            else if(!event.isAutoRepeat && hero.running)
+                hero.slide();
             else
-                actor.crouch();
+                hero.crouch();
             break;
         case Qt.Key_Space:
             if(!event.isAutoRepeat)
-                actor.attack();
+                hero.attack();
             break;
         case Qt.Key_Shift:
             if(!event.isAutoRepeat)
-                actor.throwKunai();
+                hero.throwKunai();
             break;
         case Qt.Key_Z:
             if(!event.isAutoRepeat)
-                actor.use();
+                hero.use();
             break;
         case Qt.Key_F11:
             if(!event.isAutoRepeat)
@@ -149,32 +143,32 @@ TiledScene {
 
     Keys.onReleased: {
         if(popupStack.enabled) {
-            actor.stopAllActions();
+            hero.stopAllActions();
             return;
         }
 
         switch(event.key) {
         case Qt.Key_Left:
             if(!event.isAutoRepeat)
-                actor.stopMovingLeft();
+                hero.stopMovingLeft();
             break;
         case Qt.Key_Right:
             if(!event.isAutoRepeat)
-                actor.stopMovingRight();
+                hero.stopMovingRight();
             break;
         case Qt.Key_Up:
             if(!event.isAutoRepeat) {
-                if(actor.inHoverArea)
-                    actor.stopHovering();
+                if(hero.inHoverArea)
+                    hero.stopHovering();
                 else
-                    actor.stopClimbingUp();
+                    hero.stopClimbingUp();
             }
             break;
         case Qt.Key_Down:
-            if(!event.isAutoRepeat && actor.clinging)
-                actor.stopClimbingDown();
+            if(!event.isAutoRepeat && hero.clinging)
+                hero.stopClimbingDown();
             else if(!event.isAutoRepeat)
-                actor.stopCrouching();
+                hero.stopCrouching();
             break;
         }
 
@@ -307,14 +301,14 @@ TiledScene {
             bgm.play();
     }
 
-    // When actor reaches the end of the level
+    // When hero reaches the end of the level
     function completeLevel() {
         levelBase.gameOver = true;
         hud.stopTimer();
         completeLevelTimer.start();
     }
 
-    // When the actor dies and you want to end the level
+    // When the hero dies and you want to end the level
     function terminateLevel() {
         levelBase.gameOver = true;
         hud.stopTimer();
@@ -442,7 +436,7 @@ TiledScene {
 
             FailPopup {
                 id: failPopupItem
-                cause: actor.deathCause
+                cause: hero.deathCause
 
                 Connections {
                     target: failPopupItem
@@ -1289,30 +1283,30 @@ TiledScene {
 
         // Create entities
         displayInstructions();
-        createSea();
-        createCrystals();
-        createPipes();
-        createLasers();
-        createKeys();
-        createDoors();
+//        createSea();
+//        createCrystals();
+//        createPipes();
+//        createLasers();
+//        createKeys();
+//        createDoors();
         //createInfoSigns();
         //createNearFinishSigns();
         //createFinishSigns();
         //createCheckpointSigns();
-        createFish();
+//        createFish();
 
-        createRobots();
-        createCannons();
-        createMovingPlatforms();
-        createSnowmen();
-        createKunai();
-        createKeys();
-        createGems();
-        createChainedMass();
-        createLevers();
+//        createRobots();
+//        createCannons();
+//        createMovingPlatforms();
+//        createSnowmen();
+//        createKunai();
+//        createKeys();
+//        createGems();
+//        createChainedMass();
+//        createLevers();
 
-        //Delete
-        createMachines();
+//        //Delete
+//        createMachines();
     }
 }
 

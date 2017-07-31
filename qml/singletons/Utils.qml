@@ -23,8 +23,8 @@ Item {
     // Enemy's main body area
     readonly property int kEnemy: Box.Category1
 
-    // Actor's main body area
-    readonly property int kActor: Box.Category2
+    // Hero's main body area
+    readonly property int kHero: Box.Category2
 
     /****************** INVENTORIES ***********************/
     readonly property int kCollectible: Box.Category3
@@ -59,18 +59,18 @@ Item {
 
 
     /************** GROUP INDEXES **********************/
-    readonly property int gActorGroupIndex: 1
+    readonly property int gHeroGroupIndex: 1
 
 
     // Z POSITIONS
-    readonly property int zActor: 10
-    readonly property int zInteractive: zActor - 1
-    readonly property int zActorDisguised: 0
+    readonly property int zHero: 10
+    readonly property int zInteractive: zHero - 1
+    readonly property int zHeroDisguised: 0
     readonly property int zDisguise: 4
     readonly property int zEnemy: 1
     readonly property int zHUD: 49
     readonly property int zTutor: zHUD
-    readonly property int zCollectible: zActor + 1
+    readonly property int zCollectible: zHero + 1
     readonly property int zCannonBullet: -1
     readonly property int zLaser: 11
     readonly property int zLava: 30

@@ -9,7 +9,12 @@ LevelBase {
     source: Global.paths.levels + "1.tmx"
     level: 1
     levelTitle: "Ninja Gaiden"
-    background: Rectangle { color: "lightsteelblue" }
+    //background: Rectangle { color: "lightsteelblue" }
+//    background: Image {
+//        source: Global.paths.images + "backgrounds/winter.png"
+////        layerType: Layer.Mirrored
+////        horizontalOffset: -scene.viewport.xOffset * .2
+//    }
 
     function displayInstructions() {
         tutor.clearAll();
