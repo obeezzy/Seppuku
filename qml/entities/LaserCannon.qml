@@ -265,19 +265,17 @@ EntityBase {
         }
     }
 
-    SequentialAnimation {
-        id: fireAnimation
-        running: true
+    PausableTimer {
+        running: !Global.gameWindow.paused
+        interval: laserCannon.startupDelay
+        onTimeout: {
+            if (privateProperties.firing)
+                interval = laserCannon.ceaseInterval;
+            else
+                interval = laserCannon.fireInterval;
 
-        PauseAnimation { duration: laserCannon.startupDelay }
-
-        SequentialAnimation {
-            loops: Animation.Infinite
-
-            PropertyAction { target: privateProperties; property: "firing"; value: true }
-            PauseAnimation { duration: laserCannon.fireInterval }
-            PropertyAction { target: privateProperties; property: "firing"; value: false }
-            PauseAnimation { duration: laserCannon.ceaseInterval }
+            privateProperties.firing = !privateProperties.firing;
+            start();
         }
     }
 
@@ -392,15 +390,5 @@ EntityBase {
     Connections {
         target: lever
         onPositionChanged: privateProperties.firing = lever.position == "on";
-    }
-
-    Connections {
-        target: Global.gameWindow
-        onPausedChanged: {
-            if (Global.gameWindow.paused)
-                fireAnimation.pause();
-            else
-                fireAnimation.resume();
-        }
     }
 }

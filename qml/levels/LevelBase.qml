@@ -14,7 +14,7 @@ TiledScene {
     physics: true
     debug: true
     pixelsPerMeter: 33
-    gravity: Qt.point(0, 12);
+    gravity: Qt.point(0, 9.8);
 
     EntityManager { id: entityManager }
 
@@ -160,8 +160,10 @@ TiledScene {
             if(!event.isAutoRepeat) {
                 if(hero.inHoverArea)
                     hero.stopHovering();
-                else
+                else if (hero.clinging)
                     hero.stopClimbingUp();
+                else
+                    hero.endJump();
             }
             break;
         case Qt.Key_Down:
@@ -469,7 +471,7 @@ TiledScene {
                 fixtures: Chain {
                     density: 1
                     restitution: 0
-                    friction: 1
+                    friction: 0
                     categories: Utils.kGround
                 }
             }
@@ -479,6 +481,7 @@ TiledScene {
             name: "Block Ground"
             objects: TiledObject {
                 id: groundObject
+
                 fixtures: [
                     Box {
                         height: groundObject.height * .1
@@ -557,6 +560,12 @@ TiledScene {
         TiledLayer {
             id: crystalLayer
             name: "Crystals"
+            objects: TiledObject {}
+        },
+
+        TiledLayer {
+            id: laserCannonLayer
+            name: "Laser Cannons"
             objects: TiledObject {}
         },
 
@@ -1081,6 +1090,36 @@ TiledScene {
         }
     }
 
+    function createLaserCannons() {
+        // Create laser cannons and link levers to them
+        for(var i = 0; i < laserCannonLayer.objects.length; ++i)
+        {
+            var object = laserCannonLayer.objects[i];
+            while(object.next())
+            {
+                if(object.name === "")
+                {
+                    var cannon = entityManager.createEntity("../entities/LaserCannon.qml");
+                    cannon.x = object.x;
+                    cannon.y = object.y;
+                    cannon.width = object.width;
+                    cannon.height = object.height;
+                    cannon.objectName = object.getProperty("id");
+                    cannon.direction = object.getProperty("direction");
+                    cannon.laserColor = object.getProperty("laser_color");
+                    cannon.fireInterval = object.getProperty("fire_interval");
+                    cannon.ceaseInterval = object.getProperty("cease_interval");
+                    cannon.startupDelay = object.getProperty("startup_delay");
+
+                    //link = object.getProperty("link");
+
+                    //if(link > 0)
+                        //cannon.lever = levers[link];
+                }
+            }
+        }
+    }
+
     function createLasers() {
         var levers = {};
 
@@ -1283,9 +1322,10 @@ TiledScene {
 
         // Create entities
         displayInstructions();
-//        createSea();
-//        createCrystals();
-//        createPipes();
+        createSea();
+        createCrystals();
+        createPipes();
+        createLaserCannons();
 //        createLasers();
 //        createKeys();
 //        createDoors();

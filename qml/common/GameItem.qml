@@ -17,6 +17,7 @@ Game {
 
     SceneLoader {
         id: loadingScene
+        asynchronous: false
         sourceComponent: LoadingScene { }
     }
 
