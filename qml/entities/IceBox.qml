@@ -11,7 +11,7 @@ EntityBase {
     bullet: true
     sleepingAllowed: true
     sender: "ice_box"
-    entityType: "IceBox"
+    entityType: "iceBox"
 
     EntityManager { id: entityManager; parentScene: iceBox.scene }
 

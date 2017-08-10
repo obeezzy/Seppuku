@@ -269,7 +269,7 @@ EntityBase {
     PausableTimer {
         running: !Global.gameWindow.paused && lever == null
         interval: laserCannon.startupDelay
-        onTimeout: {
+        onTriggered: {
             if (privateProperties.firing)
                 interval = laserCannon.ceaseInterval;
             else
