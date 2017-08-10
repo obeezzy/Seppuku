@@ -64,7 +64,7 @@ EntityBase {
             NumberAnimation { target: doorLock; property: "scale"; to: 5; duration: 500 }
         }
 
-        ScriptAction { script: { entityManager.removeEntity(doorLock.entityId); } }
+        ScriptAction { script: { entityManager.destroyEntity(doorLock.entityId); } }
     }
 
     Image {

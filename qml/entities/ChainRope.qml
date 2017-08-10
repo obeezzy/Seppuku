@@ -45,7 +45,7 @@ Item {
                     if(other.categories & Utils.kHero) {
                         if(other.type === "kunai") {
                             //console.log("Rope: Hit by kunai!")
-                            entityManager.removeEntity(chainRope.entityId);
+                            entityManager.destroyEntity(chainRope.entityId);
                         }
                     }
                 }

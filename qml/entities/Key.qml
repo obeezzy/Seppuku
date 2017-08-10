@@ -74,7 +74,7 @@ EntityBase {
             script: {
                 pickupSound.play();
                 console.log("Key: Picked ", hero.totalRedKeysCollected);
-                entityManager.removeEntity(key.entityId);
+                entityManager.destroyEntity(key.entityId);
             }
         }
     }

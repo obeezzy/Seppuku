@@ -6,7 +6,7 @@ import "../singletons"
 
 EntityBase {
     id: ninja
-    width: 40
+    width: 30
     height: {
         if(ninja.sliding || ninja.crouching)
             ninja.crouchingHeight;
@@ -326,9 +326,9 @@ EntityBase {
 
         Box {
             id: groundSensor
-            x: 3
+            x: target.width * .3
             y: target.height
-            width: target.width - 3
+            width: target.width - target.width * .3
             height: 1
             sensor: true
             categories: Utils.kHero
@@ -855,8 +855,12 @@ EntityBase {
         else
             return;
 
-        jumpSound.play()
-        ninja.applyLinearImpulse(Qt.point(0, -ninja.getMass() * 10), ninja.getWorldCenter());
+        jumpSound.play();
+        ninja.applyLinearImpulse(Qt.point(0, -ninja.getMass() * 9), ninja.getWorldCenter());
+    }
+
+    function endJump() {
+        // TODO
     }
 
     function crouch() {

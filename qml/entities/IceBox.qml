@@ -44,7 +44,7 @@ EntityBase {
         onBeginContact: {
             switch(other.categories) {
             case Utils.kLava:
-                entityManager.removeEntity(iceBox.entityId);
+                entityManager.destroyEntity(iceBox.entityId);
                 break;
             }
         }

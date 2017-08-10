@@ -60,7 +60,7 @@ EntityBase {
                 repeat: false
                 interval: cannon.bulletLifeSpan
 
-                onTriggered: entityManager.removeEntity(cannon.entityId);
+                onTriggered: entityManager.destroyEntity(cannon.entityId);
             }
 
             Component.onCompleted: destructionTimer.start();

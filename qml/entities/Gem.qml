@@ -66,7 +66,7 @@ EntityBase {
             NumberAnimation { target: gem; property: "opacity"; to: 0; duration: 350 }
         }
 
-        ScriptAction { script: entityManager.removeEntity(gem.entityId); }
+        ScriptAction { script: entityManager.destroyEntity(gem.entityId); }
     }
 
     onPickedChanged: if (picked) pickAnimation.start();

@@ -62,7 +62,7 @@ EntityBase {
             NumberAnimation { target: coin; property: "opacity"; to: 0; duration: 350 }
         }
 
-        ScriptAction { script: entityManager.removeEntity(coin.entityId); }
+        ScriptAction { script: entityManager.destroyEntity(coin.entityId); }
     }
 
     onPickedChanged: if(picked) pickAnimation.start();

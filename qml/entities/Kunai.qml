@@ -70,7 +70,7 @@ EntityBase {
         running: true
 
         PauseAnimation { duration: 5000 }
-        ScriptAction { script: entityManager.removeEntity(kunai); }
+        ScriptAction { script: entityManager.destroyEntity(kunai); }
     }
 
     SequentialAnimation {
@@ -78,12 +78,12 @@ EntityBase {
 
         PauseAnimation { duration: 100 }
         NumberAnimation { target: kunai; property: "opacity"; to: 0; duration: 250 }
-        ScriptAction { script: entityManager.removeEntity(kunai.entityId); }
+        ScriptAction { script: entityManager.destroyEntity(kunai.entityId); }
     }
 
     onYChanged: {
         if(y > scene.height)
-            entityManager.removeEntity(kunai);
+            entityManager.destroyEntity(kunai);
     }
 }
 

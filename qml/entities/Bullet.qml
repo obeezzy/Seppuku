@@ -37,7 +37,7 @@ EntityBase {
         repeat: false
         interval: 5
 
-        onTriggered: entityManager.removeEntity(bullet.entityId);
+        onTriggered: entityManager.destroyEntity(bullet.entityId);
     }
 
     Timer {
@@ -45,7 +45,7 @@ EntityBase {
         repeat: false
         interval: 3000
 
-        onTriggered: entityManager.removeEntity(entityId);
+        onTriggered: entityManager.destroyEntity(entityId);
     }
 
     property bool facingLeft: false

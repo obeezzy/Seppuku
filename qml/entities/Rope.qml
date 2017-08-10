@@ -41,7 +41,7 @@ Item {
                     case Utils.kHero:
                         if(other.type === "kunai") {
                             //console.log("Rope: Hit by kunai!")
-                            entityManager.removeEntity(ball.entityId);
+                            entityManager.destroyEntity(ball.entityId);
                         }
                         break
                     }

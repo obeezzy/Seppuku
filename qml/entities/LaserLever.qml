@@ -17,6 +17,7 @@ EntityBase {
     property string position: "off"
     property int duration: 0
     property bool mirror: false
+    property int link: 0
 
     readonly property string type: "lever"
     readonly property string fileLocation: Global.paths.images + "switches/"
@@ -81,7 +82,7 @@ EntityBase {
 
        SequentialAnimation on scale {
            loops: Animation.Infinite
-           running: privateProperties.inRange && !gameWindow.paused? true : false
+           running: privateProperties.inRange && !Global.gameWindow.paused
            NumberAnimation { from: .1; to: 2; duration: 250 }
            NumberAnimation { from: 2; to: .1; duration: 250 }
        }

@@ -679,7 +679,7 @@ EntityBase {
         ScriptAction {
             script: {
                 hero.comment();
-                entityManager.removeEntity(robot.entityId);
+                entityManager.destroyEntity(robot.entityId);
             }
         }
     }

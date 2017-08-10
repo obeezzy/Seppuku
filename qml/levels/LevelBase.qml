@@ -570,6 +570,12 @@ TiledScene {
         },
 
         TiledLayer {
+            id: laserLeverLayer
+            name: "Laser Levers"
+            objects: TiledObject {}
+        },
+
+        TiledLayer {
             id: iceBoxLayer
             name: "Ice Boxes"
             objects: TiledObject {}
@@ -1110,11 +1116,36 @@ TiledScene {
                     cannon.fireInterval = object.getProperty("fire_interval");
                     cannon.ceaseInterval = object.getProperty("cease_interval");
                     cannon.startupDelay = object.getProperty("startup_delay");
+                    cannon.link = object.getProperty("link", 0);
+                }
+            }
+        }
+    }
 
-                    //link = object.getProperty("link");
+    function createLaserLevers() {
+        // Create laser cannons and link levers to them
+        for(var i = 0; i < laserLeverLayer.objects.length; ++i)
+        {
+            var object = laserLeverLayer.objects[i];
+            while(object.next())
+            {
+                if(object.name === "")
+                {
+                    var lever = entityManager.createEntity("../entities/LaserLever.qml");
+                    lever.x = object.x;
+                    lever.y = object.y;
+                    lever.width = object.width;
+                    lever.height = object.height;
+                    lever.objectName = object.getProperty("id");
+                    lever.position = object.getProperty("position", "off");
+                    lever.color = object.getProperty("color");
+                    lever.duration = object.getProperty("duration", 0);
+                    lever.mirror = object.getProperty("mirror", "false") === "true";
+                    lever.link = object.getProperty("link", 0);
 
-                    //if(link > 0)
-                        //cannon.lever = levers[link];
+                    var cannon = entityManager.findEntity("laserCannon", "link", lever.link);
+                    if (cannon !== null)
+                        cannon.lever = lever;
                 }
             }
         }
@@ -1326,6 +1357,7 @@ TiledScene {
         createCrystals();
         createPipes();
         createLaserCannons();
+        createLaserLevers();
 //        createLasers();
 //        createKeys();
 //        createDoors();
@@ -1348,5 +1380,7 @@ TiledScene {
 //        //Delete
 //        createMachines();
     }
+
+    Component.onDestruction: entityManager.destroyAllEntities();
 }
 

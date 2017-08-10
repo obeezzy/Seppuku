@@ -65,7 +65,7 @@ EntityBase {
             NumberAnimation { target: kunaiCollectible; property: "opacity"; to: 0; duration: 350 }
         }
 
-        ScriptAction { script: entityManager.removeEntity(kunaiCollectible.entityId); }
+        ScriptAction { script: entityManager.destroyEntity(kunaiCollectible.entityId); }
     }
 
     onPickedChanged: if (picked) pickAnimation.start();

@@ -23,13 +23,14 @@ EntityBase {
     readonly property int laserWidth: (direction == "left" || direction == "right") ? sensorRay1.pXDiff * privateProperties.maxFraction : laserCannon.width
     readonly property int laserHeight: (direction == "up" || direction == "down") ? sensorRay1.pYDiff * privateProperties.maxFraction: laserCannon.height
     readonly property int rayMargin: 4
+    readonly property bool firing: privateProperties.firing
 
     property string direction: "right";
     property string laserColor: "red"
-    property bool __firing: lever != null && lever.position == "on"
     property int fireInterval: 2000
     property int ceaseInterval: 1000
     property int startupDelay: 100
+    property int link: 0
     property LaserLever lever: null
 
     QtObject {
@@ -266,7 +267,7 @@ EntityBase {
     }
 
     PausableTimer {
-        running: !Global.gameWindow.paused
+        running: !Global.gameWindow.paused && lever == null
         interval: laserCannon.startupDelay
         onTimeout: {
             if (privateProperties.firing)

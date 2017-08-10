@@ -35,8 +35,9 @@ EntityBase {
         },
 
         Box {
+            x: 10
             y: -windHeight
-            width: target.width
+            width: target.width - 10
             height: windHeight
             sensor: true
             categories: Utils.kHoverArea
