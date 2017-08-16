@@ -10,6 +10,10 @@ import Bacon2D 1.0
 Item {
     id: utils
 
+    QtObject {
+        id: privateProperties
+    }
+
     // const static variables
     readonly property real degToRad: Math.PI / 180
 
@@ -50,6 +54,9 @@ Item {
 
     // Colliding with doors
     readonly property int kDoor: Box.Category10
+
+    // Colliding with "camera moments"
+    readonly property int kCameraMoment: Box.Category11
 
     // Rigid bodies
     readonly property int kWall: Box.Category14
@@ -100,6 +107,23 @@ Item {
         seconds = seconds < 10 ? ("0" + seconds) : seconds
 
         return minutes + ":" + seconds
+    }
+
+    function startTimer() {
+        privateProperties.elaspedTime = new Date().getTime();
+    }
+
+    function stopTimer() {
+        if (privateProperties.elaspedTime == null)
+            return;
+
+        var elasped = new Date().getTime() - privateProperties.elaspedTime;
+        privateProperties.elaspedTime = null;
+        return elapsed;
+    }
+
+    function invertPoint(point) {
+        return Qt.point(-point.x, -point.y);
     }
 
     /********** END FUNCTIONS **************************************/

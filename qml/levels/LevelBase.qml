@@ -18,22 +18,10 @@ TiledScene {
 
     EntityManager { id: entityManager }
 
-    viewport: Viewport {
-        id: sceneViewport
-        width: Global.gameWindow.width
-        height: Global.gameWindow.height
+    viewport: HeroCamera {
+        hero: levelBase.hero
         contentWidth: levelBase.width
         contentHeight: levelBase.height
-        xOffset: camX > offsetMaxX ? (camX < offsetMinX ? offsetMinX : offsetMaxX) : camX
-        yOffset: camY > offsetMaxY ? (camY < offsetMinY ? offsetMinY : offsetMaxY) : camY
-        animationDuration: 0
-
-        readonly property real offsetMaxX: levelBase.width - width
-        readonly property real offsetMaxY: levelBase.height - height
-        readonly property real offsetMinX: 0
-        readonly property real offsetMinY: 0
-        readonly property real camX: hero.x - width / 2
-        readonly property real camY: hero.crouching ? hero.standingY : hero.y - height / 2 + 100
     }
 
     // Level information
@@ -480,11 +468,23 @@ TiledScene {
         TiledLayer {
             name: "Block Ground"
             objects: TiledObject {
-                id: groundObject
+                fixtures: Box {
+                    density: 1
+                    restitution: 0
+                    friction: 1
+                    categories: Utils.kGround
+                }
+            }
+        },
+
+        TiledLayer {
+            name: "Ground Top"
+            objects: TiledObject {
+                id: groundTopObject
 
                 fixtures: [
                     Box {
-                        height: groundObject.height * .1
+                        height: groundTopObject.height * .1
                         density: 1
                         restitution: 0
                         friction: 1
@@ -492,8 +492,8 @@ TiledScene {
                     },
 
                     Box {
-                        y: groundObject.height * .1
-                        height: groundObject.height * .9
+                        y: groundTopObject.height * .1
+                        height: groundTopObject.height * .9
                         density: 1
                         restitution: 0
                         friction: 1
@@ -540,6 +540,21 @@ TiledScene {
         },
 
         TiledLayer {
+            id: oneWayPlatformLayer
+            name: "One Way Platforms"
+            objects: TiledObject {
+                fixtures: Polygon {
+                    readonly property string type: "one_way_platform"
+
+                    density: 1
+                    restitution: 0
+                    friction: 1
+                    categories: Utils.kGround | Utils.kGroundTop
+                }
+            }
+        },
+
+        TiledLayer {
             name: "Ladders"
             objects: [
                 TiledObject {
@@ -549,6 +564,12 @@ TiledScene {
                     }
                 }
             ]
+        },
+
+        TiledLayer {
+            id: cameraMomentLayer
+            name: "Camera Moments"
+            objects: TiledObject {}
         },
 
         TiledLayer {
@@ -572,6 +593,12 @@ TiledScene {
         TiledLayer {
             id: laserLeverLayer
             name: "Laser Levers"
+            objects: TiledObject {}
+        },
+
+        TiledLayer {
+            id: leverSwitchLayer
+            name: "Lever Switches"
             objects: TiledObject {}
         },
 
@@ -716,6 +743,22 @@ TiledScene {
     }
     /**************** END ITEMS ***************/
 
+    function createCameraMoments() {
+        for(var i = 0; i < cameraMomentLayer.objects.length; ++i)
+        {
+            var object = cameraMomentLayer.objects[i];
+            while(object.next())
+            {
+                var cameraMoment = entityManager.createEntity("../entities/CameraMoment.qml");
+                cameraMoment.x = object.x;
+                cameraMoment.y = object.y;
+                cameraMoment.width = object.width;
+                cameraMoment.height = object.height;
+                cameraMoment.lockEdge = object.getProperty("lock_edge");
+            }
+        }
+    }
+
     function createSea() {
         for(var i = 0; i < lavaLayer.objects.length; ++i)
         {
@@ -725,7 +768,6 @@ TiledScene {
                 var sea = entityManager.createEntity("../entities/Sea.qml");
                 sea.x = object.x;
                 sea.y = object.y;
-                sea.z = Utils.zLava;
                 sea.width = object.width;
                 sea.height = object.height;
                 sea.objectName = object.getProperty("id");
@@ -1116,7 +1158,12 @@ TiledScene {
                     cannon.fireInterval = object.getProperty("fire_interval");
                     cannon.ceaseInterval = object.getProperty("cease_interval");
                     cannon.startupDelay = object.getProperty("startup_delay");
-                    cannon.link = object.getProperty("link", 0);
+                    cannon.startY = object.getProperty("startY", -1);
+                    cannon.endY = object.getProperty("endY", -1);
+                    cannon.motionVelocity.x = object.getProperty("motion_velocity_x", 0);
+                    cannon.motionVelocity.y= object.getProperty("motion_velocity_y", 0);
+                    cannon.laserLink = object.getProperty("laser_link", 0);
+                    cannon.motionLink = object.getProperty("motion_link", 0);
                 }
             }
         }
@@ -1141,11 +1188,54 @@ TiledScene {
                     lever.color = object.getProperty("color");
                     lever.duration = object.getProperty("duration", 0);
                     lever.mirror = object.getProperty("mirror", "false") === "true";
-                    lever.link = object.getProperty("link", 0);
+                    lever.laserLink = object.getProperty("laser_link", 0);
 
-                    var cannon = entityManager.findEntity("laserCannon", "link", lever.link);
-                    if (cannon !== null)
-                        cannon.lever = lever;
+                    var cannon = entityManager.findEntity("laserCannon", "laserLink", lever.laserLink);
+                    if (cannon !== null && cannon.laserLink > 0)
+                        cannon.laserLever = lever;
+                }
+            }
+        }
+    }
+
+    function createLeverSwitches() {
+        // Create laser cannons and link levers to them
+        for(var i = 0; i < leverSwitchLayer.objects.length; ++i)
+        {
+            var object = leverSwitchLayer.objects[i];
+            while(object.next())
+            {
+                if(object.name === "")
+                {
+                    var lever = entityManager.createEntity("../entities/LeverSwitch.qml");
+                    lever.x = object.x;
+                    lever.y = object.y;
+                    lever.width = object.width;
+                    lever.height = object.height;
+                    lever.objectName = object.getProperty("id");
+                    lever.position = object.getProperty("position", "left");
+                    lever.motionLink = object.getProperty("motion_link", 0);
+
+                    var cannon = entityManager.findEntity("laserCannon", "motionLink", lever.motionLink);
+                    if (cannon !== null && cannon.motionLink > 0)
+                        cannon.motionSwitch = lever;
+                }
+            }
+        }
+    }
+
+    function configureOneWayPlatforms() {
+        for(var i = 0; i < oneWayPlatformLayer.objects.length; ++i)
+        {
+            var object = oneWayPlatformLayer.objects[i];
+            while(object.next())
+            {
+                if(object.name === "")
+                {
+                    var platform = object.collisions[object.index];
+                    for (var j = 0; j < platform.body.fixtures.length; ++j) {
+                        platform.body.fixtures[j].type = "one_way_platform";
+                    }
                 }
             }
         }
@@ -1353,11 +1443,17 @@ TiledScene {
 
         // Create entities
         displayInstructions();
+        createCameraMoments();
         createSea();
         createCrystals();
         createPipes();
         createLaserCannons();
         createLaserLevers();
+        createLeverSwitches();
+
+        configureOneWayPlatforms();
+
+        levelBase.viewport.reset();
 //        createLasers();
 //        createKeys();
 //        createDoors();

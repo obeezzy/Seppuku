@@ -6,7 +6,7 @@ import "../singletons"
 
 EntityBase {
     id: laserCannon
-    bodyType: Body.Static
+    bodyType: moving ? Body.Kinematic : Body.Static
     width: 98
     height: 37
     z: Utils.zLaser
@@ -30,14 +30,45 @@ EntityBase {
     property int fireInterval: 2000
     property int ceaseInterval: 1000
     property int startupDelay: 100
-    property int link: 0
-    property LaserLever lever: null
+    property int laserLink: 0
+    property int motionLink: 0
+    property real startY: 0
+    property real endY: 0
+    property point motionVelocity: Qt.point(0, 5)
+    readonly property bool moving: privateProperties.moving
+    property LaserLever laserLever: null
+    property LeverSwitch motionSwitch: null
 
     QtObject {
         id: privateProperties
 
-        property bool firing: lever != null && lever.position == "on"
+        property bool firing: (laserLever != null && laserLever.position == "on") || ceaseInterval == 0
+        property bool moving: startY > -1 && endY > -1
+        readonly property bool upperLimitReached: laserCannon.y <= laserCannon.endY
+        readonly property bool lowerLimitReached: laserCannon.y >= laserCannon.startY
+        property point lastLinearVelocity: Qt.point(0, 0)
         property real maxFraction: 1
+
+        function startMovement() {
+            laserCannon.linearVelocity = lastLinearVelocity;
+        }
+
+        function switchMovement() {
+            if (laserCannon.moving && motionSwitch == null || (laserCannon.moving && laserCannon.motionSwitch.position == "right")) {
+                if (upperLimitReached)
+                    laserCannon.linearVelocity = laserCannon.motionVelocity;
+                else if (lowerLimitReached)
+                    laserCannon.linearVelocity = Utils.invertPoint(laserCannon.motionVelocity);
+
+                lastLinearVelocity = laserCannon.linearVelocity;
+            }
+            else
+                stopMovement();
+        }
+
+        function stopMovement() {
+            laserCannon.linearVelocity = Qt.point(0, 0);
+        }
     }
 
     Image {
@@ -145,7 +176,7 @@ EntityBase {
     RayCast {
         id: sensorRay1
 
-        readonly property int multiplier: 8
+        readonly property int multiplier: 6
         readonly property int pXDiff: Math.abs(p2.x - p1.x)
         readonly property int pYDiff: Math.abs(p2.y - p1.y)
 
@@ -190,7 +221,7 @@ EntityBase {
                 sensorRay1.maxFraction = fraction;
                 privateProperties.maxFraction = Math.abs(fraction);
             }
-            else if(fixture.categories & Utils.kGround) {
+            else if(fixture.categories & Utils.kGround && fixture.type !== "one_way_platform") {
                 sensorRay1.maxFraction = fraction;
                 privateProperties.maxFraction = Math.abs(fraction);
             }
@@ -244,7 +275,7 @@ EntityBase {
                 if(!hero.dead)
                     hero.stun(laserCannon.sender);
             }
-            else if(fixture.categories & Utils.kGround) {
+            else if(fixture.categories & Utils.kGround && fixture.type !== "one_way_platform") {
             }
         }
 
@@ -267,7 +298,8 @@ EntityBase {
     }
 
     PausableTimer {
-        running: !Global.gameWindow.paused && lever == null
+        id: fireTimer
+        running: !Global.gameWindow.paused && laserCannon.laserLever == null && laserCannon.ceaseInterval != 0
         interval: laserCannon.startupDelay
         onTriggered: {
             if (privateProperties.firing)
@@ -279,6 +311,8 @@ EntityBase {
             start();
         }
     }
+
+    onYChanged: privateProperties.switchMovement();
 
     Image {
         id: laserCannonImage
@@ -389,7 +423,12 @@ EntityBase {
     }
 
     Connections {
-        target: lever
-        onPositionChanged: privateProperties.firing = lever.position == "on";
+        target: laserLever
+        onPositionChanged: privateProperties.firing = laserLever.position == "on";
+    }
+
+    Connections {
+        target: laserCannon.motionSwitch
+        onNewPosition: if (position == "right") privateProperties.startMovement();
     }
 }

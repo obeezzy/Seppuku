@@ -58,7 +58,6 @@ DISTFILES += \
     qml/entities/Key.qml \
     qml/entities/Gem.qml \
     qml/entities/MovingPlatform.qml \
-    qml/entities/Lever.qml \
     qml/entities/WoodenDoor.qml \
     qml/entities/DoorLock.qml \
     qml/entities/Sensor.qml \
@@ -103,7 +102,11 @@ DISTFILES += \
     qml/gui/QuestionSlate.qml \
     qml/entities/EntityBase.qml \
     qml/singletons/Stylesheet.qml \
-    qml/singletons/Utils.qml
+    qml/singletons/Utils.qml \
+    qml/entities/OneWayPlatform.qml \
+    qml/entities/LeverSwitch.qml \
+    qml/common/HeroCamera.qml \
+    qml/entities/CameraMoment.qml
 
 HEADERS += \
     src/seppuku.h

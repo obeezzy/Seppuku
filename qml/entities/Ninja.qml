@@ -92,6 +92,10 @@ EntityBase {
     readonly property bool inInfoRange: privateProperties.inInfoRange
     readonly property bool inLeverRange: privateProperties.inLeverRange
     readonly property bool inDoorRange: privateProperties.inDoorRange
+    readonly property bool inCameraMomentRange: privateProperties.inCameraMomentRange
+
+    readonly property real cameraMomentX: -1
+    readonly property real cameraMomentY: -1
 
     QtObject {
         id: privateProperties
@@ -161,6 +165,13 @@ EntityBase {
         // Am I in front of a door?
         property bool inDoorRange: false
 
+        // Are there fixed camera positions for this area?
+        property bool inCameraMomentRange: false
+
+        // Where should the camera be placed?
+        property real cameraMomentX: -1
+        property real cameraMomentY: -1
+
         // Box margins
         readonly property int leftBoxMargin: 3
         readonly property int rightBoxMargin: 9
@@ -198,7 +209,7 @@ EntityBase {
                 Utils.kGround | Utils.kWall | Utils.kCollectible |
                             Utils.kEnemy | Utils.kLadder | Utils.kCovert |
                             Utils.kObstacle | Utils.kInteractive | Utils.kHoverArea |
-                            Utils.kLava
+                            Utils.kLava | Utils.kCameraMoment
             }
 
             readonly property bool exposed: ninja.exposed
@@ -265,6 +276,11 @@ EntityBase {
                 else if(other.categories & Utils.kDoor) {
 
                 }
+                else if (other.categories & Utils.kCameraMoment) {
+                    privateProperties.inCameraMomentRange = true;
+                    privateProperties.cameraMomentX = other.cameraMomentX;
+                    privateProperties.cameraMomentY = other.cameraMomentY;
+                }
             }
 
             onEndContact: {
@@ -294,6 +310,12 @@ EntityBase {
                         privateProperties.inInfoRange = false;
                     else if(other.type === "lever")
                         privateProperties.inLeverRange = false;
+                }
+                else if (other.categories & Utils.kCameraMoment) {
+                    console.log("Hero: Camera moment gone!");
+                    privateProperties.inCameraMomentRange = false;
+                    privateProperties.cameraMomentX = -1;
+                    privateProperties.cameraMomentY = -1;
                 }
             }
         },
@@ -1238,6 +1260,21 @@ EntityBase {
             ninja.gravityScale = 1;
             privateProperties.healthStatus = 0;
             selfDestruct();
+        }
+    }
+
+    // Allow hero to pass through one-way platforms
+    Connections {
+        target: ninja.world
+        onPreSolve: {
+            if (contact.fixtureA.categories & Utils.kGround && contact.fixtureA.type === "one_way_platform") {
+                if (ninja.linearVelocity.y < 0)
+                    contact.enabled = false;
+
+            } else if (contact.fixtureB.categories & Utils.kGround && contact.fixtureB.type === "one_way_platform") {
+                if (ninja.linearVelocity.y < 0)
+                    contact.enabled = false;
+            }
         }
     }
 }

@@ -8,7 +8,6 @@ EntityBase {
     bodyType: Body.Dynamic
     width: 60
     height: 60
-    bullet: true
     sleepingAllowed: true
     sender: "ice_box"
     entityType: "iceBox"

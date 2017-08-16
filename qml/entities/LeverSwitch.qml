@@ -4,20 +4,21 @@ import Seppuku 1.0
 import "../singletons"
 
 EntityBase {
-    id: lever
+    id: leverSwitch
     width: 55
     height: 55
     sleepingAllowed: false
     bodyType: Body.Static
     z: Utils.zInteractive
+    entityType: "lever_switch"
 
     readonly property string type: "lever"
-    readonly property string fileLocation: Global.paths.images + "switches/"
-    readonly property string fileName: "switch_" + position + ".png"
+    readonly property string fileName: Global.paths.images + "switches/switch_" + position + ".png"
 
     property string position: "left"
     property bool inRange: false
-    property bool centerIgnored: true
+    property bool hasCenterPosition: false
+    property int motionLink: 0
 
     signal newPosition(string position)
 
@@ -27,16 +28,16 @@ EntityBase {
         sensor: true
         categories: Utils.kInteractive
 
-        readonly property string type: lever.type
+        readonly property string type: leverSwitch.type
 
         onBeginContact: {
             if(other.categories & Utils.kHero)
-                lever.inRange = true;
+                leverSwitch.inRange = true;
         }
 
         onEndContact: {
             if(other.categories & Utils.kHero)
-                lever.inRange = false;
+                leverSwitch.inRange = false;
         }
     }
 
@@ -47,12 +48,12 @@ EntityBase {
        border.width: 3
        width: parent.width
        height: width
-       visible: lever.inRange ? true : false
+       visible: leverSwitch.inRange ? true : false
        radius: width
 
        SequentialAnimation on scale {
            loops: Animation.Infinite
-           running: lever.inRange && !gameWindow.paused ? true : false
+           running: leverSwitch.inRange && !Global.gameWindow.paused ? true : false
            NumberAnimation { from: .1; to: 2; duration: 250 }
            NumberAnimation { from: 2; to: .1; duration: 250 }
        }
@@ -66,11 +67,11 @@ EntityBase {
     Connections {
         target: hero
         onUtilized: {
-            if(type == lever.type && lever.inRange) {
-                console.log("The lever got the signal.")
+            if(type == leverSwitch.type && leverSwitch.inRange) {
+                console.log("The leverSwitch got the signal.")
                 switch(position) {
                 case "left":
-                    position = centerIgnored ? "mid" : "right";
+                    position = leverSwitch.hasCenterPosition ? "mid" : "right";
                     break;
                 case "mid":
                     position = "right";
@@ -80,7 +81,7 @@ EntityBase {
                     break;
                 }
 
-                lever.positionChanged(position);
+                leverSwitch.newPosition(position);
             }
         }
     }

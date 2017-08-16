@@ -17,7 +17,7 @@ EntityBase {
     property string position: "off"
     property int duration: 0
     property bool mirror: false
-    property int link: 0
+    property int laserLink: 0
 
     readonly property string type: "lever"
     readonly property string fileLocation: Global.paths.images + "switches/"
@@ -39,7 +39,6 @@ EntityBase {
         readonly property bool mirror: laserLever.mirror
 
         onBeginContact: {
-            console.log("Type? ", other.type)
             if(other.categories & Utils.kHero)
                 privateProperties.inRange = true;
         }
