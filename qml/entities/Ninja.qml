@@ -945,7 +945,7 @@ EntityBase {
             ninja.linearVelocity = Qt.point(0, -5);
             sprite.animation = "hover";
             privateProperties.facingDown = false;
-            //privateProperties.collidingWithGround = false;
+            privateProperties.collidingWithGround = false;
             privateProperties.hovering = true;
             hoveringFreefallDelayTimer.stop();
         }
