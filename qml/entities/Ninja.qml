@@ -56,7 +56,6 @@ EntityBase {
     readonly property bool striking: privateProperties.striking
     readonly property bool running: privateProperties.running
     readonly property bool jumping: privateProperties.jumping
-    readonly property bool falling: privateProperties.falling
     readonly property bool clinging: privateProperties.clinging
     readonly property bool climbing: privateProperties.climbing
     readonly property bool hovering: privateProperties.hovering
@@ -120,7 +119,6 @@ EntityBase {
 
         property bool running: false
         property bool jumping: false
-        property bool falling: false
         property bool clinging: false
         property bool climbing: false
         property bool hovering: false
@@ -293,7 +291,7 @@ EntityBase {
                         ninja.gravityScale = 1;
                         privateProperties.clinging = false;
 
-                        if(!privateProperties.collidingWithGround)
+                        if(!privateProperties.collidingWithGround || ninja.isRising())
                             sprite.animation = "freefall";
                         else
                             sprite.animation = "idle";
@@ -365,7 +363,7 @@ EntityBase {
                 if(other.categories & Utils.kGroundTop) {
                     privateProperties.groundContactCount++;
 
-                    if(!ninja.sliding && !ninja.running && !ninja.hurting)
+                    if(!ninja.sliding && !ninja.running && !ninja.hurting && !ninja.isRising())
                         sprite.animation = "idle";
                 }
             }
@@ -878,6 +876,7 @@ EntityBase {
             return;
 
         jumpSound.play();
+        ninja.linearVelocity = Qt.point(0, 0);
         ninja.applyLinearImpulse(Qt.point(0, -ninja.getMass() * 9), ninja.getWorldCenter());
     }
 
@@ -990,7 +989,8 @@ EntityBase {
         sprite.animation = "slide";
 
         // Stop privateProperties.rightBoxMargin if he was moving before
-        linearVelocity.x = linearVelocity.x > 5 ? 0: linearVelocity.x;
+        //linearVelocity.x = linearVelocity.x > 5 ? 0: linearVelocity.x;
+        linearVelocity = Qt.point(0, 0);
         if(ninja.facingLeft)
             ninja.applyLinearImpulse(Qt.point(-ninja.getMass() * 10, 0), ninja.getWorldCenter());
         else
@@ -1247,6 +1247,14 @@ EntityBase {
         ninja.x = nextDoorLocation.x;
         ninja.y = nextDoorLocation.y;
         ninja.teleported();
+    }
+
+    function isRising() {
+        return ninja.linearVelocity.y < 0;
+    }
+
+    function isFalling() {
+        return ninja.linearVelocity.y > 0;
     }
 
     onDeadChanged: {
