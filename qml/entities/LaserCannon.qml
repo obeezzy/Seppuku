@@ -6,7 +6,7 @@ import "../singletons"
 
 EntityBase {
     id: laserCannon
-    bodyType: moving ? Body.Kinematic : Body.Static
+    bodyType: canMove ? Body.Kinematic : Body.Static
     width: 98
     height: 37
     z: Utils.zLaser
@@ -14,8 +14,8 @@ EntityBase {
     entityType: "laserCannon"
 
     fixtures: Box {
-        width: laserCannon.width
-        height: laserCannon.height
+        width: target.width
+        height: target.height
         density: .5
         categories: Utils.kGround | Utils.kGroundTop
     }
@@ -30,45 +30,48 @@ EntityBase {
     property int fireInterval: 2000
     property int ceaseInterval: 1000
     property int startupDelay: 100
-    property int laserLink: 0
-    property int motionLink: 0
-    property real startY: 0
-    property real endY: 0
     property point motionVelocity: Qt.point(0, 5)
-    readonly property bool moving: privateProperties.moving
+    property var limits: limits
+    readonly property bool moving: laserCannon.linearVelocity != Qt.point(0, 0)
+    readonly property bool canMove: limits.topY != 0 && limits.bottomY != 0
     property LaserLever laserLever: null
     property LeverSwitch motionSwitch: null
+
+    function startMovement() {
+        if (laserCannon.canMove && !laserCannon.moving)
+            laserCannon.linearVelocity = privateProperties.lastLinearVelocity;
+    }
+    function stopMovement() { laserCannon.linearVelocity = Qt.point(0, 0); }
 
     QtObject {
         id: privateProperties
 
         property bool firing: (laserLever != null && laserLever.position == "on") || ceaseInterval == 0
-        property bool moving: startY > -1 && endY > -1
-        readonly property bool upperLimitReached: laserCannon.y <= laserCannon.endY
-        readonly property bool lowerLimitReached: laserCannon.y >= laserCannon.startY
-        property point lastLinearVelocity: Qt.point(0, 0)
+        readonly property bool topLimitReached: laserCannon.y <= laserCannon.limits.topY
+        readonly property bool bottomLimitReached: laserCannon.y >= laserCannon.limits.bottomY
+        property point lastLinearVelocity: laserCannon.motionVelocity
         property real maxFraction: 1
 
-        function startMovement() {
-            laserCannon.linearVelocity = lastLinearVelocity;
-        }
-
         function switchMovement() {
-            if (laserCannon.moving && motionSwitch == null || (laserCannon.moving && laserCannon.motionSwitch.position == "right")) {
-                if (upperLimitReached)
+            if (laserCannon.canMove && motionSwitch == null || (laserCannon.canMove && laserCannon.motionSwitch.position == "right")) {
+
+                if (topLimitReached)
                     laserCannon.linearVelocity = laserCannon.motionVelocity;
-                else if (lowerLimitReached)
+                else if (bottomLimitReached)
                     laserCannon.linearVelocity = Utils.invertPoint(laserCannon.motionVelocity);
 
                 lastLinearVelocity = laserCannon.linearVelocity;
             }
-            else
-                stopMovement();
         }
+    }
 
-        function stopMovement() {
-            laserCannon.linearVelocity = Qt.point(0, 0);
-        }
+    QtObject {
+        id: limits
+
+        property real topY: 0
+        property real bottomY: 0
+        property real leftX: 0
+        property real rightX: 0
     }
 
     Image {
@@ -429,6 +432,13 @@ EntityBase {
 
     Connections {
         target: laserCannon.motionSwitch
-        onNewPosition: if (position == "right") privateProperties.startMovement();
+        onNewPosition: {
+            if (position == "right")
+                laserCannon.startMovement();
+            else
+                laserCannon.stopMovement();
+        }
     }
+
+    Component.onCompleted: laserCannon.startMovement();
 }

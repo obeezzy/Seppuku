@@ -30,6 +30,7 @@ WideSlate {
                     anchors.verticalCenter: parent.verticalCenter
                     focus: true
                     value: Global.settings.bgmVolume
+                    onValueChanged: Global.settings.bgmVolume = value;
 
                     Keys.onDownPressed: {
                         sfxSlider.focus = true;
@@ -50,6 +51,7 @@ WideSlate {
                     id: sfxSlider
                     anchors.verticalCenter: parent.verticalCenter
                     value: Global.settings.sfxVolume
+                    onValueChanged: Global.settings.sfxVolume = value;
 
                     Keys.onUpPressed: {
                         bgmSlider.focus = true;

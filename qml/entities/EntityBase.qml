@@ -8,4 +8,5 @@ PhysicsEntity {
     readonly property var tutor: scene.tutor
     property string sender: ""
     property string type: ""
+    property int objectId: -1
 }

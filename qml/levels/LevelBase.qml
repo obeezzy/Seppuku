@@ -567,6 +567,12 @@ TiledScene {
         },
 
         TiledLayer {
+            id: limitLayer
+            name: "Limits"
+            objects: TiledObject {}
+        },
+
+        TiledLayer {
             id: cameraMomentLayer
             name: "Camera Moments"
             objects: TiledObject {}
@@ -1152,18 +1158,14 @@ TiledScene {
                     cannon.y = object.y;
                     cannon.width = object.width;
                     cannon.height = object.height;
-                    cannon.objectName = object.getProperty("id");
+                    cannon.objectId = object.getProperty("id");
                     cannon.direction = object.getProperty("direction");
                     cannon.laserColor = object.getProperty("laser_color");
                     cannon.fireInterval = object.getProperty("fire_interval");
                     cannon.ceaseInterval = object.getProperty("cease_interval");
                     cannon.startupDelay = object.getProperty("startup_delay");
-                    cannon.startY = object.getProperty("startY", -1);
-                    cannon.endY = object.getProperty("endY", -1);
                     cannon.motionVelocity.x = object.getProperty("motion_velocity_x", 0);
                     cannon.motionVelocity.y= object.getProperty("motion_velocity_y", 0);
-                    cannon.laserLink = object.getProperty("laser_link", 0);
-                    cannon.motionLink = object.getProperty("motion_link", 0);
                 }
             }
         }
@@ -1190,8 +1192,8 @@ TiledScene {
                     lever.mirror = object.getProperty("mirror", "false") === "true";
                     lever.laserLink = object.getProperty("laser_link", 0);
 
-                    var cannon = entityManager.findEntity("laserCannon", "laserLink", lever.laserLink);
-                    if (cannon !== null && cannon.laserLink > 0)
+                    var cannon = entityManager.findEntity("laserCannon", "objectId", lever.laserLink);
+                    if (cannon !== null && cannon.objectId > -1)
                         cannon.laserLever = lever;
                 }
             }
@@ -1216,8 +1218,8 @@ TiledScene {
                     lever.position = object.getProperty("position", "left");
                     lever.motionLink = object.getProperty("motion_link", 0);
 
-                    var cannon = entityManager.findEntity("laserCannon", "motionLink", lever.motionLink);
-                    if (cannon !== null && cannon.motionLink > 0)
+                    var cannon = entityManager.findEntity("laserCannon", "objectId", lever.motionLink);
+                    if (cannon !== null && cannon.objectId > -1)
                         cannon.motionSwitch = lever;
                 }
             }
@@ -1235,6 +1237,36 @@ TiledScene {
                     var platform = object.collisions[object.index];
                     for (var j = 0; j < platform.body.fixtures.length; ++j) {
                         platform.body.fixtures[j].type = "one_way_platform";
+                    }
+                }
+            }
+        }
+    }
+
+    function createLimits() {
+        for (var i = 0; i < limitLayer.objects.length; ++i)
+        {
+            var object = limitLayer.objects[i];
+            while (object.next())
+            {
+                if (object.name === "")
+                {
+                    var limit = entityManager.createEntity("../entities/Limit.qml");
+                    limit.x = object.x;
+                    limit.y = object.y;
+                    limit.limitLink = object.getProperty("limit_link", 0);
+                    limit.limitEdge = object.getProperty("limit_edge", "bottom");
+
+                    var cannon = entityManager.findEntity("laserCannon", "objectId", limit.limitLink);
+                    if (cannon !== null && cannon.objectId > -1) {
+                        switch (limit.limitEdge) {
+                        case "top": cannon.limits.topY = limit.y; break;
+                        case "bottom": cannon.limits.bottomY = limit.y - cannon.height; break;
+                        case "left": cannon.limits.leftX = limit.x; break;
+                        case "right": cannon.limits.rightX = limit.x - cannon.width; break;
+                        }
+
+                        cannon.startMovement();
                     }
                 }
             }
@@ -1448,8 +1480,11 @@ TiledScene {
         createCrystals();
         createPipes();
         createLaserCannons();
+        // Must be created after cannons
         createLaserLevers();
         createLeverSwitches();
+        createLimits();
+        // End
 
         configureOneWayPlatforms();
 

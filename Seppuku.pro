@@ -106,7 +106,8 @@ DISTFILES += \
     qml/entities/OneWayPlatform.qml \
     qml/entities/LeverSwitch.qml \
     qml/common/HeroCamera.qml \
-    qml/entities/CameraMoment.qml
+    qml/entities/CameraMoment.qml \
+    qml/entities/Limit.qml
 
 HEADERS += \
     src/seppuku.h
