@@ -89,7 +89,6 @@ EntityBase {
                 properties.text = infoSign.hintText;
                 properties.messageVisible = true;
 
-
                 infoSign.infoRequested(properties);
 
                 if(infoSign.inRange)
@@ -113,7 +112,7 @@ EntityBase {
     onMessageDisplayed: if(!showing) tutorPlayer();
 
     function tutorPlayer() {
-        tutor.clearAll();
+        tutor.clear();
 
         for(var i = 0; i < tutorTextArray.length; ++i) {
             var text = tutorTextArray[i];
@@ -121,7 +120,5 @@ EntityBase {
 
             tutor.queueText(text, duration);
         }
-
-        tutor.startDisplay();
     }
 }

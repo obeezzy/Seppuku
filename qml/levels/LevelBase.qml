@@ -439,7 +439,10 @@ TiledScene {
         Component {
             id: infoPopup
 
-            InfoPopup { onDismissed: popupStack.clear(); }
+            InfoPopup {
+                onDismissed: popupStack.clear();
+                StackView.onRemoved: tutor.startDisplay();
+            }
         }
     }
 
@@ -1005,7 +1008,7 @@ TiledScene {
                     var sign = entityManager.createEntity("../entities/InfoSign.qml");
                     sign.x = object.x;
                     sign.y = object.y;
-                    sign.objectName = object.getProperty("id");
+                    sign.objectId = object.getProperty("id");
                     sign.hintText = object.getProperty("hint_text");
                     sign.infoRequested.connect(function(properties) { popupStack.push(infoPopup, properties); });
 
@@ -1484,6 +1487,7 @@ TiledScene {
         createLaserLevers();
         createLeverSwitches();
         createLimits();
+        createInfoSigns();
         // End
 
         configureOneWayPlatforms();
@@ -1492,7 +1496,6 @@ TiledScene {
 //        createLasers();
 //        createKeys();
 //        createDoors();
-        //createInfoSigns();
         //createNearFinishSigns();
         //createFinishSigns();
         //createCheckpointSigns();
@@ -1511,7 +1514,5 @@ TiledScene {
 //        //Delete
 //        createMachines();
     }
-
-    Component.onDestruction: entityManager.destroyAllEntities();
 }
 

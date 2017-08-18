@@ -6,9 +6,9 @@ import "../singletons"
 Rectangle {
     id: tutorText
     width: 500
-    height: bText.height + 10
+    height: timedText.height + 10
     color: "#cc0d66ff"
-    opacity: bText.opacity
+    opacity: timedText.opacity
 
     QtObject {
         id: privateProperties
@@ -16,34 +16,26 @@ Rectangle {
         property string text: ""
         property int displayDuration: 0
         property var textList: []
-        property bool paused: false
+        property var iconMap: {
+            "{up_arrow_key}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_up.png' width='30' height='30'>",
+            "{down_arrow_key}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_down.png' width='30' height='30'>",
+            "{left_arrow_key}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_left.png' width='30' height='30'>",
+            "{right_arrow_key}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_right.png' width='30' height='30'>",
+            "{a_button}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_up.png' width='30' height='30'>"
+        }
+
         property int messageCount: 0
 
-        function pause() {
-            paused = true;
-            //timer.stop()
-        }
-
-        function resume() {
-            paused = false;
-            //timer.start()
-        }
-
-        function setText(text, duration) {
+        function displayText(text, duration) {
             if(duration < 0 || duration === undefined)
                 duration = 3000;
 
-            if(bText.state == "HIDE_TEXT") {
-                privateProperties.text = text;
-                privateProperties.displayDuration = duration;
-                bText.state = "DISPLAY_TEXT";
-                timer.start();
-            }
-            else {
-                privateProperties.text = text;
-                privateProperties.displayDuration = duration;
-                timer.start();
-            }
+            privateProperties.text = text;
+            privateProperties.displayDuration = duration;
+            if (displayAnimation.running)
+                displayAnimation.restart();
+            else
+                displayAnimation.start();
         }
 
         function switchText() {
@@ -51,17 +43,13 @@ Rectangle {
             if(privateProperties.messageCount > 0)
                 privateProperties.messageCount--;
 
-            if(privateProperties.textList.length > 0) {
-                privateProperties.text = privateProperties.textList[0]["text"];
-                privateProperties.displayDuration = privateProperties.textList[0]["duration"];
-                bText.state = "DISPLAY_TEXT";
-                timer.start();
-            }
+            if(privateProperties.textList.length > 0)
+                privateProperties.displayText(textList[0]["text"], textList[0]["duration"]);
         }
     }
 
     Text {
-        id: bText
+        id: timedText
         anchors.centerIn: parent
         color: "white"
         font.pixelSize: 20
@@ -71,50 +59,40 @@ Rectangle {
         height: contentHeight
         horizontalAlignment: Qt.AlignHCenter
         verticalAlignment: Qt.AlignVCenter
-        state: "HIDE_TEXT"
         wrapMode: Text.WordWrap
 
-        states: [
-            State {
-                name: "DISPLAY_TEXT"
-                PropertyChanges {
-                    target: bText
-                    scale: 1
-                    opacity: 1
-                    rotation: 360
-                }
-            },
+        SequentialAnimation {
+            id: displayAnimation
 
-            State {
-                name: "HIDE_TEXT"
-                PropertyChanges {
-                    target: bText
-                    scale: 0
-                    opacity: 0
-                    rotation: 0
-                }
+            PropertyAction { target: timedText; property: "scale"; value: 0 }
+            PropertyAction { target: timedText; property: "opacity"; value: 0 }
+            PropertyAction { target: timedText; property: "rotation"; value: 0 }
+
+            ParallelAnimation {
+                NumberAnimation { target: timedText; properties: "scale, opacity"; to: 1; easing.type: Easing.InOutQuad; duration: 500 }
+                NumberAnimation { target: timedText; properties: "rotation"; to: 360; easing.type: Easing.InOutQuad; duration: 500 }
             }
-        ]
 
-        transitions: [
-            Transition {
-                enabled: true
+            PauseAnimation { duration: privateProperties.displayDuration }
 
-                NumberAnimation {
-                    properties: "scale, opacity, rotation"
-                    easing.type: Easing.InOutQuad
-                    duration: 500
-                }
+            ParallelAnimation {
+                NumberAnimation { target: timedText; properties: "scale, opacity"; to: 0; easing.type: Easing.InOutQuad; duration: 500 }
+                NumberAnimation { target: timedText; properties: "rotation"; to: 0; easing.type: Easing.InOutQuad; duration: 500 }
             }
-        ]
 
+            ScriptAction { script: privateProperties.switchText(); }
+        }
 
-        // When the text is fully hidden . . .
-        onScaleChanged: {
-            if(scale != 0)
-                return;
+        states: State {
+            name: "hidden"
+            when: !displayAnimation.running
 
-            privateProperties.switchText();
+            PropertyChanges {
+                target: timedText
+                scale: 0
+                opacity: 0
+                rotation: 0
+            }
         }
     }
 
@@ -143,32 +121,24 @@ Rectangle {
         }
     }
 
-    Timer {
-        id: timer
-        interval: privateProperties.displayDuration
-        repeat: false
-        running: false
-
-        onTriggered: {
-            if(tutorText.__paused) {
-                repeat = true
-                running = true
-            }
-            else {
-                repeat = false
-                bText.state = "HIDE_TEXT"
-            }
-        }
-    }
-
     function queueText(text, duration) {
         if(text.trim() === "")
             return;
-        if(duration < 0 || duration === undefined || duration == null)
+        if(duration < 0 || duration === undefined || duration === null)
             duration = 3000;
 
-        privateProperties.textList.push({text: text, duration: duration})
-        privateProperties.messageCount++
+        privateProperties.textList.push({ text: formatText(text), duration: duration });
+        privateProperties.messageCount++;
+    }
+
+    function formatText(text) {
+        var matches = text.match(/\{(.*?)\}/gi); // Match anything like this -> {example}
+
+        if (matches !== null)
+            for (var i = 0; i < matches.length; ++i)
+                text = text.replace(matches[i], privateProperties.iconMap[matches[i]]);
+
+        return text;
     }
 
     function startDisplay() {
@@ -176,28 +146,37 @@ Rectangle {
             return;
         if(privateProperties.textList[0]["text"] === undefined)
             return;
+        if (isQueueEmpty())
+            return;
 
         var text = privateProperties.textList[0]["text"];
         var duration = privateProperties.textList[0]["duration"];
-        privateProperties.setText(text, duration)
+        privateProperties.displayText(text, duration);
     }
 
-    function clearAll() {
-        privateProperties.textList = []
+    function clear() { privateProperties.textList = []; }
+
+    function stopAndClear() {
+        displayAnimation.stop();
+        clear();
     }
+
+    function isQueueEmpty() { return privateProperties.textList.length == 0; }
 
     Connections {
         target: Global.gameWindow
-
         onGameStateChanged: {
             switch(Global.gameWindow.gameState) {
-            case Bacon2D.Suspended:
             case Bacon2D.Paused:
-                privateProperties.pause();
-                break;
-            case Bacon2D.Running:
-                privateProperties.resume();
-                break;
+            case Bacon2D.Inactive:
+            case Bacon2D.Suspended:
+                if (displayAnimation.running)
+                    displayAnimation.pause();
+                break
+            default:
+                if (displayAnimation.paused)
+                    displayAnimation.resume();
+                break
             }
         }
     }

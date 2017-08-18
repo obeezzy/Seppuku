@@ -21,14 +21,15 @@ WideSlate {
             }
 
             font {
-                family: Global.hintFontFamily
+                family: Stylesheet.hintFontFamily
                 pixelSize: 21
             }
             color: "white"
             text: infoSlate.text
             wrapMode: Text.WordWrap
             style: Text.Outline;
-            styleColor: "#F0C961"
+            //styleColor: "#F0C961"
+            styleColor: "crimson"
         }
     }
 }

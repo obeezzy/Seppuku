@@ -46,7 +46,7 @@ EntityBase {
     readonly property bool facingDown: privateProperties.facingDown
 
     // Am I on the ground?
-    readonly property bool airborne: !collidingWithGround
+    readonly property bool airborne: !ninja.grounded
 
     readonly property real standingY: ninja.crouching ? ninja.y - 24 : y
     readonly property real standingHeight: 60
@@ -74,7 +74,7 @@ EntityBase {
     readonly property int totalGreenKeysCollected: privateProperties.totalGreenKeysCollected
 
     // Is the player on the ground
-    readonly property bool collidingWithGround: privateProperties.groundContactCount > 0 && !privateProperties.clinging
+    readonly property bool grounded: privateProperties.groundContactCount > 0 && !privateProperties.clinging
 
     readonly property bool inDisguiseRange: privateProperties.inDisguiseRange
     readonly property bool wearingDisguise: privateProperties.wearingDisguise
@@ -291,7 +291,7 @@ EntityBase {
                         ninja.gravityScale = 1;
                         privateProperties.clinging = false;
 
-                        if(!privateProperties.collidingWithGround || ninja.isRising())
+                        if(!ninja.grounded || ninja.isRising())
                             sprite.animation = "freefall";
                         else
                             sprite.animation = "idle";
@@ -831,7 +831,7 @@ EntityBase {
 
         if(ninja.clinging)
             return;
-        if(ninja.inHoverArea && !privateProperties.collidingWithGround)
+        if(ninja.inHoverArea && !ninja.grounded)
             return;
 
         if(!ninja.airborne && !ninja.hurting)
@@ -848,7 +848,7 @@ EntityBase {
 
         if(ninja.clinging)
             return;
-        if(ninja.inHoverArea && !privateProperties.collidingWithGround)
+        if(ninja.inHoverArea && !ninja.grounded)
             return;
 
         if(!ninja.airborne && !ninja.hurting)
@@ -893,7 +893,7 @@ EntityBase {
             return;
         if(ninja.clinging)
             return;
-        if(!privateProperties.collidingWithGround)
+        if(!ninja.grounded)
             return;
 
         if(ninja.wearingDisguise)
@@ -945,7 +945,7 @@ EntityBase {
             ninja.linearVelocity = Qt.point(0, -5);
             sprite.animation = "hover";
             privateProperties.facingDown = false;
-            privateProperties.collidingWithGround = false;
+            ninja.grounded = false;
             privateProperties.hovering = true;
             hoveringFreefallDelayTimer.stop();
         }

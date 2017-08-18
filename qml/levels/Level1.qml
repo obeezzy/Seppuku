@@ -17,8 +17,8 @@ LevelBase {
 //    }
 
     function displayInstructions() {
-        tutor.clearAll();
-        tutor.queueText("Level One: Here We Go", 3000);
+        tutor.clear();
+        tutor.queueText("Level One: The Way of The Samurai", 3000);
         tutor.queueText("Follow these instructions to survive!", 3000);
         tutor.startDisplay();
     }
