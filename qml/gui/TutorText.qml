@@ -21,7 +21,8 @@ Rectangle {
             "{down_arrow_key}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_down.png' width='30' height='30'>",
             "{left_arrow_key}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_left.png' width='30' height='30'>",
             "{right_arrow_key}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_right.png' width='30' height='30'>",
-            "{a_button}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_up.png' width='30' height='30'>"
+            "{a_button}": "<img src='" + Global.paths.images + "input/keyboard/key_arrow_up.png' width='30' height='30'>",
+            "{z_key}": "<img src='" + Global.paths.images + "input/keyboard/key_z.png' width='30' height='30'>"
         }
 
         property int messageCount: 0
