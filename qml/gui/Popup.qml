@@ -33,5 +33,7 @@ FocusScope {
         sourceComponent: popup.content
         onLoaded: item.forceActiveFocus();
     }
+
+    Keys.onPressed: event.accepted = true;
 }
 
