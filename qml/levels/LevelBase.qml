@@ -75,53 +75,43 @@ TiledScene {
 
     /**************************** INPUT HANDLING *************************************************************/
     // Key handling
+    Keys.enabled: !popupStack.enabled && !levelBase.gameOver && !Global.gameWindow.paused
     Keys.onPressed: {
-        if(popupStack.enabled || levelBase.gameOver) {
-            hero.stopAllActions();
-            return;
-        }
-
-        switch(event.key) {
+        switch (event.key) {
         case Qt.Key_Left:
-            hero.moveLeft();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("left", "press");
             break;
         case Qt.Key_Right:
-            hero.moveRight();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("right", "press");
             break;
         case Qt.Key_Up:
-            if(hero.clinging)
-                hero.climbUp();
-            else if(hero.inHoverArea)
-                hero.hover();
-            else if(!event.isAutoRepeat)
-                hero.jump();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("up", "press");
             break;
         case Qt.Key_Down:
-            if(hero.clinging)
-                hero.climbDown();
-            else if(!event.isAutoRepeat && hero.running)
-                hero.slide();
-            else
-                hero.crouch();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("down", "press");
             break;
         case Qt.Key_Space:
-            if(!event.isAutoRepeat)
-                hero.attack();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("attack", "press");
             break;
         case Qt.Key_Shift:
-            if(!event.isAutoRepeat)
-                hero.throwKunai();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("throw", "press");
             break;
         case Qt.Key_Z:
-            if(!event.isAutoRepeat)
-                hero.use();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("use", "press");
             break;
         case Qt.Key_F11:
-            if(!event.isAutoRepeat)
+            if (!event.isAutoRepeat)
                 Global.fullscreenEnabled = !Global.fullscreenEnabled;
             break;
         case Qt.Key_Escape:
-            if(!event.isAutoRepeat)
+            if (!event.isAutoRepeat)
                 levelBase.toggleLevelPause();
             break;
         }
@@ -130,35 +120,22 @@ TiledScene {
     }
 
     Keys.onReleased: {
-        if(popupStack.enabled) {
-            hero.stopAllActions();
-            return;
-        }
-
-        switch(event.key) {
+        switch (event.key) {
         case Qt.Key_Left:
-            if(!event.isAutoRepeat)
-                hero.stopMovingLeft();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("left", "release");
             break;
         case Qt.Key_Right:
-            if(!event.isAutoRepeat)
-                hero.stopMovingRight();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("right", "release");
             break;
         case Qt.Key_Up:
-            if(!event.isAutoRepeat) {
-                if(hero.inHoverArea)
-                    hero.stopHovering();
-                else if (hero.clinging)
-                    hero.stopClimbingUp();
-                else
-                    hero.endJump();
-            }
+            if (!event.isAutoRepeat)
+                hero.handleEvent("up", "release");
             break;
         case Qt.Key_Down:
-            if(!event.isAutoRepeat && hero.clinging)
-                hero.stopClimbingDown();
-            else if(!event.isAutoRepeat)
-                hero.stopCrouching();
+            if (!event.isAutoRepeat)
+                hero.handleEvent("down", "release");
             break;
         }
 

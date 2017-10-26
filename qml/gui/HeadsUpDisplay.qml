@@ -17,7 +17,7 @@ Item {
 
     // Hero properties
     readonly property real healthStatus: hero.healthStatus
-    readonly property bool hurting: hero.hurting
+    readonly property bool hurting: hero.actionState == "hurting"
     readonly property int totalCoins: hero.totalCoinsCollected
     readonly property int totalKunai: hero.totalKunaiCollected
     readonly property int totalBlueKeysCollected: hero.totalBlueKeysCollected
