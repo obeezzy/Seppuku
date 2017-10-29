@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
+import "../singletons"
 
 StackView {
     id: popupStack
@@ -8,6 +9,7 @@ StackView {
 
     enabled: visible
     visible: depth != 0
+    z: Utils.zPopup
 
     pushEnter: null
     pushExit: null

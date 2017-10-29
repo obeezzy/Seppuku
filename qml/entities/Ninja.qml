@@ -12,6 +12,7 @@ EntityBase {
     sleepingAllowed: false
     fixedRotation: true
     bullet: true
+    z: ninja.wearingDisguise ? Utils.zHeroDisguised : Utils.zHero
 
     signal selfDestruct
     signal disguised(bool putOn)
@@ -1221,7 +1222,6 @@ EntityBase {
     }
 
     function attack() {
-        console.log("Heool, state? ", privateProperties.actionState);
         if(ninja.inHoverArea)
             return;
         switch (privateProperties.actionState) {
@@ -1333,8 +1333,10 @@ EntityBase {
 
         if (privateProperties.healthStatus > 0)
             privateProperties.actionState = "hurting";
-        else
+        else {
             privateProperties.actionState = "dying";
+            ninja.gravityScale = 1;
+        }
         ninja.linearVelocity = Qt.point(0, 0);
     }
 

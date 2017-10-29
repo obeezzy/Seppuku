@@ -34,17 +34,13 @@ Item {
     }
 
     readonly property Settings settings: Settings {
-        id: settings
-
         readonly property int levelCount: 1
         property int highScore: 0
         property bool noSound: false
         property real sfxVolume: .4
         property real bgmVolume: .4
         property int currentLevel: 0
-        property var checkpointState: {
-            "level": 0, "pos": Qt.point(-1, -1)
-        }
+        property var checkpointState: { "level": 0, "pos": Qt.point(-1, -1) }
     }
 
     property var gameWindow: undefined

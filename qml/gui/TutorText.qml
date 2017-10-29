@@ -7,6 +7,7 @@ Rectangle {
     id: tutorText
     width: 500
     height: timedText.height + 10
+    z: Utils.zTutor
     color: "#cc0d66ff"
     opacity: timedText.opacity
 

@@ -114,7 +114,7 @@ Item {
     }
 
     function stopTimer() {
-        if (privateProperties.elaspedTime == null)
+        if (privateProperties.elaspedTime === null)
             return;
 
         var elasped = new Date().getTime() - privateProperties.elaspedTime;

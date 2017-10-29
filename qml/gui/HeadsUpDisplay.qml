@@ -8,9 +8,9 @@ import "../entities"
 
 Item {
     id: headsUpDisplay
-    width: 100
-    height: 66
-    z: 1
+    implicitWidth: 100
+    implicitHeight: 60
+    z: Utils.zHUD
 
     readonly property Scene scene: parent
     readonly property Ninja hero: parent.hero

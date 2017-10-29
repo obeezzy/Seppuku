@@ -47,7 +47,6 @@ TiledScene {
         id: hero
         x: heroInitPos.x
         y: heroInitPos.y
-        z: hero.wearingDisguise ? Utils.zHeroDisguised : Utils.zHero
 
         onSelfDestruct: terminateLevel();
     }
@@ -58,8 +57,6 @@ TiledScene {
         x: viewport.xOffset + 6
         y: viewport.yOffset + 6
         width: viewport.width
-        height: 60
-        z: Utils.zHUD
     }
 
     TutorText {
@@ -67,7 +64,6 @@ TiledScene {
         x: viewport.xOffset
         y: hud.y + hud.height + 24
         width: viewport.width
-        z: Utils.zTutor
     }
 
     /***************************** END HEADS-UP DISPLAY *********************************************************/
@@ -77,66 +73,57 @@ TiledScene {
     // Key handling
     Keys.enabled: !popupStack.enabled && !levelBase.gameOver && !Global.gameWindow.paused
     Keys.onPressed: {
-        switch (event.key) {
-        case Qt.Key_Left:
-            if (!event.isAutoRepeat)
+        if (!event.isAutoRepeat) {
+            switch (event.key) {
+            case Qt.Key_Left:
                 hero.handleEvent("left", "press");
-            break;
-        case Qt.Key_Right:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Right:
                 hero.handleEvent("right", "press");
-            break;
-        case Qt.Key_Up:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Up:
                 hero.handleEvent("up", "press");
-            break;
-        case Qt.Key_Down:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Down:
                 hero.handleEvent("down", "press");
-            break;
-        case Qt.Key_Space:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Space:
                 hero.handleEvent("attack", "press");
-            break;
-        case Qt.Key_Shift:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Shift:
                 hero.handleEvent("throw", "press");
-            break;
-        case Qt.Key_Z:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Z:
                 hero.handleEvent("use", "press");
-            break;
-        case Qt.Key_F11:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_F11:
                 Global.fullscreenEnabled = !Global.fullscreenEnabled;
-            break;
-        case Qt.Key_Escape:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Escape:
                 levelBase.toggleLevelPause();
-            break;
+                break;
+            }
         }
 
         event.accepted = true;
     }
 
     Keys.onReleased: {
-        switch (event.key) {
-        case Qt.Key_Left:
-            if (!event.isAutoRepeat)
+        if (!event.isAutoRepeat) {
+            switch (event.key) {
+            case Qt.Key_Left:
                 hero.handleEvent("left", "release");
-            break;
-        case Qt.Key_Right:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Right:
                 hero.handleEvent("right", "release");
-            break;
-        case Qt.Key_Up:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Up:
                 hero.handleEvent("up", "release");
-            break;
-        case Qt.Key_Down:
-            if (!event.isAutoRepeat)
+                break;
+            case Qt.Key_Down:
                 hero.handleEvent("down", "release");
-            break;
+                break;
+            }
         }
 
         event.accepted = true;
@@ -157,7 +144,7 @@ TiledScene {
     /*************************************** END INPUT HANDLING ***********************************************/
 
     /************************* VIEWPORT POSITIONING **************************************/
-    property int positionDelta: 120
+    readonly property int positionDelta: 120
     MouseArea {
         id: topArea
         x: viewport.xOffset
@@ -357,7 +344,6 @@ TiledScene {
         y: viewport.yOffset
         width: viewport.width
         height: viewport.height
-        z: Utils.zPopup
 
         onEnabledChanged: {
             if (enabled)
