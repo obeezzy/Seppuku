@@ -17,6 +17,7 @@ WideSlate {
                 top: parent.top
                 left: parent.left
                 right: parent.right
+                bottom: dismissText.top
                 topMargin: 7
             }
 
@@ -30,6 +31,27 @@ WideSlate {
             style: Text.Outline;
             //styleColor: "#F0C961"
             styleColor: "crimson"
+            verticalAlignment: Qt.AlignVCenter
+            horizontalAlignment: Qt.AlignHCenter
+        }
+
+        Text {
+            id: dismissText
+            anchors {
+                left: parent.left
+                right: parent.right
+                bottom: parent.bottom
+            }
+
+            font {
+                family: Stylesheet.casualFontFamily
+                pixelSize: 16
+                bold: true
+            }
+
+            color: "crimson"
+            horizontalAlignment: Qt.AlignRight
+            text: qsTr("Press \"Z\" to dismiss.")
         }
     }
 }

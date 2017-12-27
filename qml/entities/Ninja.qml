@@ -162,7 +162,7 @@ EntityBase {
     fixtures: [
         Box {
             id: mainBody
-            friction: 0
+            friction: .001
             density: .4
             restitution: 0
 
@@ -425,7 +425,7 @@ EntityBase {
             sprite.animation = "idle";
             break;
         default:
-            console.warn("Unhandle action state, defaulting to idle...");
+            console.warn("Unhandled action state, defaulting to idle...");
             sprite.animation = "idle";
             break;
         }

@@ -107,7 +107,8 @@ DISTFILES += \
     qml/entities/LeverSwitch.qml \
     qml/common/HeroCamera.qml \
     qml/entities/CameraMoment.qml \
-    qml/entities/Limit.qml
+    qml/entities/Limit.qml \
+    qml/gui/HelperBalloon.qml
 
 HEADERS += \
     src/seppuku.h

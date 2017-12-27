@@ -12,7 +12,7 @@ import "../entities"
 TiledScene {
     id: levelBase
     physics: true
-    debug: true
+    debug: false
     pixelsPerMeter: 33
     gravity: Qt.point(0, 9.8);
 
@@ -101,6 +101,9 @@ TiledScene {
                 break;
             case Qt.Key_Escape:
                 levelBase.toggleLevelPause();
+                break;
+            case Qt.Key_D:
+                levelBase.debug = !levelBase.debug;
                 break;
             }
         }
@@ -964,6 +967,8 @@ TiledScene {
         for(var i = 0; i < infoSignLayer.objects.length; ++i)
         {
             var object = infoSignLayer.objects[i];
+            var isFirstTime = false;
+
             while(object.next())
             {
                 if(object.name === "")
@@ -974,6 +979,8 @@ TiledScene {
                     sign.objectId = object.getProperty("id");
                     sign.hintText = object.getProperty("hint_text");
                     sign.infoRequested.connect(function(properties) { popupStack.push(infoPopup, properties); });
+                    sign.balloonVisible = !isFirstTime;
+                    isFirstTime = true;
 
                     sign.tutorTextArray = object.getProperty("tutor_text").toString().split("; ");
                     sign.tutorDurationArray = object.getProperty("tutor_duration").toString().split("; ");
