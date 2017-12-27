@@ -15,6 +15,7 @@ EntityBase {
     property bool messageVisible: false
     property variant infoBox: null
     property string hintText: ""
+    property bool balloonVisible: false
 
     property var tutorTextArray: []
     property var tutorDurationArray: []
@@ -74,6 +75,17 @@ EntityBase {
            NumberAnimation { from: .1; to: 2; duration: 250 }
            NumberAnimation { from: 2; to: .1; duration: 250 }
        }
+    }
+
+    Loader {
+        active: infoSign.balloonVisible
+        anchors {
+            bottom: parent.top
+            horizontalCenter: parent.horizontalCenter
+            bottomMargin: 10
+        }
+
+        sourceComponent: HelperBalloon { text: qsTr("Press \"Z\" to view message when in range.") }
     }
 
     Connections {

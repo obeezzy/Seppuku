@@ -11,12 +11,18 @@ Item {
     readonly property string tutorFontFamily: tutorFontLoader.name
     readonly property string iconFontFamily: iconFontLoader.name
     readonly property string splashFontFamily: splashFontLoader.name
+    readonly property string casualFontFamily: casualFontLoader.name
     readonly property var icons: icons
 
     /*************** FONT LOADERS ****************************/
     FontLoader {
         id: defaultFontLoader
         source: fontLocation + "matura/MATURASC.TTF"
+    }
+
+    FontLoader {
+        id: casualFontLoader
+        source: fontLocation + "hanken/Hanken-Light.ttf"
     }
 
     FontLoader {

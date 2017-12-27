@@ -47,10 +47,10 @@ FocusScope {
                 left: parent.left
                 right: parent.right
                 bottom: parent.bottom
-                topMargin: 80
+                topMargin: 60
                 bottomMargin: 60
-                leftMargin: 40
-                rightMargin: 40
+                leftMargin: 30
+                rightMargin: 50
             }
 
             sourceComponent: wideSlate.content
