@@ -6,7 +6,7 @@ import "../singletons"
 
 EntityBase {
     id: laserCannon
-    bodyType: canMove ? Body.Kinematic : Body.Static
+    bodyType: Body.Static
     width: 98
     height: 37
     z: Utils.zLaser
@@ -20,58 +20,25 @@ EntityBase {
         categories: Utils.kGround | Utils.kGroundTop
     }
 
-    readonly property int laserWidth: (direction == "left" || direction == "right") ? sensorRay1.pXDiff * privateProperties.maxFraction : laserCannon.width
-    readonly property int laserHeight: (direction == "up" || direction == "down") ? sensorRay1.pYDiff * privateProperties.maxFraction: laserCannon.height
+    readonly property int laserWidth: (direction == "left" || direction == "right") ? laserRay.pXDiff * privateProperties.maxFraction : laserCannon.width
+    readonly property int laserHeight: (direction == "up" || direction == "down") ? laserRay.pYDiff * privateProperties.maxFraction: laserCannon.height
     readonly property int rayMargin: 4
     readonly property bool firing: privateProperties.firing
 
+    property alias imageSource: laserCannonImage.source
+    property alias imageRotation: laserCannonImage.rotation
     property string direction: "right";
     property string laserColor: "red"
     property int fireInterval: 2000
     property int ceaseInterval: 1000
     property int startupDelay: 100
-    property point motionVelocity: Qt.point(0, 5)
-    property var limits: limits
-    readonly property bool moving: laserCannon.linearVelocity != Qt.point(0, 0)
-    readonly property bool canMove: limits.topY != 0 && limits.bottomY != 0
     property LaserLever laserLever: null
-    property LeverSwitch motionSwitch: null
-
-    function startMovement() {
-        if (laserCannon.canMove && !laserCannon.moving)
-            laserCannon.linearVelocity = privateProperties.lastLinearVelocity;
-    }
-    function stopMovement() { laserCannon.linearVelocity = Qt.point(0, 0); }
 
     QtObject {
         id: privateProperties
 
         property bool firing: (laserLever != null && laserLever.position == "on") || ceaseInterval == 0
-        readonly property bool topLimitReached: laserCannon.y <= laserCannon.limits.topY
-        readonly property bool bottomLimitReached: laserCannon.y >= laserCannon.limits.bottomY
-        property point lastLinearVelocity: laserCannon.motionVelocity
         property real maxFraction: 1
-
-        function switchMovement() {
-            if (laserCannon.canMove && motionSwitch == null || (laserCannon.canMove && laserCannon.motionSwitch.position == "right")) {
-
-                if (topLimitReached)
-                    laserCannon.linearVelocity = laserCannon.motionVelocity;
-                else if (bottomLimitReached)
-                    laserCannon.linearVelocity = Utils.invertPoint(laserCannon.motionVelocity);
-
-                lastLinearVelocity = laserCannon.linearVelocity;
-            }
-        }
-    }
-
-    QtObject {
-        id: limits
-
-        property real topY: 0
-        property real bottomY: 0
-        property real leftX: 0
-        property real rightX: 0
     }
 
     Image {
@@ -177,11 +144,13 @@ EntityBase {
     }
 
     RayCast {
-        id: sensorRay1
+        id: laserRay
 
         readonly property int multiplier: 6
         readonly property int pXDiff: Math.abs(p2.x - p1.x)
         readonly property int pYDiff: Math.abs(p2.y - p1.y)
+        property real closestFraction: 1
+        property string closestEntity: ""
 
         property point p1: {
             switch(direction) {
@@ -217,86 +186,44 @@ EntityBase {
         }
 
         onFixtureReported: {
-            if (fixture.categories & Utils.kHero && fixture.type === "main_body") {
-                if(!hero.dead)
-                    hero.stun(laserCannon.sender);
+            if((fixture.categories & Utils.kGround) && fixture.type !== "one_way_platform") {
+                if (closestFraction > fraction) {
+                    closestFraction = fraction;
+                    closestEntity = "ground";
+                }
 
-                sensorRay1.maxFraction = fraction;
+                laserRay.maxFraction = fraction;
+                privateProperties.maxFraction = Math.abs(fraction);
+            } else if ((fixture.categories & Utils.kHero) && fixture.type === "main_body") {
+                if (closestFraction > fraction) {
+                    closestFraction = fraction;
+                    closestEntity = "hero";
+                }
+
+                laserRay.maxFraction = fraction;
                 privateProperties.maxFraction = Math.abs(fraction);
             }
-            else if(fixture.categories & Utils.kGround && fixture.type !== "one_way_platform") {
-                sensorRay1.maxFraction = fraction;
-                privateProperties.maxFraction = Math.abs(fraction);
-            }
         }
 
-        function cast() { scene.rayCast(this, p1, p2); }
-    }
+        function cast() {
+            // If hero is detected first by the laser, then stun hero.
+            if(closestEntity === "hero" && !hero.dead)
+                hero.stun(laserCannon.sender);
 
-    RayCast {
-        id: sensorRay2
-
-        readonly property int multiplier: 6
-        readonly property int pXDiff: Math.abs(p2.x - p1.x)
-        readonly property int pYDiff: Math.abs(p2.y - p1.y)
-
-        property point p1: {
-            switch(direction) {
-            case "up":
-                Qt.point(laserCannon.x + laserCannon.width / 2 - rayMargin, laserCannon.y);
-                break;
-            case "down":
-                Qt.point(laserCannon.x + laserCannon.width / 2 + rayMargin, laserCannon.y + laserCannon.height);
-                break;
-            case "left":
-                Qt.point(laserCannon.x, laserCannon.y + laserCannon.height / 2 + rayMargin);
-                break;
-            default: // right
-                Qt.point(laserCannon.x + laserCannon.width, laserCannon.y + laserCannon.height / 2 + rayMargin);
-                break;
-            }
-        }
-        property point p2: {
-            switch(direction) {
-            case "up":
-                Qt.point(p1.x, laserCannon.y - laserCannon.height * multiplier);
-                break;
-            case "down":
-                Qt.point(p1.x, laserCannon.y + laserCannon.height * multiplier)
-                break;
-            case "left":
-                Qt.point(laserCannon.x - laserCannon.width * multiplier, p1.y);
-                break;
-            default:
-                Qt.point(laserCannon.x + laserCannon.width + laserCannon.width * multiplier, p1.y);
-                break;
-            }
-        }
-
-        onFixtureReported: {
-            if (fixture.categories & Utils.kHero && fixture.type === "main_body") {
-                if(!hero.dead)
-                    hero.stun(laserCannon.sender);
-            }
-            else if(fixture.categories & Utils.kGround && fixture.type !== "one_way_platform") {
-            }
-        }
-
-        function cast() { scene.rayCast(this, p1, p2); }
+            closestFraction = 1;
+            closestEntity = "";
+            scene.rayCast(this, p1, p2); }
     }
 
     Timer {
-        id: rayTimer
+        id: laserRayTimer
         running: !Global.gameWindow.paused
         repeat: true
         interval: 50
 
         onTriggered: {
             if(privateProperties.firing)
-            {
-                sensorRay1.cast();
-                //sensorRay2.cast();
-            }
+                laserRay.cast();
         }
     }
 
@@ -314,8 +241,6 @@ EntityBase {
             start();
         }
     }
-
-    onYChanged: privateProperties.switchMovement();
 
     Image {
         id: laserCannonImage
@@ -341,6 +266,7 @@ EntityBase {
     Image {
         id: hitImage
         opacity: privateProperties.firing ? 1 : 0
+        visible: opacity > 0
         z: laser.z + 1
         x: {
             switch(direction) {
@@ -429,16 +355,4 @@ EntityBase {
         target: laserLever
         onPositionChanged: privateProperties.firing = laserLever.position == "on";
     }
-
-    Connections {
-        target: laserCannon.motionSwitch
-        onNewPosition: {
-            if (position == "right")
-                laserCannon.startMovement();
-            else
-                laserCannon.stopMovement();
-        }
-    }
-
-    Component.onCompleted: laserCannon.startMovement();
 }
