@@ -146,7 +146,7 @@ EntityBase {
     RayCast {
         id: laserRay
 
-        readonly property int multiplier: 6
+        readonly property int multiplier: 16
         readonly property int pXDiff: Math.abs(p2.x - p1.x)
         readonly property int pYDiff: Math.abs(p2.y - p1.y)
         property real closestFraction: 1

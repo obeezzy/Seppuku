@@ -321,7 +321,7 @@ TiledScene {
                 bgm.pause();
                 break;
             default:
-                bgm.play();
+                levelBase.handleResume();
             }
         }
     }
@@ -735,7 +735,12 @@ TiledScene {
                 cameraMoment.y = object.y;
                 cameraMoment.width = object.width;
                 cameraMoment.height = object.height;
-                cameraMoment.lockEdge = object.getProperty("lock_edge");
+                cameraMoment.lockedX = object.getProperty("locked_x", true);
+                cameraMoment.lockedY = object.getProperty("locked_y", true);
+                cameraMoment.lockedMinX = object.getProperty("locked_min_x", false);
+                cameraMoment.lockedMaxX = object.getProperty("locked_max_x", false);
+                cameraMoment.lockedMinY = object.getProperty("locked_min_y", false);
+                cameraMoment.lockedMaxY = object.getProperty("locked_max_y", false);
             }
         }
     }
@@ -1022,7 +1027,7 @@ TiledScene {
             {
                 if(object.name === "")
                 {
-                    sign = entityManager.createEntity("../entities/FinishSign.qml");
+                    var sign = entityManager.createEntity("../entities/FinishSign.qml");
                     sign.x = object.x;
                     sign.y = object.y;
                     sign.width = object.width;
@@ -1490,6 +1495,7 @@ TiledScene {
         createLeverSwitches();
         createLimits();
         createInfoSigns();
+        createFinishSigns();
         // End
 
         configureOneWayPlatforms();

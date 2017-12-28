@@ -73,8 +73,7 @@ EntityBase {
     readonly property bool inDoorRange: privateProperties.inDoorRange
     readonly property bool inCameraMomentRange: privateProperties.inCameraMomentRange
 
-    readonly property real cameraMomentX: -1
-    readonly property real cameraMomentY: -1
+    readonly property var cameraMoment: privateProperties.cameraMoment
 
     QtObject {
         id: privateProperties
@@ -134,8 +133,7 @@ EntityBase {
         property bool inCameraMomentRange: false
 
         // Where should the camera be placed?
-        property real cameraMomentX: -1
-        property real cameraMomentY: -1
+        property var cameraMoment: null
 
         // Box margins
         readonly property int leftBoxMargin: 3
@@ -246,9 +244,8 @@ EntityBase {
 
                 }
                 else if (other.categories & Utils.kCameraMoment) {
+                    privateProperties.cameraMoment = other.cameraMoment;
                     privateProperties.inCameraMomentRange = true;
-                    privateProperties.cameraMomentX = other.cameraMomentX;
-                    privateProperties.cameraMomentY = other.cameraMomentY;
                 }
             }
 
@@ -294,8 +291,7 @@ EntityBase {
                 else if (other.categories & Utils.kCameraMoment) {
                     console.log("Hero: Camera moment gone!");
                     privateProperties.inCameraMomentRange = false;
-                    privateProperties.cameraMomentX = -1;
-                    privateProperties.cameraMomentY = -1;
+                    privateProperties.cameraMoment = null;
                 }
             }
         },
