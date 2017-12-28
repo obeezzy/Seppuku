@@ -12,7 +12,12 @@ EntityBase {
     sender: "camera_moment"
     entityType: "cameraMoment"
 
-    property string lockEdge: "bottom"
+    property bool lockedX: true
+    property bool lockedY: true
+    property bool lockedMinX: false
+    property bool lockedMaxX: false
+    property bool lockedMinY: false
+    property bool lockedMaxY: false
 
     fixtures: Box {
         width: target.width
@@ -21,23 +26,13 @@ EntityBase {
         categories: Utils.kCameraMoment
 
         readonly property string type: "camera_moment"
-        readonly property real cameraMomentX: {
-            switch (cameraMoment.lockEdge) {
-            default:
-                cameraMoment.x;
-                break;
-            }
+        readonly property var cameraMoment: {
+            "x": cameraMoment.lockedX ? cameraMoment.x : -1,
+            "y": cameraMoment.lockedY ? cameraMoment.y : -1,
+            "min_x": cameraMoment.lockedMinX ? cameraMoment.x : -1,
+            "max_x": cameraMoment.lockedMaxX ? cameraMoment.x + cameraMoment.width : -1,
+            "min_y": cameraMoment.lockedMinY ? cameraMoment.y : -1,
+            "max_y": cameraMoment.lockedMaxY ? cameraMoment.y + cameraMoment.height : -1
         }
-        readonly property real cameraMomentY: {
-            switch (cameraMoment.lockEdge) {
-            case "bottom":
-                cameraMoment.y + cameraMoment.height;
-                break;
-            default:
-                -1;
-                break;
-            }
-        }
-        readonly property string lockEdge: cameraMoment.lockEdge
     }
 }
