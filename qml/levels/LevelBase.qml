@@ -566,6 +566,12 @@ TiledScene {
         },
 
         TiledLayer {
+            id: movingLaserCannonLayer
+            name: "Moving Laser Cannons"
+            objects: TiledObject {}
+        },
+
+        TiledLayer {
             id: laserLeverLayer
             name: "Laser Levers"
             objects: TiledObject {}
@@ -1118,7 +1124,7 @@ TiledScene {
     }
 
     function createLaserCannons() {
-        // Create laser cannons and link levers to them
+        // Create laser cannons
         for(var i = 0; i < laserCannonLayer.objects.length; ++i)
         {
             var object = laserCannonLayer.objects[i];
@@ -1137,6 +1143,31 @@ TiledScene {
                     cannon.fireInterval = object.getProperty("fire_interval");
                     cannon.ceaseInterval = object.getProperty("cease_interval");
                     cannon.startupDelay = object.getProperty("startup_delay");
+                }
+            }
+        }
+    }
+
+    function createMovingLaserCannons() {
+        // Create moving laser cannons
+        for(var i = 0; i < movingLaserCannonLayer.objects.length; ++i)
+        {
+            var object = movingLaserCannonLayer.objects[i];
+            while(object.next())
+            {
+                if(object.name === "")
+                {
+                    var cannon = entityManager.createEntity("../entities/MovingLaserCannon.qml");
+                    cannon.x = object.x;
+                    cannon.y = object.y;
+                    cannon.width = object.width;
+                    cannon.height = object.height;
+                    cannon.objectId = object.getProperty("id");
+                    cannon.direction = object.getProperty("direction");
+                    cannon.laserColor = object.getProperty("laser_color");
+                    cannon.fireInterval = object.getProperty("fire_interval");
+                    cannon.ceaseInterval = object.getProperty("cease_interval");
+                    cannon.startupDelay = object.getProperty("startup_delay");
                     cannon.motionVelocity.x = object.getProperty("motion_velocity_x", 0);
                     cannon.motionVelocity.y= object.getProperty("motion_velocity_y", 0);
                 }
@@ -1145,7 +1176,7 @@ TiledScene {
     }
 
     function createLaserLevers() {
-        // Create laser cannons and link levers to them
+        // Create and link levers to laser cannons
         for(var i = 0; i < laserLeverLayer.objects.length; ++i)
         {
             var object = laserLeverLayer.objects[i];
@@ -1166,7 +1197,7 @@ TiledScene {
                     lever.laserLink = object.getProperty("laser_link", 0);
 
                     var cannon = entityManager.findEntity("laserCannon", "objectId", lever.laserLink);
-                    if (cannon !== null && cannon.objectId > -1)
+                    if (cannon !== null && cannon.objectId > -1 && Object(cannon).hasOwnProperty("laserLever"))
                         cannon.laserLever = lever;
                 }
             }
@@ -1192,7 +1223,7 @@ TiledScene {
                     lever.motionLink = object.getProperty("motion_link", 0);
 
                     var cannon = entityManager.findEntity("laserCannon", "objectId", lever.motionLink);
-                    if (cannon !== null && cannon.objectId > -1)
+                    if (cannon !== null && cannon.objectId > -1 && Object(cannon).hasOwnProperty("motionSwitch"))
                         cannon.motionSwitch = lever;
                 }
             }
@@ -1231,7 +1262,7 @@ TiledScene {
                     limit.limitEdge = object.getProperty("limit_edge", "bottom");
 
                     var cannon = entityManager.findEntity("laserCannon", "objectId", limit.limitLink);
-                    if (cannon !== null && cannon.objectId > -1) {
+                    if (cannon !== null && cannon.objectId > -1 && Object(cannon).hasOwnProperty("limits")) {
                         switch (limit.limitEdge) {
                         case "top": cannon.limits.topY = limit.y; break;
                         case "bottom": cannon.limits.bottomY = limit.y - cannon.height; break;
@@ -1453,6 +1484,7 @@ TiledScene {
         createCrystals();
         createPipes();
         createLaserCannons();
+        createMovingLaserCannons();
         // Must be created after cannons
         createLaserLevers();
         createLeverSwitches();
