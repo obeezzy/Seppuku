@@ -28,10 +28,7 @@ TiledScene {
     property int level: 0
     property string levelTitle: ""
 
-    readonly property point heroInitPos: Qt.point(heroPosition.x, heroPosition.y)
-    //    heroInitPos: {
-    //        Global.settings.checkpointState.level === 0 ? Qt.point(heroPosition.x, heroPosition.y) : Global.settings.checkpointState.pos
-    //    }
+    readonly property point heroInitPos: Global.checkpointAvailable ? Global.checkpoint.pos : Qt.point(heroPosition.x, heroPosition.y)
     property alias musicSource: bgm.source
     property bool gameOver: false
 
@@ -47,6 +44,7 @@ TiledScene {
         id: hero
         x: heroInitPos.x
         y: heroInitPos.y
+        faceForward: Global.checkpointAvailable ? Global.checkpoint.face_forward : heroPosition.getProperty("face_forward", true)
 
         onSelfDestruct: terminateLevel();
     }
@@ -236,7 +234,9 @@ TiledScene {
 
     function playNextLevel() { Global.gameWindow.playNextLevel(); }
 
-    function restartLevel() { Global.gameWindow.restartLevel(); }
+    function resumeFromCheckpoint() { Global.gameWindow.restartLevel(); }
+
+    function restartLevel() { Global.checkpoint = null; Global.gameWindow.restartLevel(); }
 
     function returnToMainMenu() { Global.gameWindow.returnToMainMenu(); }
 
@@ -396,6 +396,7 @@ TiledScene {
 
                 Connections {
                     target: failPopupItem
+                    onResumeFromCheckpointClicked: levelBase.resumeFromCheckpoint();
                     onRestartClicked: levelBase.restartLevel();
                     onHomeClicked: levelBase.returnToMainMenu();
                 }
@@ -592,6 +593,12 @@ TiledScene {
         TiledLayer {
             id: infoSignLayer
             name: "Info Signs"
+            objects: TiledObject {}
+        },
+
+        TiledLayer {
+            id: checkpointSignLayer
+            name: "Checkpoint Signs"
             objects: TiledObject {}
         },
 
@@ -1048,7 +1055,7 @@ TiledScene {
             {
                 if(object.name === "")
                 {
-                    sign = entityManager.createEntity("../entities/CheckpointSign.qml");
+                    var sign = entityManager.createEntity("../entities/CheckpointSign.qml");
                     sign.x = object.x;
                     sign.y = object.y;
                     sign.width = object.width;
@@ -1479,9 +1486,6 @@ TiledScene {
     /*********************************************************************************/
 
     Component.onCompleted: {
-        Global.settings.currentLevel = level;
-        Global.settings.checkpointState = null;
-
         // Create entities
         displayInstructions();
         createCameraMoments();
@@ -1490,12 +1494,14 @@ TiledScene {
         createPipes();
         createLaserCannons();
         createMovingLaserCannons();
+        createInfoSigns();
+        createFinishSigns();
+        createCheckpointSigns();
+
         // Must be created after cannons
         createLaserLevers();
         createLeverSwitches();
         createLimits();
-        createInfoSigns();
-        createFinishSigns();
         // End
 
         configureOneWayPlatforms();
@@ -1506,7 +1512,6 @@ TiledScene {
 //        createDoors();
         //createNearFinishSigns();
         //createFinishSigns();
-        //createCheckpointSigns();
 //        createFish();
 
 //        createRobots();

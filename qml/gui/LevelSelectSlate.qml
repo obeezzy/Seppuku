@@ -28,7 +28,7 @@ WideSlate {
             onActiveFocusChanged: if (activeFocus) levelGrid.children[currentIndex].forceActiveFocus();
 
             Repeater {
-                model: 10
+                model: Global.levelTotal
                 GameShortButton {
                     focus: levelGrid.currentIndex == index
                     text: index + 1

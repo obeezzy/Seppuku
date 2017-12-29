@@ -28,7 +28,7 @@ ApplicationWindow {
         levelScenes: mainWindow.levelScenes
 
         onMainMenuRequested: gameWindow.push(mainMenuScene);
-        onRestartLevelRequested: playLevel(Global.settings.currentLevel);
+        onRestartLevelRequested: playLevel(Global.currentLevel);
     }
 
     SceneLoader {

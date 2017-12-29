@@ -18,17 +18,17 @@ LaserCannon {
     imageSource: {
         switch(movingLaserCannon.direction) {
         case "up":
-            movingLaserCannon.firing ? (Global.paths.images + "machines/laserUpShoot.png") : (Global.paths.images + "machines/laserUp.png");
+            movingLaserCannon.firing ? (Global.paths.images + "lasers/laserUpShoot.png") : (Global.paths.images + "lasers/laserUp.png");
             break;
         case "down":
-            movingLaserCannon.firing ? (Global.paths.images + "machines/laserDownShoot.png") : (Global.paths.images + "machines/laserDown.png");
+            movingLaserCannon.firing ? (Global.paths.images + "lasers/laserDownShoot.png") : (Global.paths.images + "lasers/laserDown.png");
             break;
             // Use laserUpShoot.png so that the laser leg does not show
         case "left":
-            movingLaserCannon.firing ? (Global.paths.images + "machines/laserUpShoot.png") : (Global.paths.images + "machines/laserUp.png");
+            movingLaserCannon.firing ? (Global.paths.images + "lasers/laserUpShoot.png") : (Global.paths.images + "lasers/laserUp.png");
             break;
         default: // right
-            movingLaserCannon.firing ? (Global.paths.images + "machines/laserUpShoot.png") : (Global.paths.images + "machines/laserUp.png");
+            movingLaserCannon.firing ? (Global.paths.images + "lasers/laserUpShoot.png") : (Global.paths.images + "lasers/laserUp.png");
             break;
         }
     }

@@ -85,7 +85,6 @@ DISTFILES += \
     qml/entities/LaserLever.qml \
     js/Fish.js \
     js/Robot.js \
-    qml/common/CheckpointState.qml \
     qml/levels/LevelBase.qml \
     qml/scenes/SceneBase.qml \
     qml/scenes/MainMenuScene.qml \

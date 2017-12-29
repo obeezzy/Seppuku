@@ -109,27 +109,27 @@ EntityBase {
             switch(laserColor) {
             case "green":
                 if(direction == "left" || direction == "right")
-                    Global.paths.images + "machines/laserGreenHorizontal.png";
+                    Global.paths.images + "lasers/laserGreenHorizontal.png";
                 else
-                    Global.paths.images + "machines/laserGreenVertical.png";
+                    Global.paths.images + "lasers/laserGreenVertical.png";
                 break;
             case "blue":
                 if(direction == "left" || direction == "right")
-                    Global.paths.images + "machines/laserBlueHorizontal.png";
+                    Global.paths.images + "lasers/laserBlueHorizontal.png";
                 else
-                    Global.paths.images + "machines/laserBlueVertical.png";
+                    Global.paths.images + "lasers/laserBlueVertical.png";
                 break;
             case "yellow":
                 if(direction == "left" || direction == "right")
-                    Global.paths.images + "machines/laserYellowHorizontal.png";
+                    Global.paths.images + "lasers/laserYellowHorizontal.png";
                 else
-                    Global.paths.images + "machines/laserYellowVertical.png";
+                    Global.paths.images + "lasers/laserYellowVertical.png";
                 break;
             default:
                 if(direction == "left" || direction == "right")
-                    Global.paths.images + "machines/laserRedHorizontal.png";
+                    Global.paths.images + "lasers/laserRedHorizontal.png";
                 else
-                    Global.paths.images + "machines/laserRedVertical.png";
+                    Global.paths.images + "lasers/laserRedVertical.png";
                 break;
             }
         }
@@ -248,16 +248,16 @@ EntityBase {
         source: {
             switch(direction) {
             case "up":
-                privateProperties.firing ? (Global.paths.images + "machines/laserUpShoot.png") : (Global.paths.images + "machines/laserUp.png");
+                privateProperties.firing ? (Global.paths.images + "lasers/laserUpShoot.png") : (Global.paths.images + "lasers/laserUp.png");
                 break;
             case "down":
-                privateProperties.firing ? (Global.paths.images + "machines/laserDownShoot.png") : (Global.paths.images + "machines/laserDown.png");
+                privateProperties.firing ? (Global.paths.images + "lasers/laserDownShoot.png") : (Global.paths.images + "lasers/laserDown.png");
                 break;
             case "left":
-                privateProperties.firing ? (Global.paths.images + "machines/laserLeftShoot.png") : (Global.paths.images + "machines/laserLeft.png");
+                privateProperties.firing ? (Global.paths.images + "lasers/laserLeftShoot.png") : (Global.paths.images + "lasers/laserLeft.png");
                 break;
             default: // right
-                privateProperties.firing ? (Global.paths.images + "machines/laserRightShoot.png") : (Global.paths.images + "machines/laserRight.png");
+                privateProperties.firing ? (Global.paths.images + "lasers/laserRightShoot.png") : (Global.paths.images + "lasers/laserRight.png");
                 break;
             }
         }
@@ -320,16 +320,16 @@ EntityBase {
         source: {
             switch(laserColor) {
             case "blue":
-                Global.paths.images + "machines/laserBlueBurst.png";
+                Global.paths.images + "lasers/laserBlueBurst.png";
                 break;
             case "yellow":
-                Global.paths.images + "machines/laserYellowBurst.png";
+                Global.paths.images + "lasers/laserYellowBurst.png";
                 break;
             case "green":
-                Global.paths.images + "machines/laserGreenBurst.png";
+                Global.paths.images + "lasers/laserGreenBurst.png";
                 break;
             default: // red
-                Global.paths.images + "machines/laserRedBurst.png";
+                Global.paths.images + "lasers/laserRedBurst.png";
             }
         }
 

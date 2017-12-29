@@ -62,14 +62,15 @@ Game {
     function pop() { return gameItem.popScene(); }
 
     function playLevel(level) {
+        Global.currentLevel = level;
         gameItem.push(loadingScene);
         gameItem.push(levelScenes[level]);
     }
 
 
     function playNextLevel() {
-        if (Object(levelScenes).hasOwnProperty(Global.settings.currentLevel + 1))
-            playLevel(Global.settings.currentLevel + 1);
+        if (Object(levelScenes).hasOwnProperty(Global.currentLevel + 1))
+            playLevel(Global.currentLevel + 1);
     }
 
     function restartLevel() {
