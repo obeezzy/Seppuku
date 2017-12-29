@@ -55,7 +55,6 @@ EntityBase {
                 Image.TileHorizontally;
             }
         }
-        smooth: true
         visible: privateProperties.firing ? 1 : 0
         rotation: {
             switch(direction) {

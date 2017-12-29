@@ -49,10 +49,14 @@ EntityBase {
         }
     }
 
-    Image {
+    Sprite {
         anchors.fill: parent
-        source: Global.paths.images + "objects/crystal.png"
+        source: Global.paths.images + "objectset/winter.png"
         rotation: imageRotation
         transformOrigin: Item.Center
+        frameX: 104
+        frameY: 0
+        frameWidth: 90
+        frameHeight: 90
     }
 }

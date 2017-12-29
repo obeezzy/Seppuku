@@ -57,10 +57,14 @@ EntityBase {
         }
     ]
 
-    Image {
+    Sprite {
         id: pipeImage
         anchors.fill: parent
-        source: Global.paths.images + "objects/pipe.png"
+        source: Global.paths.images + "objectset/common.png"
+        frameX: 105
+        frameY: 0
+        frameWidth: 250
+        frameHeight: 335
     }
 
     Rectangle {
