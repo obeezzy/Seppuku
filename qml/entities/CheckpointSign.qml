@@ -5,6 +5,9 @@ import "../singletons"
 
 EntityBase {
     id: checkpointSign
+
+    readonly property bool checked: Global.checkpointAvailable && Global.checkpoint.pos === Qt.point(x, y)
+
     bodyType: Body.Static
     width: 60
     height: 60
@@ -14,12 +17,6 @@ EntityBase {
         id: privateProperties
 
         property bool checked: false
-
-        onCheckedChanged: {
-            if(checked) {
-                //Seppuku.saveState()
-            }
-        }
     }
 
     fixtures: Box {
@@ -36,11 +33,12 @@ EntityBase {
             case Utils.kHero:
                 if(other.type === "main_body") {
                     privateProperties.checked = true;
-                    console.log("Global checkpoint state? ", Global.settings.checkpointState);
-                    //Global.checkpointState.level = 3;
-                    Global.settings.checkpointState.pos = Qt.point(hero.x, hero.y);
+                    console.log("Global checkpoint before? ", Global.checkpoint);
+                    Global.checkpoint = { "level": Global.currentLevel, "pos": Qt.point(checkpointSign.x, checkpointSign.y), "face_forward": hero.facingRight };
+                    console.log("Global checkpoint afater? ", Global.checkpoint);
+
                 }
-                break
+                break;
             }
         }
 
@@ -98,12 +96,12 @@ EntityBase {
 
        NumberAnimation on scale {
            running: privateProperties.checked && !Global.gameWindow.paused
-           from: .1; to: 4; duration: 1500
+           from: .1; to: 4; duration: 1500; easing.type: Easing.OutCubic
        }
 
        NumberAnimation on opacity {
            running: privateProperties.checked && !Global.gameWindow.paused
-           from: 1; to: 0; duration: 1300
+           from: 1; to: 0; duration: 1300; easing.type: Easing.OutCubic
        }
     }
 }

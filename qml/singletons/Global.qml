@@ -16,6 +16,13 @@ Item {
     readonly property var gamepad: gamepad1
     readonly property int defaultWidth: 800
     readonly property int defaultHeight: 600
+
+    readonly property bool checkpointAvailable: checkpoint !== null && checkpoint["level"] === currentLevel
+    readonly property bool nextLevelAvailable: false
+    readonly property int levelTotal: 10
+    property int currentLevel: -1
+    property var checkpoint: null
+
     readonly property bool isMobile: {
         switch(Qt.platform.os) {
             case "android":
@@ -39,8 +46,8 @@ Item {
         property bool noSound: false
         property real sfxVolume: .4
         property real bgmVolume: .4
-        property int currentLevel: 0
-        property var checkpointState: { "level": 0, "pos": Qt.point(-1, -1) }
+        property int newestAvailableLevel: 0
+        category: "obeezzy"
     }
 
     property var gameWindow: undefined

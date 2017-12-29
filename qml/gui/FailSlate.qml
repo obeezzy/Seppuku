@@ -14,9 +14,9 @@ NarrowSlate {
 
         readonly property var messages: {
             "bullet": ["Shot down boy!"],
-            "crystal": ["Stabbed like a m*****f*****"],
+            "crystal": ["Have aN ICE day!"],
             "ice_box": ["Headache!!!", "Lights out!"],
-            "laser_cannon": ["Fried!", "You're \"fired\"!"],
+            "laser_cannon": ["Fried!", "You're \"fired\"!", "Would you like some fries with that cooked turkey?"],
             "robot": ["Stabs of the enemy!"],
             "sea": ["Stay out the water, student!", "Ninjas don't swim!", "Drink me!", "Quench your thirst!"],
             "unknown": ["Unhandled case!"]
@@ -26,6 +26,7 @@ NarrowSlate {
     }
 
     property string cause: "unknown"
+    signal resumeFromCheckpointClicked
     signal restartClicked
     signal homeClicked
 
@@ -67,14 +68,38 @@ NarrowSlate {
             transform: Translate { id: buttonRowTranslate }
 
             GameIconButton {
+                id: resumeFromCheckpointButton
+                focus: visible
+                visible: Global.checkpointAvailable
+                text: Stylesheet.icons.fa_flag
+                onClicked: failSlate.resumeFromCheckpointClicked();
+
+                Keys.onUpPressed: event.accepted = true;
+                Keys.onDownPressed: event.accepted = true;
+                Keys.onLeftPressed: event.accepted = true;
+                Keys.onRightPressed: {
+                    restartButton.focus = true;
+                    effect.play();
+                }
+            }
+
+            GameIconButton {
                 id: restartButton
-                focus: true
+                focus: !resumeFromCheckpointButton.visible
                 text: Stylesheet.icons.fa_repeat
                 onClicked: failSlate.restartClicked();
 
                 Keys.onUpPressed: event.accepted = true;
                 Keys.onDownPressed: event.accepted = true;
-                Keys.onLeftPressed: event.accepted = true;
+                Keys.onLeftPressed: {
+                    if (resumeFromCheckpointButton.visible) {
+                        resumeFromCheckpointButton.focus = true;
+                        effect.play();
+                    } else {
+                        event.accepted = true;
+                    }
+                }
+
                 Keys.onRightPressed: {
                     quitButton.focus = true;
                     effect.play();

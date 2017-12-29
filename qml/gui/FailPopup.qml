@@ -10,6 +10,7 @@ Popup {
 
     property string cause: "unknown"
 
+    signal resumeFromCheckpointClicked
     signal restartClicked
     signal homeClicked
 
@@ -18,6 +19,7 @@ Popup {
         anchors.centerIn: parent
         cause: failPopup.cause
 
+        onResumeFromCheckpointClicked: failPopup.resumeFromCheckpointClicked();
         onRestartClicked: failPopup.restartClicked();
         onHomeClicked: failPopup.homeClicked();
     }

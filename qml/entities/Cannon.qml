@@ -69,7 +69,7 @@ EntityBase {
 
     Image {
         id: image
-        source: Global.paths.images + "machines/cannon.png"
+        source: Global.paths.images + "lasers/cannon.png"
         anchors.fill: parent
         mirror: cannon.mirror
     }

@@ -24,6 +24,8 @@ EntityBase {
     property point nextDoorLocation: Qt.point(-1, -1)
     // Name of hero
     property string name: "tomahawk"
+    // Face forward or backwards?
+    property bool faceForward: true
 
     // Current scene
     readonly property Scene scene: parent
@@ -79,7 +81,7 @@ EntityBase {
         id: privateProperties
 
         property string verticalDirectionState: "down"
-        property string horizontalDirectionState: "right"
+        property string horizontalDirectionState: ninja.faceForward ? "right" : "left"
         property string actionState: "idle"
         property string altitudeState: ""
         property string rangeState: ""

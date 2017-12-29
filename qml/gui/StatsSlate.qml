@@ -231,7 +231,8 @@ FocusScope {
             GameIconButton {
                 id: nextLevelButton
                 text: Stylesheet.icons.fa_play
-                focus: true
+                visible: Global.nextLevelAvailable
+                focus: Global.nextLevelAvailable
 
                 onClicked: statsSlate.nextLevelClicked();
 
@@ -247,6 +248,7 @@ FocusScope {
             GameIconButton {
                 id: restartButton
                 text: Stylesheet.icons.fa_repeat
+                focus: !Global.nextLevelAvailable
 
                 onClicked: statsSlate.restartClicked();
 
@@ -254,8 +256,10 @@ FocusScope {
                 Keys.onDownPressed: event.accepted = true;
 
                 Keys.onLeftPressed: {
-                    nextLevelButton.focus = true;
-                    effect.play();
+                    if (nextLevelButton.visible) {
+                        nextLevelButton.focus = true;
+                        effect.play();
+                    }
                 }
 
                 Keys.onRightPressed: {

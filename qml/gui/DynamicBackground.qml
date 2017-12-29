@@ -10,7 +10,7 @@ Item {
 
     FolderListModel {
         id: folderModel
-        folder: Global.paths.images + "backgrounds/main_menu/"
+        folder: Global.paths.images + "main_menu/"
         nameFilters: ["*.jpg"]
     }
 

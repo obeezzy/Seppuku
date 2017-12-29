@@ -32,6 +32,7 @@ EntityBase {
                     if(other.type === "main_body") {
                         //console.log("Coin: The hero wants to pick me up.")
                         coin.picked = true;
+                        pickAnimation.start();
                     }
                     break;
                 }
@@ -64,8 +65,6 @@ EntityBase {
 
         ScriptAction { script: entityManager.destroyEntity(coin.entityId); }
     }
-
-    onPickedChanged: if(picked) pickAnimation.start();
 
     SoundEffect {
         id: coinSound
