@@ -232,13 +232,13 @@ TiledScene {
             popupStack.clear();
     }
 
-    function playNextLevel() { Global.gameWindow.playNextLevel(); }
+    function playNextLevel() { Global.checkpoint = null; Global.gameWindow.playNextLevel(); }
 
     function resumeFromCheckpoint() { Global.gameWindow.restartLevel(); }
 
     function restartLevel() { Global.checkpoint = null; Global.gameWindow.restartLevel(); }
 
-    function returnToMainMenu() { Global.gameWindow.returnToMainMenu(); }
+    function returnToMainMenu() { Global.checkpoint = null; Global.gameWindow.returnToMainMenu(); }
 
     /************************************************************************************/
 
