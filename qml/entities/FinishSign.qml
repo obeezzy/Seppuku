@@ -34,9 +34,13 @@ EntityBase {
         onEndContact: {}
     }
 
-    Image {
+    Sprite {
         anchors.fill: parent
-        source: Global.paths.images + "objects/winter_sign.png"
+        source: Global.paths.images + "objectset/winter.png"
+        frameX: 0
+        frameY: 200
+        frameWidth: 86
+        frameHeight: 90
 
         Image {
             id: flagImage

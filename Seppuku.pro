@@ -31,7 +31,6 @@ DISTFILES += \
     qml/entities/Sea.qml \
     qml/entities/Robot.qml \
     qml/entities/Crystal.qml \
-    qml/entities/Ladder.qml \
     qml/entities/IceBox.qml \
     qml/entities/WarningSign.qml \
     qml/entities/Cannon.qml \
