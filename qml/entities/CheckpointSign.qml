@@ -33,10 +33,7 @@ EntityBase {
             case Utils.kHero:
                 if(other.type === "main_body") {
                     privateProperties.checked = true;
-                    console.log("Global checkpoint before? ", Global.checkpoint);
-                    Global.checkpoint = { "level": Global.currentLevel, "pos": Qt.point(checkpointSign.x, checkpointSign.y), "face_forward": hero.facingRight };
-                    console.log("Global checkpoint afater? ", Global.checkpoint);
-
+                    Global.checkpoint = { "level": Global.currentLevel, "pos": Qt.point(checkpointSign.x, checkpointSign.y), "face_forward": hero.faceForward };
                 }
                 break;
             }
@@ -52,9 +49,13 @@ EntityBase {
         }
     }
 
-    Image {
+    Sprite {
         anchors.fill: parent
-        source: Global.paths.images + "objects/winter_sign.png"
+        source: Global.paths.images + "objectset/winter.png"
+        frameX: 0
+        frameY: 200
+        frameWidth: 86
+        frameHeight: 90
 
         Image {
             id: likeImage

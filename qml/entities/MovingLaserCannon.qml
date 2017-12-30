@@ -15,26 +15,26 @@ LaserCannon {
 
     bodyType: Body.Kinematic
 
-    imageSource: {
+    spriteAlias: {
         switch(movingLaserCannon.direction) {
         case "up":
-            movingLaserCannon.firing ? (Global.paths.images + "lasers/laserUpShoot.png") : (Global.paths.images + "lasers/laserUp.png");
+            movingLaserCannon.firing ? "laser_up_shoot" : "laser_up";
             break;
         case "down":
-            movingLaserCannon.firing ? (Global.paths.images + "lasers/laserDownShoot.png") : (Global.paths.images + "lasers/laserDown.png");
+            movingLaserCannon.firing ? "laser_down_shoot" : "laser_down";
             break;
             // Use laserUpShoot.png so that the laser leg does not show
         case "left":
-            movingLaserCannon.firing ? (Global.paths.images + "lasers/laserUpShoot.png") : (Global.paths.images + "lasers/laserUp.png");
+            movingLaserCannon.firing ? "laser_up_shoot" : "laser_up";
             break;
         default: // right
-            movingLaserCannon.firing ? (Global.paths.images + "lasers/laserUpShoot.png") : (Global.paths.images + "lasers/laserUp.png");
+            movingLaserCannon.firing ? "laser_up_shoot" : "laser_up";
             break;
         }
     }
 
     // Rotate image accordingly, since laserUpShoot.png is used when direction is "left" or "right"
-    imageRotation: movingLaserCannon.direction === "left" ? -90 : (movingLaserCannon.direction === "right" ? 90 : 0)
+    spriteRotation: movingLaserCannon.direction === "left" ? -90 : (movingLaserCannon.direction === "right" ? 90 : 0)
 
     QtObject {
         id: privateProperties

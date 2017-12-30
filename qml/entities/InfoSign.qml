@@ -55,9 +55,28 @@ EntityBase {
         }
     }
 
-    Image {
+    Sprite {
         anchors.fill: parent
-        source: Global.paths.images + "objects/info_sign.png"
+        source: Global.paths.images + "objectset/winter.png"
+        frameX: 0
+        frameY: 200
+        frameWidth: 86
+        frameHeight: 90
+
+        Text {
+            anchors {
+                top: parent.top
+                horizontalCenter: parent.horizontalCenter
+                topMargin: 12
+            }
+            color: "white"
+            text: "?"
+            font {
+                family: Stylesheet.casualFontFamily
+                pixelSize: 30
+                bold: true
+            }
+        }
     }
 
     Rectangle {

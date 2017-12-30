@@ -25,8 +25,8 @@ EntityBase {
     readonly property int rayMargin: 4
     readonly property bool firing: privateProperties.firing
 
-    property alias imageSource: laserCannonImage.source
-    property alias imageRotation: laserCannonImage.rotation
+    property alias spriteAlias: laserCannonSprite.alias
+    property alias spriteRotation: laserCannonSprite.rotation
     property string direction: "right";
     property string laserColor: "red"
     property int fireInterval: 2000
@@ -41,21 +41,21 @@ EntityBase {
         property real maxFraction: 1
     }
 
-    Image {
+    Sprite {
         id: laser
         width: laserCannon.laserWidth
         height: laserCannon.laserHeight
+        source: Global.paths.images + "objectset/lasers.png"
         fillMode: {
             switch(direction) {
             case "up":
             case "down":
-                Image.TileVertically;
+                Bacon2D.TileVertically;
                 break;
             default:
-                Image.TileHorizontally;
+                Bacon2D.TileHorizontally;
             }
         }
-        smooth: true
         visible: privateProperties.firing ? 1 : 0
         rotation: {
             switch(direction) {
@@ -105,31 +105,73 @@ EntityBase {
             }
         }
 
-        source: {
+        aliases: [
+            SpriteAlias {
+                name: "laser_green_horizontal"
+                frameX: 70; frameY: 70; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_green_vertical"
+                frameX: 140; frameY: 70; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_blue_horizontal"
+                frameX: 70; frameY: 0; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_blue_vertical"
+                frameX: 140; frameY: 0; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_yellow_horizontal"
+                frameX: 210; frameY: 350; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_yellow_vertical"
+                frameX: 280; frameY: 350; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_red_horizontal"
+                frameX: 210; frameY: 140; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_red_vertical"
+                frameX: 280; frameY: 140; frameWidth: 70; frameHeight: 70
+            }
+        ]
+
+        alias: {
             switch(laserColor) {
             case "green":
                 if(direction == "left" || direction == "right")
-                    Global.paths.images + "lasers/laserGreenHorizontal.png";
+                    "laser_green_horizontal"
                 else
-                    Global.paths.images + "lasers/laserGreenVertical.png";
+                    "laser_green_vertical"
                 break;
             case "blue":
                 if(direction == "left" || direction == "right")
-                    Global.paths.images + "lasers/laserBlueHorizontal.png";
+                    "laser_blue_horizontal"
                 else
-                    Global.paths.images + "lasers/laserBlueVertical.png";
+                    "laser_blue_vertical"
                 break;
             case "yellow":
                 if(direction == "left" || direction == "right")
-                    Global.paths.images + "lasers/laserYellowHorizontal.png";
+                    "laser_yellow_horizontal"
                 else
-                    Global.paths.images + "lasers/laserYellowVertical.png";
+                    "laser_yellow_vertical"
                 break;
             default:
                 if(direction == "left" || direction == "right")
-                    Global.paths.images + "lasers/laserRedHorizontal.png";
+                    "laser_red_horizontal"
                 else
-                    Global.paths.images + "lasers/laserRedVertical.png";
+                    "laser_red_vertical"
                 break;
             }
         }
@@ -242,31 +284,74 @@ EntityBase {
         }
     }
 
-    Image {
-        id: laserCannonImage
+    Sprite {
+        id: laserCannonSprite
         anchors.fill: parent
-        source: {
+        source: Global.paths.images + "objectset/lasers.png"
+        alias: {
             switch(direction) {
             case "up":
-                privateProperties.firing ? (Global.paths.images + "lasers/laserUpShoot.png") : (Global.paths.images + "lasers/laserUp.png");
+                privateProperties.firing ? "laser_up_shoot" : "laser_up";
                 break;
             case "down":
-                privateProperties.firing ? (Global.paths.images + "lasers/laserDownShoot.png") : (Global.paths.images + "lasers/laserDown.png");
+                privateProperties.firing ? "laser_down_shoot" : "laser_down";
                 break;
             case "left":
-                privateProperties.firing ? (Global.paths.images + "lasers/laserLeftShoot.png") : (Global.paths.images + "lasers/laserLeft.png");
+                privateProperties.firing ? "laser_left_shoot" : "laser_left";
                 break;
             default: // right
-                privateProperties.firing ? (Global.paths.images + "lasers/laserRightShoot.png") : (Global.paths.images + "lasers/laserRight.png");
+                privateProperties.firing ? "laser_right_shoot" : "laser_right";
                 break;
             }
         }
+        aliases: [
+            SpriteAlias {
+                name: "laser_up_shoot"
+                frameX: 70; frameY: 350; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_up"
+                frameX: 0; frameY: 350; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_down_shoot"
+                frameX: 280; frameY: 0; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_down"
+                frameX: 210; frameY: 0; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_left_shoot"
+                frameX: 280; frameY: 70; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_left"
+                frameX: 210; frameY: 70; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_right_shoot"
+                frameX: 70; frameY: 210; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_right"
+                frameX: 0; frameY: 210; frameWidth: 70; frameHeight: 70
+            }
+        ]
     }
 
-    Image {
+    Sprite {
         id: hitImage
         opacity: privateProperties.firing ? 1 : 0
         visible: opacity > 0
+        source: Global.paths.images + "objectset/lasers.png"
         z: laser.z + 1
         x: {
             switch(direction) {
@@ -317,19 +402,41 @@ EntityBase {
             }
         }
 
-        source: {
+        aliases: [
+            SpriteAlias {
+                name: "laser_blue_burst"
+                frameX: 0; frameY: 0; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_yellow_burst"
+                frameX: 140; frameY: 350; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_green_burst"
+                frameX: 0; frameY: 70; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "laser_red_burst"
+                frameX: 140; frameY: 140; frameWidth: 70; frameHeight: 70
+            }
+        ]
+
+        alias: {
             switch(laserColor) {
             case "blue":
-                Global.paths.images + "lasers/laserBlueBurst.png";
+                "laser_blue_burst";
                 break;
             case "yellow":
-                Global.paths.images + "lasers/laserYellowBurst.png";
+                "laser_yellow_burst";
                 break;
             case "green":
-                Global.paths.images + "lasers/laserGreenBurst.png";
+                "laser_green_burst";
                 break;
             default: // red
-                Global.paths.images + "lasers/laserRedBurst.png";
+                "laser_red_burst";
             }
         }
 

@@ -53,11 +53,11 @@ EntityBase {
         id: sprite
         animation: "moving"
         horizontalMirror: facingLeft
+        source: Global.paths.images + "robot/bullet.png"
 
         animations: [
             SpriteAnimation {
                 name: "moving"
-                source: Global.paths.images + "robot/bullet.png"
                 frames: 5
                 duration: 500
                 loops: Animation.Infinite

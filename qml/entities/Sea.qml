@@ -8,7 +8,6 @@ EntityBase {
     id: entity
     width: 40
     height: 40
-
     bodyType: Body.Static
     sleepingAllowed: false
     fixedRotation: false
@@ -46,18 +45,23 @@ EntityBase {
 
             readonly property string type: "fish_depth"
         }
-
     ]
 
     Rectangle {
-        anchors.fill: parent
-        anchors.topMargin: 12
+        anchors {
+            fill: parent
+            topMargin: 24
+        }
         color: "#3b9cfb"
     }
 
-    Image {
+    Sprite {
         width: parent.width
-        source: Global.paths.images + "tiles/winter/17.png"
+        source: Global.paths.images + "objectset/winter.png"
+        frameX: 0
+        frameY: 128
+        frameWidth: 32
+        frameHeight: 32
         fillMode: Image.TileHorizontally
     }
 
@@ -68,10 +72,3 @@ EntityBase {
         volume: Global.settings.sfxVolume
     }
 }
-
-//Image {
-//    width: 60
-//    height: 60
-//    source: "../images/tiles/17.png"
-//    fillMode: Image.TileHorizontally
-//}

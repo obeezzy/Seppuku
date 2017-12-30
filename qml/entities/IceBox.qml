@@ -49,9 +49,13 @@ EntityBase {
         }
     }
 
-    Image {
-        source: Global.paths.images + "objects/ice_box.png"
+    Sprite {
+        source: Global.paths.images + "objectset/winter.png"
         anchors.fill: parent
+        frameX: 200
+        frameY: 0
+        frameWidth: 100
+        frameHeight: 100
     }
 
     Component.onDestruction: iceBox.selfDestruct();

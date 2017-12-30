@@ -33,8 +33,10 @@ EntityBase {
 
         onBeginContact: {
             if(other.categories & Utils.kHero) {
-                if(other.type === "main_body")
-                    gem.picked = true
+                if(other.type === "main_body") {
+                    gem.picked = true;
+                    pickAnimation.start();
+                }
             }
         }
     }
@@ -68,8 +70,6 @@ EntityBase {
 
         ScriptAction { script: entityManager.destroyEntity(gem.entityId); }
     }
-
-    onPickedChanged: if (picked) pickAnimation.start();
 
     SoundEffect {
         id: pickupSound

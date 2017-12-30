@@ -10,7 +10,7 @@ EntityBase {
     width: 60
     height: 60
 
-    property int imageRotation: 0
+    property int spriteRotation: 0
     readonly property string sender: "crystal"
 
     fixtures: Polygon {
@@ -31,7 +31,7 @@ EntityBase {
         ]
 
         Component.onCompleted: {
-            switch(imageRotation) {
+            switch(spriteRotation) {
             case 90:
                 break;
             case 180:
@@ -49,10 +49,14 @@ EntityBase {
         }
     }
 
-    Image {
+    Sprite {
         anchors.fill: parent
-        source: Global.paths.images + "objects/crystal.png"
-        rotation: imageRotation
+        source: Global.paths.images + "objectset/winter.png"
+        rotation: spriteRotation
         transformOrigin: Item.Center
+        frameX: 104
+        frameY: 0
+        frameWidth: 90
+        frameHeight: 90
     }
 }
