@@ -974,7 +974,8 @@ TiledScene {
         var warningSignComponent = Qt.createComponent("../entities/WarningSign.qml");
         var warningSign = warningSignComponent.createObject(levelBase);
         warningSign.x = iceBox.x;
-        warningSign.y = Qt.binding(function() { return viewport.yOffset + 6; });
+        if (hero.actionState === "clinging" || hero.actionState === "climbing")
+            warningSign.y = Qt.binding(function() { return viewport.yOffset + 6; });
 
         iceBox.warningSign = warningSign;
         iceBox.selfDestruct.connect(warningSign.destroy);
