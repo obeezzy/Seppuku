@@ -41,7 +41,7 @@ Item {
     }
 
     readonly property Settings settings: Settings {
-        readonly property int levelCount: 1
+        readonly property int levelCount: 2
         property int highScore: 0
         property bool noSound: false
         property real sfxVolume: .4

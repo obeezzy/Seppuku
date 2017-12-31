@@ -77,10 +77,16 @@ Item {
                 anchors.bottom: parent.bottom
                 spacing: 5
 
-                Image {
+                Sprite {
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
-                    source: Global.paths.images + "collectibles/coin_icon.png"
+                    width: 30
+                    source: Global.paths.images + "objectsets/hud.png"
+                    alias: "coin"
+                    aliases: SpriteAlias {
+                        name: "coin"
+                        frameX: 0; frameY: 512; frameWidth: 128; frameHeight: 128
+                    }
                 }
 
                 Text {
@@ -110,12 +116,17 @@ Item {
                 anchors.bottom: parent.bottom
                 spacing: 2
 
-                Image {
+                Sprite {
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
-                    width: 40
-                    fillMode: Image.PreserveAspectFit
-                    source: Global.paths.images + "hud/kunai.png"
+                    width: 30
+                    fillMode: Bacon2D.PreserveAspectFit
+                    source: Global.paths.images + "objectsets/hud.png"
+                    alias: "kunai"
+                    aliases: SpriteAlias {
+                        name: "kunai"
+                        frameX: 512; frameY: 640; frameWidth: 128; frameHeight: 128
+                    }
                 }
 
                 Text {
@@ -153,11 +164,16 @@ Item {
                 anchors.bottom: parent.bottom
                 spacing: 2
 
-                Image {
+                Sprite {
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
-                    width: height
-                    source: Global.paths.images + "hud/hud_keyRed.png"
+                    width: 40
+                    source: Global.paths.images + "objectsets/hud.png"
+                    alias: "red_key"
+                    aliases: SpriteAlias {
+                        name: "red_key"
+                        frameX: 384; frameY: 0; frameWidth: 128; frameHeight: 128
+                    }
 
                     opacity: totalRedKeysCollected > 0 ? 1 : 0
                     scale: totalRedKeysCollected > 0 ? 1 : 4
@@ -209,12 +225,18 @@ Item {
             anchors.bottom: parent.bottom
             spacing: 5
 
-            Image {
+            Sprite {
                 id: clockImage
                 anchors.top: parent.top
+                width: 48
                 height: 48
-                fillMode: Image.PreserveAspectFit
-                source: Global.paths.images + "hud/clock.png"
+                fillMode: Bacon2D.PreserveAspectFit
+                source: Global.paths.images + "objectsets/hud.png"
+                alias: "clock"
+                aliases: SpriteAlias {
+                    name: "clock"
+                    frameX: 530; frameY: 512; frameWidth: 128; frameHeight: 128
+                }
             }
 
             Text {

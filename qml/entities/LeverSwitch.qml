@@ -13,7 +13,6 @@ EntityBase {
     entityType: "lever_switch"
 
     readonly property string type: "lever"
-    readonly property string fileName: Global.paths.images + "switches/switch_" + position + ".png"
 
     property string position: "left"
     property bool inRange: false
@@ -59,9 +58,26 @@ EntityBase {
        }
     }
 
-    Image {
+    Sprite {
         anchors.fill: parent
-        source: fileName
+        source: Global.paths.images + "objectsets/common.png"
+        alias: "switch_" + position
+        aliases: [
+            SpriteAlias {
+                name: "switch_left"
+                frameX: 0; frameY: 340; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "switch_mid"
+                frameX: 70; frameY: 340; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "switch_right"
+                frameX: 140; frameY: 340; frameWidth: 70; frameHeight: 70
+            }
+        ]
     }
 
     Connections {

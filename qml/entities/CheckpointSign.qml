@@ -57,14 +57,18 @@ EntityBase {
         frameWidth: 86
         frameHeight: 90
 
-        Image {
+        Sprite {
             id: likeImage
             x: parent.width / 2 - width / 2
             y: 12
             width: 23
             height: width
-            source: Global.paths.images + "misc/like_white.png"
-            transformOrigin: Image.Center
+            source: Global.paths.images + "objectsets/symbols.png"
+            alias: "like_sign"
+            aliases: SpriteAlias {
+                name: "like_sign"
+                frameX: 80; frameY: 0; frameWidth: 50; frameHeight: 50
+            }            transformOrigin: Image.Center
             rotation: 180
             opacity: .4
 

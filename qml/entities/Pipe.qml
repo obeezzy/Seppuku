@@ -90,21 +90,26 @@ EntityBase {
         anchors.bottom: pipeImage.top
         anchors.bottomMargin: 18
 
-        readonly property int animDuration: 1000
+        readonly property int animDuration: 1500
         SequentialAnimation on opacity {
             running: indicator.visible
             loops: Animation.Infinite
 
             NumberAnimation { to: 0; duration: indicator.animDuration }
             NumberAnimation { to: 1; duration: indicator.animDuration }
-
-            onRunningChanged: if(!running) indicator.opacity = 0;
         }
 
 
-        Image {
+        Sprite {
             anchors.centerIn: parent
-            source: Global.paths.images + "signs/hover.png"
+            width: 30
+            height: 30
+            source: Global.paths.images + "objectsets/symbols.png"
+            alias: "hover"
+            aliases: SpriteAlias {
+                name: "hover"
+                frameX: 52; frameY: 0; frameWidth: 30; frameHeight: 30
+            }
         }
     }
 }

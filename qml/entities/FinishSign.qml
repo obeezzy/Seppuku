@@ -42,13 +42,19 @@ EntityBase {
         frameWidth: 86
         frameHeight: 90
 
-        Image {
+        Sprite {
             id: flagImage
             x: parent.width / 2 - width / 2
             y: 12
             width: 23
             height: width
-            source: Global.paths.images + "misc/finish_flag_white.png"
+            source: Global.paths.images + "objectsets/symbols.png"
+            alias: "finish_flag"
+            aliases: SpriteAlias {
+                name: "finish_flag"
+                frameX: 0; frameY: 0; frameWidth: 48; frameHeight: 48
+            }
+
             transformOrigin: Image.Center
             rotation: 180
             opacity: .4

@@ -986,7 +986,6 @@ TiledScene {
         for(var i = 0; i < infoSignLayer.objects.length; ++i)
         {
             var object = infoSignLayer.objects[i];
-            var isFirstTime = false;
 
             while(object.next())
             {
@@ -997,9 +996,9 @@ TiledScene {
                     sign.y = object.y;
                     sign.objectId = object.getProperty("id");
                     sign.hintText = object.getProperty("hint_text");
+                    sign.balloonText = object.getProperty("balloon_text", "");
+
                     sign.infoRequested.connect(function(properties) { popupStack.push(infoPopup, properties); });
-                    sign.balloonVisible = !isFirstTime;
-                    isFirstTime = true;
 
                     sign.tutorTextArray = object.getProperty("tutor_text").toString().split("; ");
                     sign.tutorDurationArray = object.getProperty("tutor_duration").toString().split("; ");
@@ -1176,11 +1175,11 @@ TiledScene {
                     cannon.width = object.width;
                     cannon.height = object.height;
                     cannon.objectId = object.getProperty("id");
-                    cannon.direction = object.getProperty("direction");
-                    cannon.laserColor = object.getProperty("laser_color");
-                    cannon.fireInterval = object.getProperty("fire_interval");
-                    cannon.ceaseInterval = object.getProperty("cease_interval");
-                    cannon.startupDelay = object.getProperty("startup_delay");
+                    cannon.direction = object.getProperty("direction", "up");
+                    cannon.laserColor = object.getProperty("laser_color", "blue");
+                    cannon.fireInterval = object.getProperty("fire_interval", 0);
+                    cannon.ceaseInterval = object.getProperty("cease_interval", 0);
+                    cannon.startupDelay = object.getProperty("startup_delay", 0);
                     cannon.motionVelocity.x = object.getProperty("motion_velocity_x", 0);
                     cannon.motionVelocity.y= object.getProperty("motion_velocity_y", 0);
                 }
@@ -1274,9 +1273,9 @@ TiledScene {
                     limit.link = object.getProperty("link", 0);
                     limit.edge = object.getProperty("edge", "bottom");
 
-                    var cannon = entityManager.findEntity("laserCannon", "objectId", limit.limitLink);
+                    var cannon = entityManager.findEntity("laserCannon", "objectId", limit.link);
                     if (cannon !== null && cannon.objectId > -1 && Object(cannon).hasOwnProperty("limits")) {
-                        switch (limit.limitEdge) {
+                        switch (limit.edge) {
                         case "top": cannon.limits.topY = limit.y; break;
                         case "bottom": cannon.limits.bottomY = limit.y - cannon.height; break;
                         case "left": cannon.limits.leftX = limit.x; break;

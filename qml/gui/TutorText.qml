@@ -106,7 +106,7 @@ Rectangle {
 
         Image {
             id: mailImage
-            source: Global.paths.images + "misc/mail.png"
+            source: Global.paths.images + "symbols/mail.png"
         }
 
         Text {

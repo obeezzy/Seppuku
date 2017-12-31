@@ -20,8 +20,6 @@ EntityBase {
     property int laserLink: 0
 
     readonly property string type: "lever"
-    readonly property string fileLocation: Global.paths.images + "switches/"
-    readonly property string fileName: fileLocation + "laser_switch_" + color + "_" + laserLever.position + ".png"
 
     QtObject {
         id: privateProperties
@@ -49,10 +47,52 @@ EntityBase {
         }
     }
 
-    Image {
+    Sprite {
         anchors.fill: parent
-        source: fileName
-        mirror: laserLever.mirror
+        source: Global.paths.images + "objectsets/lasers.png"
+        alias: color + "_switch_" + laserLever.position
+        horizontalMirror: laserLever.mirror
+        aliases: [
+            SpriteAlias {
+                name: "blue_switch_off"
+                frameX: 140; frameY: 210; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "blue_switch_on"
+                frameX: 210; frameY: 210; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "green_switch_off"
+                frameX: 280; frameY: 210; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "green_switch_on"
+                frameX: 0; frameY: 280; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "red_switch_off"
+                frameX: 70; frameY: 280; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "red_switch_on"
+                frameX: 140; frameY: 280; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "yellow_switch_off"
+                frameX: 210; frameY: 280; frameWidth: 70; frameHeight: 70
+            },
+
+            SpriteAlias {
+                name: "yellow_switch_on"
+                frameX: 280; frameY: 280; frameWidth: 70; frameHeight: 70
+            }
+        ]
     }
 
     TimerPie {
