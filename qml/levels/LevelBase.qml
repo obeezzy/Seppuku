@@ -1271,8 +1271,8 @@ TiledScene {
                     var limit = entityManager.createEntity("../entities/Limit.qml");
                     limit.x = object.x;
                     limit.y = object.y;
-                    limit.limitLink = object.getProperty("limit_link", 0);
-                    limit.limitEdge = object.getProperty("limit_edge", "bottom");
+                    limit.link = object.getProperty("link", 0);
+                    limit.edge = object.getProperty("edge", "bottom");
 
                     var cannon = entityManager.findEntity("laserCannon", "objectId", limit.limitLink);
                     if (cannon !== null && cannon.objectId > -1 && Object(cannon).hasOwnProperty("limits")) {

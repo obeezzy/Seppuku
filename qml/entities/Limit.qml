@@ -6,6 +6,6 @@ Entity {
     id: limit
     entityType: "limit"
 
-    property int limitLink: 0
-    property string limitEdge: "bottom"
+    property int link: 0
+    property string edge: "bottom"
 }
