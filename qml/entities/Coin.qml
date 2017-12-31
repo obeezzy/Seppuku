@@ -43,7 +43,7 @@ EntityBase {
     AnimatedSprite {
         id: sprite
         animation: "default"
-        source: Global.paths.images + "objectset/coin.png"
+        source: Global.paths.images + "objectsets/coin.png"
 
         animations: [
             SpriteAnimation {

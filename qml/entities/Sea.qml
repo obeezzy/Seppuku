@@ -57,7 +57,7 @@ EntityBase {
 
     Sprite {
         width: parent.width
-        source: Global.paths.images + "objectset/winter.png"
+        source: Global.paths.images + "objectsets/winter.png"
         frameX: 0
         frameY: 128
         frameWidth: 32

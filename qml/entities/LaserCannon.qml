@@ -45,7 +45,7 @@ EntityBase {
         id: laser
         width: laserCannon.laserWidth
         height: laserCannon.laserHeight
-        source: Global.paths.images + "objectset/lasers.png"
+        source: Global.paths.images + "objectsets/lasers.png"
         fillMode: {
             switch(direction) {
             case "up":
@@ -287,7 +287,7 @@ EntityBase {
     Sprite {
         id: laserCannonSprite
         anchors.fill: parent
-        source: Global.paths.images + "objectset/lasers.png"
+        source: Global.paths.images + "objectsets/lasers.png"
         alias: {
             switch(direction) {
             case "up":
@@ -351,7 +351,7 @@ EntityBase {
         id: hitImage
         opacity: privateProperties.firing ? 1 : 0
         visible: opacity > 0
-        source: Global.paths.images + "objectset/lasers.png"
+        source: Global.paths.images + "objectsets/lasers.png"
         z: laser.z + 1
         x: {
             switch(direction) {

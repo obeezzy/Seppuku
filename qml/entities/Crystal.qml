@@ -51,7 +51,7 @@ EntityBase {
 
     Sprite {
         anchors.fill: parent
-        source: Global.paths.images + "objectset/winter.png"
+        source: Global.paths.images + "objectsets/winter.png"
         rotation: spriteRotation
         transformOrigin: Item.Center
         frameX: 104
