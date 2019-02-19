@@ -1,5 +1,6 @@
 import QtQuick 2.9
 import Bacon2D 1.0
+import "../common"
 import "../singletons"
 
 LaserCannon {
@@ -14,6 +15,7 @@ LaserCannon {
     property var limits: limits
 
     bodyType: Body.Kinematic
+    updateInterval: 60
 
     spriteAlias: {
         switch(movingLaserCannon.direction) {
@@ -66,14 +68,7 @@ LaserCannon {
         }
     }
 
-    QtObject {
-        id: limits
-
-        property real topY: 0
-        property real bottomY: 0
-        property real leftX: 0
-        property real rightX: 0
-    }
+    Limits { id: limits }
 
     Connections {
         target: movingLaserCannon.motionSwitch
@@ -85,9 +80,7 @@ LaserCannon {
         }
     }
 
-    onYChanged: privateProperties.switchMovement();
-    onXChanged: privateProperties.switchMovement();
-
+    behavior: ScriptBehavior { script: privateProperties.switchMovement(); }
 
     function startMovement() {
         if (movingLaserCannon.canMove && !movingLaserCannon.moving)

@@ -55,6 +55,7 @@ TiledScene {
         x: viewport.xOffset + 6
         y: viewport.yOffset + 6
         width: viewport.width
+        onPauseRequested: levelBase.toggleLevelPause();
     }
 
     TutorText {
@@ -835,13 +836,11 @@ TiledScene {
                 while(object.next())
                 {
                     var robot = entityManager.createEntity("../entities/Robot.qml");
-                    robot.x = object.x
-                    robot.y = object.y
-                    robot.objectName = object.getProperty("id")
-                    robot.startX = object.getProperty("start_x")
-                    robot.endX = object.getProperty("end_x")
-                    robot.waitDelay = object.getProperty("wait_delay")
-                    robot.facingLeft = object.getProperty("facing_left");
+                    robot.x = object.x;
+                    robot.y = object.y;
+                    robot.objectId = object.getProperty("id");
+                    robot.faceForward = object.getProperty("face_forward", false);
+                    robot.motionVelocity = Qt.point(object.getProperty("motion_velocity_x", 0), object.getProperty("motion_velocity_y", 0));
                 }
             }
         }
@@ -1275,14 +1274,14 @@ TiledScene {
 
                     var cannon = entityManager.findEntity("laserCannon", "objectId", limit.link);
                     if (cannon !== null && cannon.objectId > -1 && Object(cannon).hasOwnProperty("limits")) {
-                        switch (limit.edge) {
-                        case "top": cannon.limits.topY = limit.y; break;
-                        case "bottom": cannon.limits.bottomY = limit.y - cannon.height; break;
-                        case "left": cannon.limits.leftX = limit.x; break;
-                        case "right": cannon.limits.rightX = limit.x - cannon.width; break;
-                        }
-
+                        Utils.applyLimit(limit, cannon);
                         cannon.startMovement();
+                    }
+
+                    var robot = entityManager.findEntity("robot", "objectId", limit.link);
+                    if (robot !== null) {
+                        Utils.applyLimit(limit, robot);
+                        robot.startMovement();
                     }
                 }
             }
@@ -1497,14 +1496,18 @@ TiledScene {
         createInfoSigns();
         createFinishSigns();
         createCheckpointSigns();
+        createRobots();
 
         // Must be created after cannons
         createLaserLevers();
         createLeverSwitches();
-        createLimits();
         // End
 
         configureOneWayPlatforms();
+
+        // Must be created last
+        createLimits();
+        // End
 
         levelBase.viewport.reset();
 //        createLasers();
@@ -1514,7 +1517,6 @@ TiledScene {
         //createFinishSigns();
 //        createFish();
 
-//        createRobots();
 //        createCannons();
 //        createMovingPlatforms();
 //        createSnowmen();

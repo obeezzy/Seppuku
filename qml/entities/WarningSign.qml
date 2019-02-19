@@ -7,12 +7,8 @@ Sprite {
     id: warningSign
     width: 38
     height: 30
-    source: Global.paths.images + "objectsets/symbols.png"
-    alias: "warning_sign"
-    aliases: SpriteAlias {
-        name: "warning_sign"
-        frameX: 150; frameY: 0; frameWidth: 38; frameHeight: 30
-    }
+    spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/symbols.png" }
+    frameX: 150; frameY: 0; frameWidth: 38; frameHeight: 30
 
     Behavior on rotation { enabled: !anim.running; PropertyAnimation { duration: 100 } }
 

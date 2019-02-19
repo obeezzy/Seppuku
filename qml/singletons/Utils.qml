@@ -24,6 +24,9 @@ Item {
     // Hit everything
     readonly property int kAll: Box.All
 
+    // Hit nothing
+    readonly property int kNone: Box.None
+
     // Enemy's main body area
     readonly property int kEnemy: Box.Category1
 
@@ -95,35 +98,23 @@ Item {
         return radians * 180 / Math.PI;
     }
 
-    function saveState() {
-
-    }
-
     function toTimeString(timeInSeconds) {
-        var minutes = Math.floor(timeInSeconds / 60)
-        minutes = minutes < 10 ? ("0" + minutes) : minutes
-
-        var seconds = timeInSeconds % 60
-        seconds = seconds < 10 ? ("0" + seconds) : seconds
-
-        return minutes + ":" + seconds
-    }
-
-    function startTimer() {
-        privateProperties.elaspedTime = new Date().getTime();
-    }
-
-    function stopTimer() {
-        if (privateProperties.elaspedTime === null)
-            return;
-
-        var elasped = new Date().getTime() - privateProperties.elaspedTime;
-        privateProperties.elaspedTime = null;
-        return elapsed;
+        return Qt.formatTime(new Date(timeInSeconds * 1000), "mm:ss");
     }
 
     function invertPoint(point) {
         return Qt.point(-point.x, -point.y);
+    }
+
+    function applyLimit(limit, entity) {
+        if (entity !== null && entity.objectId > -1 && Object(entity).hasOwnProperty("limits")) {
+            switch (limit.edge) {
+            case "top": entity.limits.topY = limit.y; break;
+            case "bottom": entity.limits.bottomY = limit.y - entity.height; break;
+            case "left": entity.limits.leftX = limit.x; break;
+            case "right": entity.limits.rightX = limit.x - entity.width; break;
+            }
+        }
     }
 
     /********** END FUNCTIONS **************************************/

@@ -65,7 +65,7 @@ EntityBase {
     // Am I on the ground?
     readonly property bool airborne: !ninja.grounded
 
-    // Can the hero be seen by the enemy
+    // Can the hero be seen by the
     readonly property bool exposed: !ninja.wearingDisguise
     readonly property bool wearingDisguise: privateProperties.wearingDisguise
 
@@ -170,12 +170,7 @@ EntityBase {
             width: target.width - privateProperties.rightBoxMargin
             height: target.height
             categories: Utils.kHero
-            collidesWith: {
-                Utils.kGround | Utils.kWall | Utils.kCollectible |
-                            Utils.kEnemy | Utils.kLadder | Utils.kCovert |
-                            Utils.kObstacle | Utils.kInteractive | Utils.kHoverArea |
-                            Utils.kLava | Utils.kCameraMoment
-            }
+            collidesWith: Utils.kAll
 
             readonly property bool exposed: ninja.exposed
             readonly property string type: "main_body"
@@ -185,17 +180,7 @@ EntityBase {
                 if(privateProperties.actionState == "dead")
                     return;
                 if(other.categories & Utils.kEnemy) {
-                    if(other.type === "main_body") {
-                        //console.log("Hero: I collided with the enemy. Ouch!")
-                        if(other.dead)
-                            return;
-                        privateProperties.depleteHealth(other.damage, other.sender);
-                        ninja.receivePain();
-                    }
-                    else if(other.type === "vision") {
-                        //console.log("I've been spotted by the enemy.");
-                    }
-                    else if(other.type === "bullet") {
+                    if(ninja.actionState != "dead" && other.type === "bullet") {
                         privateProperties.depleteHealth(other.damage, other.sender);
                         ninja.receivePain();
                     }
@@ -428,7 +413,7 @@ EntityBase {
             break;
         }
 
-        console.log("Action state:", actionState);
+        console.log("Ninja action:", actionState);
     }
 
     AnimatedSprite {
@@ -449,49 +434,60 @@ EntityBase {
 
         anchors.horizontalCenter: parent.horizontalCenter
         animation: ninja.airborne ? "freefall" : "idle"
-        source: Global.paths.images + "hero/" + ninja.name + ".png"
+        spriteSheet: SpriteSheet {
+            source: Global.paths.images + "hero/" + ninja.name + ".png"
+            horizontalFrameCount: 10
+            verticalFrameCount: 17
+        }
         horizontalMirror: privateProperties.horizontalDirectionState == "left"
-        horizontalFrameCount: 10
-        verticalFrameCount: 17
 
         animations: [
             SpriteAnimation {
                 name: "attack_main"
-                finalFrame: 6
-                frameY: 0
+                spriteStrip: SpriteStrip {
+                    finalFrame: 6
+                    frameY: 0
+                }
                 duration: 500
                 loops: 1
-                inverse: privateProperties.horizontalDirectionState == "left"
-
                 onFinished: privateProperties.actionState = "idle";
             },
 
             SpriteAnimation {
                 name: "attack_secondary"
-                finalFrame: 7
-                frameY: frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 7
+                    frameY: frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "climb"
-                frameY: 2 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 6
+                    frameY: 2 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "crouch"
-                frameY: 4 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 4 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "crouch_attack"
-                finalFrame: 7
-                frameY: 3 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 7
+                    frameY: 3 * frameHeight
+                }
                 duration: 500
                 loops: 1
 
@@ -508,8 +504,10 @@ EntityBase {
 
             SpriteAnimation {
                 name: "crouch_throw"
-                finalFrame: 5
-                frameY: 5 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 5
+                    frameY: 5 * frameHeight
+                }
                 duration: 500
                 loops: 1
 
@@ -518,8 +516,10 @@ EntityBase {
 
             SpriteAnimation {
                 name: "die"
-                frameY: 6 * frameHeight
-                frameWidth: .08102981029 * sprite.sourceSize.width
+                spriteStrip: SpriteStrip {
+                    frameY: 6 * frameHeight
+                    frameWidth: .08102981029 * sprite.spriteSheet.sourceSize.width
+                }
                 duration: 500
                 loops: 1
 
@@ -528,15 +528,19 @@ EntityBase {
 
             SpriteAnimation {
                 name: "hover"
-                frameY: 7 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 7 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "hurt"
-                finalFrame: 7
-                frameY: 8 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 7
+                    frameY: 8 * frameHeight
+                }
                 duration: 500
                 loops: 1
                 onFinished: privateProperties.actionState = "idle";
@@ -544,22 +548,28 @@ EntityBase {
 
             SpriteAnimation {
                 name: "idle"
-                frameY: 9 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 9 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "jump"
-                frameY: 11 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 11 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "jump_attack"
-                finalFrame: 6
-                frameY: 10 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 10 * frameHeight
+                    finalFrame: 6
+                }
                 duration: 500
                 loops: 1
 
@@ -568,8 +578,10 @@ EntityBase {
 
             SpriteAnimation {
                 name: "jump_throw"
-                finalFrame: 5
-                frameY: 12 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 5
+                    frameY: 12 * frameHeight
+                }
                 duration: 500
                 loops: 1
 
@@ -579,8 +591,10 @@ EntityBase {
 
             SpriteAnimation {
                 name: "run"
-                finalFrame: 7
-                frameY: 13 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 7 * frameHeight
+                    finalFrame: 7
+                }
                 duration: 500
                 loops: Animation.Infinite
                 inverse: privateProperties.horizontalDirectionState == "left"
@@ -588,15 +602,19 @@ EntityBase {
 
             SpriteAnimation {
                 name: "slide"
-                frameY: 14 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 14 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "throw"
-                finalFrame: 5
-                frameY: 15 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 5
+                    frameY: 15 * frameHeight
+                }
                 duration: 500
                 loops: 1
                 onFinished: privateProperties.actionState = "idle";
@@ -604,23 +622,29 @@ EntityBase {
 
             SpriteAnimation {
                 name: "walk"
-                frameY: 16 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 16 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "freefall"
-                frameY: 11 * frameHeight
-                initialFrame: 9
+                spriteStrip: SpriteStrip {
+                    frameY: 11 * frameHeight
+                    initialFrame: 9
+                }
                 duration: 250
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "rise"
-                frameY: 11 * frameHeight
-                finalFrame: 8
+                spriteStrip: SpriteStrip {
+                    frameY: 7 * frameHeight
+                    finalFrame: 8
+                }
                 duration: 500
                 loops: 1
 
@@ -629,17 +653,21 @@ EntityBase {
 
             SpriteAnimation {
                 name: "dead"
-                frameY: 6 * frameHeight
-                frameWidth: .08102981029 * sprite.sourceSize.width
-                initialFrame: 9
+                spriteStrip: SpriteStrip {
+                    frameY: 6 * frameHeight
+                    frameWidth: .08102981029 * sprite.spriteSheet.sourceSize.width
+                    initialFrame: 9
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "cling"
-                initialFrame: 9
-                frameY: 2 * frameHeight
+                spriteStrip: SpriteStrip {
+                    initialFrame: 9
+                    frameY: 2 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             }

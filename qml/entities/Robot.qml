@@ -1,399 +1,186 @@
-import QtQuick 2.9
+import QtQuick 2.10
 import Bacon2D 1.0
 import QtMultimedia 5.4
-import Seppuku 1.0
 import "../../js/Robot.js" as Ai
 import "../gui"
 import "../singletons"
+import "../common"
 
 EntityBase {
     id: robot
-    //y: robot.dead ? 28 : 0
-    width: 40
-    height: 55
-    //height: robot.dead ? 28 : 55
-    updateInterval: Ai.updateInterval
+
+    property bool faceForward: true
+    property var limits: limits
+    property point motionVelocity: Qt.point(0, 5)
+    property real healthStatus: 1
+    property int waitInterval: 2000
+
+    readonly property bool moving: linearVelocity !== Qt.point(0, 0)
+    readonly property bool canMove: limits.leftX != 0 && limits.rightX != 0
+    readonly property int boxXOffset: 18
+    readonly property bool facingLeft: privateProperties.verticalDirectionState == "left"
+    readonly property bool facingRight: privateProperties.verticalDirectionState == "right"
+    readonly property bool grounded: privateProperties.groundContactCount > 0
+
+    width: 30
+    height: 68
+    updateInterval: 50
     bodyType: Body.Dynamic
     sleepingAllowed: false
     fixedRotation: true
     z: Utils.zEnemy
-    //bullet: true
+    entityType: "robot"
     sender: "robot"
-
-    property int startX: 0
-    property int endX: 0
-    property int waitDelay: parseInt(robot.waitDelay)
-
-    property bool facingLeft: false
-    readonly property bool facingRight: !facingLeft
-
-    // Is this enemy dead
-    property bool dead: false
-
-    // Have i seen the hero
-    property bool heroSpotted: false
-
-    // Check ranges
-    property bool withinSightRange: false
-    property bool withinLeftAttackingRange: false
-    property bool withinRightAttackingRange: false
-
-    // Am I striking the hero
-    property bool striking: false
-
-    readonly property int boxXOffset: 18
-
-    property real healthStatus: 1
 
     QtObject {
         id: privateProperties
-        property bool collidingWithGround: false
+
+        property string verticalDirectionState: robot.faceForward ? "right" : "left"
+        property string actionState: "idle"
+        property point lastLinearVelocity: robot.motionVelocity
+        property bool heroSpotted: false
+        property int groundContactCount: 0
+        property real maxFraction: 1
+
+        readonly property bool leftLimitReached: robot.x <= robot.limits.leftX
+        readonly property bool rightLimitReached: robot.x >= robot.limits.rightX
+
+        onActionStateChanged: {
+            switch (privateProperties.actionState) {
+            case "dead":
+                sprite.animation = "dead";
+                break;
+            case "dying":
+                sprite.animation = "die";
+                break;
+            case "running":
+                sprite.animation = "run";
+                break;
+            case "idle":
+                sprite.animation = "idle";
+                break;
+            }
+
+            console.log("Robot action: ", actionState);
+        }
+
+        function moveLeft() {
+            //robot.linearVelocity = Utils.invertPoint(robot.motionVelocity);
+            robot.linearVelocity = Qt.point(0, 0);
+            privateProperties.verticalDirectionState = "left";
+            privateProperties.actionState = "running";
+            robot.applyLinearImpulse(Utils.invertPoint(robot.motionVelocity), robot.getWorldCenter());
+        }
+
+        function moveRight() {
+            //robot.linearVelocity = robot.motionVelocity;
+            robot.linearVelocity = Qt.point(0, 0);
+            privateProperties.verticalDirectionState = "right";
+            privateProperties.actionState = "running";
+            robot.applyLinearImpulse(robot.motionVelocity, robot.getWorldCenter());
+        }
+
+        function switchDirection() {
+            if (robot.canMove) {
+                if (leftLimitReached)
+                    moveRight();
+                else if (rightLimitReached)
+                    moveLeft();
+
+                lastLinearVelocity = robot.linearVelocity;
+            }
+        }
+
+        function lookoutForHero() {
+            robot.linearVelocity = Qt.point(0, 0);
+            privateProperties.actionState = "idle";
+        }
 
         function depleteHealth(loss) {
             if(loss === undefined)
                 loss = .1;
-
-            if(healthStatus - loss > 0)
-                healthStatus -= loss;
             else {
-                healthStatus = 0;
-                robot.dead = true;
-                sprite.animation = "die";
+                if(robot.healthStatus - loss > 0)
+                    robot.healthStatus -= loss;
+                else {
+                    robot.healthStatus = 0;
+                    sprite.animation = "die";
+                }
             }
         }
     }
 
     EntityManager { id: entityManager; parentScene: robot.scene }
 
-    fixtures: [
-        Box {
-            id: mainBody
-            friction: .8
-            density: .8
-            restitution: .1
-            x: boxXOffset
-            width: target.width
-            height: target.height
-            categories: Utils.kEnemy
-            collidesWith: {
-                if(hero != null && (hero.wearingDisguise || hero.dead))
-                    Utils.kGround | Utils.kWall | Utils.kLava;
-                else
-                    Utils.kGround | Utils.kHero | Utils.kWall | Utils.kLava;
-            }
+    Limits { id: limits }
 
-            readonly property string type: "main_body"
-            readonly property bool dead: robot.dead
-            readonly property string sender: robot.sender
-            readonly property real damage: .1
+    fixtures: Box {
+        id: mainBody
+        friction: 0
+        density: .2
+        restitution: 0
+        width: target.width
+        height: target.height
+        categories: Utils.kEnemy
+        collidesWith: {
+            if(hero !== null && (hero.wearingDisguise || hero.dead))
+                Utils.kGround | Utils.kWall | Utils.kLava;
+            else
+                Utils.kGround | Utils.kHero | Utils.kWall | Utils.kLava;
+        }
 
-            onBeginContact: {
-                if(robot.dead)
-                    return
-                switch(other.categories) {
-                case Utils.kGround:
-                    privateProperties.collidingWithGround = true;
-                    sprite.animation = "idle";
-                    break;
-                case Utils.kHero:
-                    if(other.type === "kunai") {
-                        robot.linearDamping = 50;
-                        privateProperties.depleteHealth(.2);
-                    }
-                    break;
-                case Utils.kLava:
-                    robot.dead = true;
-                    break;
-                }
-            }
+        readonly property string type: "main_body"
+        readonly property string sender: robot.sender
+        readonly property real damage: .1
 
-            onEndContact: {
-                switch(other.categories) {
-                case Utils.kGround:
-                    privateProperties.collidingWithGround = false;
-                    break;
-                }
-            }
-        },
-
-        Chain {
-            id: leftAttackEdge
-            collidesWith: Utils.kHero
-            sensor: true
-
-            vertices: [
-                Qt.point(boxXOffset, 0),
-                Qt.point(boxXOffset, target.height)
-            ]
-
-            readonly property string type: "left_attack"
-            readonly property string sender: robot.sender
-
-            onBeginContact: {
-                if(robot.dead)
-                    return
-                switch(other.categories) {
-                case Utils.kHero:
-                    if(other.type === "main_body") {
-//                        console.log("Robot: I can attack the ninja (left)!")
-                        withinLeftAttackingRange = true;
-                    }
-                    break
-                }
-            }
-
-            onEndContact:  {
-                switch(other.categories) {
-                case Utils.kHero:
-                    if(other.type === "main_body") {
-//                        console.log("Robot: I can attack the ninja (left)!")
-                        withinLeftAttackingRange = false;
-                    }
-                    break;
-                }
-            }
-        },
-
-        Chain {
-            id: rightAttackEdge
-            collidesWith: Utils.kHero
-            sensor: true
-
-            vertices: [
-                Qt.point(target.width + boxXOffset, 0),
-                Qt.point(target.width + boxXOffset, target.height)
-            ]
-
-            readonly property string type: "right_attack"
-            readonly property string sender: robot.sender
-
-            onBeginContact: {
-                if(robot.dead)
-                    return
-                switch(other.categories) {
-                case Utils.kHero:
-                    if(other.type === "main_body") {
-//                        console.log("Robot: I can attack the ninja (right)!")
-                        withinRightAttackingRange = true;
-                    }
-                     break;
-                }
-            }
-
-            onEndContact:  {
-                switch(other.categories) {
-                case Utils.kHero:
-                    if(other.type === "main_body") {
-//                        console.log("Robot: I can no longer attack the ninja (right)!")
-                        withinRightAttackingRange = false;
-                    }
-                     break;
-                }
-            }
-        },
-
-        Chain {
-            id: leftBackEdge
-            collidesWith: Utils.kHero
-            sensor: true
-
-            vertices: [
-                Qt.point(boxXOffset, 0),
-                Qt.point(boxXOffset, target.height)
-            ]
-
-            readonly property string type: "left_back"
-            readonly property string sender: robot.sender
-
-            onBeginContact: {
-                if(robot.dead)
-                    return;
-
-                switch(other.categories) {
-                case Utils.kHero:
-                    if(other.type === "main_body") {
-//                        console.log("Robot: I can attack the ninja (left)!")
-                        withinLeftAttackingRange = true;
-                    }
-                    else if(other.type === "right_attack" && other.striking) {
-                        // This is a "pearl harbor"! Once I'm hit, I perish instantly!
-                        privateProperties.depleteHealth(1);
-                        clunkSound.play();
-                    }
-                    else if(other.type === "left_attack" && other.striking) {
-                        // Normal front attack
-                        privateProperties.depleteHealth(.1);
-                    }
-                    break;
-                }
-            }
-
-            onEndContact:  {
-                switch(other.categories) {
-                case Utils.kHero:
-                    if(other.type === "main_body") {
-//                        console.log("Robot: I can attack the ninja (left)!")
-                        withinLeftAttackingRange = false;
-                    }
-                    break;
-                }
-            }
-        },
-
-        Chain {
-            id: rightBackEdge
-            collidesWith: Utils.kHero
-            sensor: true
-
-            vertices: [
-                Qt.point(target.width + boxXOffset, 0),
-                Qt.point(target.width + boxXOffset, target.height)
-            ]
-
-            readonly property string type: "right_back"
-            readonly property string sender: robot.sender
-
-            onBeginContact: {
-                if(robot.dead)
-                    return
-                switch(other.categories) {
-                case Utils.kHero:
-                    if(other.type === "main_body") {
-//                        console.log("Robot: I can attack the ninja (right)!")
-                        withinRightAttackingRange = true;
-                    }
-                    else if(other.type === "left_attack" && other.striking) {
-                        // This is a "pearl harbor"! Once I'm hit, I perish instantly!
-                        privateProperties.depleteHealth(1);
-                        clunkSound.play();
-                    }
-                    else if(other.type === "right_attack" && other.striking) {
-                        // Normal front attack
-                        privateProperties.depleteHealth(.1);
-                    }
-                     break;
-                }
-            }
-
-            onEndContact:  {
-                switch(other.categories) {
-                case Utils.kHero:
-                    if(other.type === "main_body") {
-//                        console.log("Robot: I can no longer attack the ninja (right)!")
-                        withinRightAttackingRange = false;
-                    }
-                     break;
-                }
+        onBeginContact: {
+            if (other.categories & Utils.kGroundTop) {
+                privateProperties.groundContactCount++;
             }
         }
-    ]
+
+        onEndContact: {
+            if (other.categories & Utils.kGroundTop) {
+                privateProperties.groundContactCount--;
+            }
+        }
+    }
 
     behavior: ScriptBehavior {
             script: {
-                if(robot.dead)
-                    return;
-                // Don't attack while the hero is hurting
-                if(hero.hurting)
-                    return;
+                Ai.setUpdateInterval(robot.updateInterval);
 
-                // Set the "hero spotted" flag
-                Ai.setHeroSpotted(withinSightRange /*heroSpotted*/);
-
-                // If hero is not spotted . . .
-                if(!Ai.heroSpotted || hero.dead)  {
-                    // Reset shot counter
-                    Ai.resetShots();
-                    Ai.resetTicks("shot");
-
-                    // If the robot is facing right . . .
-                    if(robot.facingRight)
-                    {
-                        // Move right until "endX" is reached
-                        if(robot.x < robot.endX) {
-                            Ai.resetTicks("wait");
-                            moveRight();
-                        }
-
-                        // Once the robot has reached the end, wait and stare
-                        else if(Ai.getTicks() !== robot.waitDelay) {
+                if (robot.canMove && !privateProperties.heroSpotted) {
+                    if (privateProperties.leftLimitReached) {
+                        if (Ai.getElapsedTickTime("wait") < robot.waitInterval) {
+                            privateProperties.lookoutForHero();
                             Ai.tick("wait");
-                            sprite.animation = "idle";
-                        }
-
-                        // Face the left
-                        else {
-                            robot.facingLeft = true;
-                        }
-                    }
-                    else {
-                        // Move left until "startX" is reached
-                        if(robot.x > robot.startX) {
+                        } else {
+                            privateProperties.switchDirection();
                             Ai.resetTicks("wait");
-                            moveLeft();
                         }
-
-                        // Once the robot has reached the end, wait and stare
-                        else if(Ai.getTicks("wait") !== robot.waitDelay) {
+                    } else if (privateProperties.rightLimitReached) {
+                        if (Ai.getElapsedTickTime("wait") < robot.waitInterval) {
+                            privateProperties.lookoutForHero();
                             Ai.tick("wait");
-                            sprite.animation = "idle";
-                        }
-
-                        // Face the right
-                        else
-                            robot.facingLeft = false;
-                    }
-                }
-
-                // If hero is spotted . . .
-                else {
-                    // The robot has left alert mode. He is ready to attack the hero!
-                    if(Ai.getTicks("alert") >= Ai.getAlertDelay())
-                    {
-                        // The robot stops shooting after the maximum shots have been reached
-                        if(Ai.getShots() >= Ai.getMaxShots())
-                        {
-                            // The shot timer ticks until the "shot delay" period is reached
-                            if(Ai.getTicks("shot") < Ai.getShotDelay())
-                                Ai.tick("shot");
-
-                            // After the delay has been reached, the shot timer and shot counter is reset.
-                            // The robot shoots the hero again (which increases the shot counter by 1).
-                            else {
-                                Ai.resetTicks("shot");
-                                Ai.resetShots();
-
-                                // Only increment shots if the hero was actually shot
-                                if(shootHero())
-                                    Ai.incrementShots();
-                            }
-                        }
-
-                        // The robot shoots at the hero.
-                        else
-                        {
-                            // Only increment shots if the hero was actually shot
-                            if(shootHero())
-                                Ai.incrementShots();
+                        } else {
+                            privateProperties.switchDirection();
+                            Ai.resetTicks("wait");
                         }
                     }
+                } else if (privateProperties.heroSpotted) {
 
-                    // The robot goes into alert mode. While in alert mode, he stays idle for the "alert delay"
-                    // period.
-                    else
-                    {
-                        Ai.tick("wait");
-                        sprite.animation = "idle";
-                    }
                 }
             }
     }
 
     HealthBar {
         id: healthStatusBar
-        anchors.bottom: parent.top
-        anchors.bottomMargin: 5
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: 8
+        anchors {
+            bottom: parent.top
+            bottomMargin: 5
+            horizontalCenter: parent.horizontalCenter
+        }
         height: 3
         width: 50
         radius: 3
@@ -401,172 +188,142 @@ EntityBase {
     }
 
     Rectangle {
-        height: 1
-        color: "red"
-        x: sensorRay1.facingLeft ? sensorRay1.p2.x : sensorRay1.p1.x
-        y: sensorRay1.p2.y
-        width: sensorRay1.pXDiff
-        parent: scene
+        color: "pink"
+        opacity: .8
+        width: 20
+        height: width
+        radius: width / 2
+        x: 800
+        y: 3040
+        parent: robot.parent
+        z: 10
     }
 
-    RayCast {
-        id: sensorRay1
-        property point p1: initialP1
-        property point p2: initialP2
+    Ray {
+        id: leftRay
+        enabled: robot.facingLeft
+        scene: robot.scene
 
-        readonly property point initialP1: {
-            if(robot.facingLeft)
-                Qt.point(robot.x + rayMargin, robot.y + robot.height / 2);
-            else
-                Qt.point(robot.x + robot.width + rayMargin, robot.y + robot.height / 2);
-        }
-
-        readonly property point initialP2: {
-            if(robot.facingLeft)
-                Qt.point(robot.x - visionSpan + rayMargin, robot.y + robot.height / 2);
-            else
-                Qt.point(robot.x + robot.width + visionSpan + rayMargin, robot.y + robot.height / 2);
-
-        }
-
-        readonly property real pXDiff: Math.abs(p1.x - p2.x)
-        readonly property int multiplier: 8
-        readonly property int visionSpan: 30 * multiplier
-        readonly property bool facingLeft: robot.facingLeft
-        readonly property int rayMargin: 0
+        p1: Qt.point(robot.x, robot.height / 2)
+        p2: Qt.point(robot.x - multiplier * robot.width, robot.height / 2)
 
         onFixtureReported: {
-            if(fixture.categories & Utils.kEnemy)
-                return;
-
-            console.log("categories?", fixture.categories);
-
-            if (fixture.categories & Utils.kHero && fixture.type === "main_body") {
-                if(!hero.dead) {
-                    withinSightRange = true;
-
-                    if(hero.exposed) {
-                        heroSpotted = true;
-                    }
+            console.log("Fixture reported!", point.x, point.y, fixture.type, fixture.categories);
+            if((fixture.categories & Utils.kHero) && fixture.type === "main_body") {
+                if (closestFraction > fraction) {
+                    closestFraction = fraction;
+                    closestEntity = "hero";
                 }
-            }
-            else if(fixture.categories & Utils.kGround) {
-                if(point.x == undefined)
-                    return;
-//                if(facingLeft)
-//                    p2.x = point.x;
-//                else
-//                    p1.x = point.x;
-            }
-            else {
-                withinSightRange = false;
-                //heroSpotted = false;
-            }
-        }
 
-        function cast() {
-            scene.rayCast(this, p1, p2);
-//            console.log("p1=", p1);
-//            console.log("p2=", p2);
+                leftRay.maxFraction = fraction;
+                privateProperties.maxFraction = Math.abs(fraction);
+                console.log("Found hero!!!");
+            }
         }
     }
 
-    Timer {
-        id: rayTimer
-        running: !Global.gameWindow.paused
-        repeat: true
-        interval: 100
+    Ray {
+        id: rightRay
+        enabled: robot.facingRight
+        multiplier: 6
+        scene: robot.scene
 
-        onTriggered: sensorRay1.cast();
+        p1: Qt.point(robot.x + robot.width, robot.height / 2)
+        p2: Qt.point(robot.x + robot.width - multiplier * robot.width, robot.height / 2)
     }
 
     AnimatedSprite {
         id: sprite
+        anchors.centerIn: parent
         horizontalMirror: robot.facingLeft
         horizontalFrameCount: 10
-        source: Global.paths.images + "robot.png"
+        verticalFrameCount: 10
+        source: Global.paths.images + "enemies/robot.png"
+        animation: "idle"
+
+        y: {
+            switch (animation) {
+            case "run": -20; break;
+            case "idle": 800; break;
+            default: 0; break;
+            }
+        }
 
         animations: [
             SpriteAnimation {
+                name: "dead"
+                frameY: 0
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
                 name: "idle"
+                frameY: frameHeight
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "jump"
+                frameY: 2 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "jump_melee"
+                frameY: 3 * frameHeight
+                finalFrame: 7
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "jump_shoot"
+                finalFrame: 4
+                frameY: 4 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
+            },
+
+            SpriteAnimation {
+                name: "melee"
+                finalFrame: 7
+                frameY: 5 * frameHeight
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "run"
+                frameY: 6 * frameHeight
                 finalFrame: 7
-                duration: 1000
+                duration: 800
                 loops: Animation.Infinite
-                inverse: robot.facingLeft
             },
 
             SpriteAnimation {
-                name: "melee_attack"
-                finalFrame: 7
-                duration: 700
-                loops: 1
-                inverse: robot.facingLeft
-
-                onFinished: sprite.animation = "idle"
+                name: "run_shoot"
+                finalFrame: 8
+                frameY: 7 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "shoot"
                 finalFrame: 3
-                duration: 700
-                loops: 1
-                inverse: robot.facingLeft
-
-                onFinished: sprite.animation = "idle"
-                onFrameChanged: {
-                    if(frame == frames / 2) {
-                        releaseBullet()
-                    }
-                }
-            },
-
-            SpriteAnimation {
-                name: "rise"
-                finalFrame: 4
-                duration: 1000
-                loops: 1
-
-                onFinished: sprite.animation = "fall"
-            },
-
-            SpriteAnimation {
-                name: "fall"
-                finalFrame: 4
-                duration: 500
-                loops: 1
-
-                onFinished: sprite.animation = "freefall"
-            },
-
-            SpriteAnimation {
-                name: "freefall"
+                frameY: 8 * frameHeight
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
-                name: "die"
-                duration: 1000
-                loops: 1
-
-                onFinished: sprite.animation = "dead"
-            },
-
-            SpriteAnimation {
-                name: "dead"
-                duration: 1000
-                loops: 1
-
-                onFinished: {
-                    // After killed, fade away gradually
-                    dieAnimation.start();
-                }
+                name: "slide"
+                frameY: 9 * frameHeight
+                duration: 500
+                loops: Animation.Infinite
             }
         ]
 
@@ -579,96 +336,24 @@ EntityBase {
     SoundEffect {
         id: clunkSound
         source: Global.paths.sounds + "sword_clunk.wav"
-        volume: settings.sfxVolume
-        muted: settings.noSound
+        volume: Global.settings.sfxVolume
+        muted: Global.settings.noSound
     }
 
     /****************************** END SOUNDS *********************************************/
 
-    function moveLeft() {
-        robot.facingLeft = true;
-        sprite.animation = "run";
-        robot.x -= 6;
-    }
-
-    function moveRight() {
-        robot.facingLeft = false
-        sprite.animation = "run";
-        robot.x += 6;
-    }
-
-    function runAndAttack() {
-        if(isWithinAttackingRange()) {
-            attack();
-        }
-        else {
-            runTowardsHero();
-        }
-    }
-
-    function runTowardsHero() {
-        if((hero.x + hero.width) < robot.x + robot.boxXOffset) {
-            robot.facingLeft = true;
-            sprite.animation = "run";
-            moveLeft();
-        }
-        else {
-            robot.facingLeft = false;
-            sprite.animation = "run";
-            moveRight();
-        }
-    }
-
-    function jump() {
-        if(!privateProperties.collidingWithGround) {
-            console.log("Not colliding with ground");
-            return;
-        }
-
-        if(sprite.animation == "idle")
-            sprite.animation = "rise";
-        else
-            return;
-
-        robot.applyLinearImpulse(Qt.point(0, -robot.getMass() * 10), robot.getWorldCenter());
-    }
-
-    function attack() {
-        sprite.animation = "melee_attack";
-    }
-
-    function shootHero() {
-        if(sprite.animation == "shoot")
-            return false;
-
-        sprite.animation = "shoot";
-        return true;
-    }
-
-    function isWithinSightRange() {
-        return false;
-    }
-
-    function isWithinAttackingRange() {
-        return withinLeftAttackingRange || withinRightAttackingRange;
-    }
-
     function releaseBullet() {
-        var component = Qt.createComponent("Bullet.qml");
-        var newBullet = component.createObject(gameWindow.currentScene)
-        newBullet.y = robot.y + robot.height / 2 - 12
-        newBullet.facingLeft = robot.facingLeft
+        var bullet = entityManager.createEntity("Bullet.qml");
+        bullet.y = robot.y + robot.height / 2 - 12;
 
-        //var impulseX = newBullet.getMass() * 500
-        var impulseX = 5
+        //var impulseX = newBullet.getMass() * 500;
+        var impulseX = 5;
+    }
 
-        if(robot.facingLeft) {
-            newBullet.x = robot.x - 6
-            newBullet.linearVelocity = Qt.point(-impulseX, 0)
-        }
-        else {
-            newBullet.x = robot.x + robot.width + 6
-            newBullet.linearVelocity = Qt.point(impulseX, 0)
+    function startMovement() {
+        if (robot.canMove) {
+            privateProperties.actionState = "running";
+            robot.linearVelocity = robot.motionVelocity;
         }
     }
 
@@ -684,28 +369,20 @@ EntityBase {
         }
     }
 
-//    onHeroSpottedChanged: {
-//        if(heroSpotted)
-//            console.log("Robot: Hero has been spotted!")
-//        else
-//            console.log("Robot: Hero has left my sight.")
-//    }
-
     Connections {
         target: hero
         onExposedChanged: {
-            if(hero.exposed && robot.withinSightRange)
-                robot.heroSpotted = true;
         }
     }
 
-    Connections {
-        target: gameWindow
-
-        onPausedChanged: {
-            if(gameWindow.paused)
-                sprite.animation = "idle";
-        }
-    }
+//    Connections {
+//        target: robot.world
+//        onPreSolve: {
+//            if (contact.fixtureA.categories & Utils.kHero && contact.fixtureA.type === "main_body")
+//                contact.enabled = false;
+//            else if (contact.fixtureB.categories & Utils.kHero && contact.fixtureB.type === "main_body")
+//                contact.enabled = false;
+//        }
+//    }
 }
 
