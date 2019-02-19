@@ -60,7 +60,7 @@ EntityBase {
     Sprite {
         id: pipeImage
         anchors.fill: parent
-        source: Global.paths.images + "objectsets/common.png"
+        spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/common.png" }
         frameX: 105
         frameY: 0
         frameWidth: 250
@@ -104,12 +104,8 @@ EntityBase {
             anchors.centerIn: parent
             width: 30
             height: 30
-            source: Global.paths.images + "objectsets/symbols.png"
-            alias: "hover"
-            aliases: SpriteAlias {
-                name: "hover"
-                frameX: 52; frameY: 0; frameWidth: 30; frameHeight: 30
-            }
+            frameX: 52; frameY: 0; frameWidth: 30; frameHeight: 30
+            spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/symbols.png" }
         }
     }
 }

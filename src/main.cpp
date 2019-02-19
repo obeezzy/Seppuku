@@ -11,7 +11,9 @@ void registerTypes();
 
 int main(int argc, char *argv[])
 {
+#if defined(Q_OS_WIN) || defined(Q_OS_ANDROID)
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
     QGuiApplication app(argc, argv);
     app.setWindowIcon(QIcon("../Seppuku/icons/seppuku.png"));
 

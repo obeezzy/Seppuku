@@ -28,6 +28,8 @@ Item {
     property int elapsedSeconds: 0
     property string elapsedTimeString: "00:00"
 
+    signal pauseRequested
+
     Image {
         id: headImage
         anchors.top: parent.top
@@ -78,14 +80,17 @@ Item {
                 spacing: 5
 
                 Sprite {
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
+                    anchors {
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
                     width: 30
-                    source: Global.paths.images + "objectsets/hud.png"
-                    alias: "coin"
-                    aliases: SpriteAlias {
-                        name: "coin"
-                        frameX: 0; frameY: 512; frameWidth: 128; frameHeight: 128
+                    frameX: 0
+                    frameY: 512
+                    frameWidth: 128
+                    frameHeight: 128
+                    spriteSheet: SpriteSheet {
+                        source: Global.paths.images + "objectsets/hud.png"
                     }
                 }
 
@@ -117,16 +122,14 @@ Item {
                 spacing: 2
 
                 Sprite {
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
+                    anchors {
+                        top: parent.top
+                        bottom: parent.bottom
+                    }
                     width: 30
                     fillMode: Bacon2D.PreserveAspectFit
-                    source: Global.paths.images + "objectsets/hud.png"
-                    alias: "kunai"
-                    aliases: SpriteAlias {
-                        name: "kunai"
-                        frameX: 512; frameY: 640; frameWidth: 128; frameHeight: 128
-                    }
+                    spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/hud.png" }
+                    frameX: 512; frameY: 640; frameWidth: 128; frameHeight: 128
                 }
 
                 Text {
@@ -168,12 +171,11 @@ Item {
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
                     width: 40
-                    source: Global.paths.images + "objectsets/hud.png"
-                    alias: "red_key"
-                    aliases: SpriteAlias {
-                        name: "red_key"
-                        frameX: 384; frameY: 0; frameWidth: 128; frameHeight: 128
-                    }
+                    frameX: 384
+                    frameY: 0
+                    frameWidth: 128
+                    frameHeight: 128
+                    spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/hud.png" }
 
                     opacity: totalRedKeysCollected > 0 ? 1 : 0
                     scale: totalRedKeysCollected > 0 ? 1 : 4
@@ -194,6 +196,7 @@ Item {
 
         text: Stylesheet.icons.fa_pause
         font.pixelSize: 24
+        onClicked: headsUpDisplay.pauseRequested();
     }
 
     Item {
@@ -205,18 +208,13 @@ Item {
         width: levelTimerRow.width
         transform: Translate { id: levelTimerDisplayTransform }
 
-        Timer {
+        PausableTimer {
             id: levelTimer
             interval: 1000
             repeat: true
-            running: !scene.gameOver
+            running: !scene.gameOver && !gameWindow.paused
 
-            onTriggered: {
-                if(gameWindow.paused)
-                    return;
-
-                headsUpDisplay.elapsedTimeString = Utils.toTimeString(headsUpDisplay.elapsedSeconds++);
-            }
+            onTriggered: headsUpDisplay.elapsedTimeString = Utils.toTimeString(headsUpDisplay.elapsedSeconds++);
         }
 
         Row {
@@ -231,12 +229,8 @@ Item {
                 width: 48
                 height: 48
                 fillMode: Bacon2D.PreserveAspectFit
-                source: Global.paths.images + "objectsets/hud.png"
-                alias: "clock"
-                aliases: SpriteAlias {
-                    name: "clock"
-                    frameX: 530; frameY: 512; frameWidth: 128; frameHeight: 128
-                }
+                frameX: 530; frameY: 512; frameWidth: 128; frameHeight: 128
+                spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/hud.png" }
             }
 
             Text {

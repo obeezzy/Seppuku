@@ -3,8 +3,10 @@
 
 var shots = 0, maxShots = 3
 
-// Ticks (The different clocks
+// Ticks (The different clocks)
 var ticks = 0, shotTicks = 0
+
+var tickClocks = null
 
 // Intervals
 var updateInterval = 50, waitDelay = 1000, alertDelay = 500, shotDelay = 3000
@@ -13,46 +15,30 @@ var updateInterval = 50, waitDelay = 1000, alertDelay = 500, shotDelay = 3000
 var heroSpotted = false
 
 function resetTicks(clockName) {
-    switch(clockName) {
-    case "shot":
-        shotTicks = 0
-        break
-    case "wait":
-    case "alert":
-        ticks = 0
-        break
-    default:
-        ticks = 0
-        shotTicks = 0
-        break
-    }
+    if (clockName === undefined)
+        tickClocks = null; // Reset all
+    else if (tickClocks !== null && Object(tickClocks).hasOwnProperty(clockName))
+        tickClocks[clockName] = 0;
 }
 
 function getTicks(clockName) {
-    switch(clockName) {
-    case "shot":
-        return shotTicks
-    case "wait":
-    case "alert":
-        return ticks
-    }
+    if (tickClocks !== null && Object(tickClocks).hasOwnProperty(clockName))
+        return tickClocks[clockName];
 
-    return ticks
+    return 0;
 }
 
 function tick(clockName) {
-    switch(clockName) {
-    case "shot":
-        shotTicks += updateInterval
-        break
-    case "wait":
-    case "alert":
-        ticks += updateInterval
-        break
-    default:
-        ticks += updateInterval
-        break
+    if (tickClocks == null) {
+        tickClocks = {};
+        tickClocks[clockName] = 1;
+    } else if (tickClocks != null && Object(tickClocks).hasOwnProperty(clockName)) {
+        tickClocks[clockName]++;
     }
+}
+
+function getElapsedTickTime(clockName) {
+    return getTicks(clockName) * updateInterval;
 }
 
 function setHeroSpotted(spotted) {

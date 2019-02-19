@@ -4,7 +4,6 @@ QT += qml quick gamepad
 
 SOURCES += src/main.cpp \
     src/seppuku.cpp
-
 #RESOURCES += qml.qrc
 
 RC_ICONS = seppuku.ico
@@ -107,7 +106,9 @@ DISTFILES += \
     qml/entities/CameraMoment.qml \
     qml/entities/Limit.qml \
     qml/gui/HelperBalloon.qml \
-    qml/entities/MovingLaserCannon.qml
+    qml/entities/MovingLaserCannon.qml \
+    qml/common/Ray.qml \
+    qml/common/Limits.qml
 
 HEADERS += \
     src/seppuku.h
