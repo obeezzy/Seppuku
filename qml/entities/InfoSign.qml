@@ -57,7 +57,7 @@ EntityBase {
 
     Sprite {
         anchors.fill: parent
-        source: Global.paths.images + "objectsets/winter.png"
+        spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/winter.png" }
         frameX: 0
         frameY: 200
         frameWidth: 86

@@ -17,7 +17,6 @@ Item {
 
     // Hero properties
     readonly property real healthStatus: hero.healthStatus
-    readonly property bool hurting: hero.actionState == "hurting"
     readonly property int totalCoins: hero.totalCoinsCollected
     readonly property int totalKunai: hero.totalKunaiCollected
     readonly property int totalBlueKeysCollected: hero.totalBlueKeysCollected
@@ -35,7 +34,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: 10
-        source: hurting || (healthStatus == 0) ? (hero.filePrefix + "dead_head.png") : (hero.filePrefix + "head.png")
+        source: hero.hurting || (healthStatus == 0) ? (hero.filePrefix + "dead_head.png") : (hero.filePrefix + "head.png")
         width: 70
         fillMode: Image.PreserveAspectFit
     }

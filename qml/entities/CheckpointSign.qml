@@ -51,7 +51,7 @@ EntityBase {
 
     Sprite {
         anchors.fill: parent
-        source: Global.paths.images + "objectsets/winter.png"
+        spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/winter.png" }
         frameX: 0
         frameY: 200
         frameWidth: 86
@@ -63,12 +63,10 @@ EntityBase {
             y: 12
             width: 23
             height: width
-            source: Global.paths.images + "objectsets/symbols.png"
-            alias: "like_sign"
-            aliases: SpriteAlias {
-                name: "like_sign"
-                frameX: 80; frameY: 0; frameWidth: 50; frameHeight: 50
-            }            transformOrigin: Image.Center
+            spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/symbols.png" }
+            frameX: 80; frameY: 0; frameWidth: 50; frameHeight: 50
+
+            transformOrigin: Image.Center
             rotation: 180
             opacity: .4
 

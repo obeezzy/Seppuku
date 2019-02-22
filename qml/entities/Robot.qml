@@ -147,31 +147,31 @@ EntityBase {
     }
 
     behavior: ScriptBehavior {
-            script: {
-                Ai.setUpdateInterval(robot.updateInterval);
+        script: {
+            Ai.setUpdateInterval(robot.updateInterval);
 
-                if (robot.canMove && !privateProperties.heroSpotted) {
-                    if (privateProperties.leftLimitReached) {
-                        if (Ai.getElapsedTickTime("wait") < robot.waitInterval) {
-                            privateProperties.lookoutForHero();
-                            Ai.tick("wait");
-                        } else {
-                            privateProperties.switchDirection();
-                            Ai.resetTicks("wait");
-                        }
-                    } else if (privateProperties.rightLimitReached) {
-                        if (Ai.getElapsedTickTime("wait") < robot.waitInterval) {
-                            privateProperties.lookoutForHero();
-                            Ai.tick("wait");
-                        } else {
-                            privateProperties.switchDirection();
-                            Ai.resetTicks("wait");
-                        }
+            if (robot.canMove && !privateProperties.heroSpotted) {
+                if (privateProperties.leftLimitReached) {
+                    if (Ai.getElapsedTickTime("wait") < robot.waitInterval) {
+                        privateProperties.lookoutForHero();
+                        Ai.tick("wait");
+                    } else {
+                        privateProperties.switchDirection();
+                        Ai.resetTicks("wait");
                     }
-                } else if (privateProperties.heroSpotted) {
-
+                } else if (privateProperties.rightLimitReached) {
+                    if (Ai.getElapsedTickTime("wait") < robot.waitInterval) {
+                        privateProperties.lookoutForHero();
+                        Ai.tick("wait");
+                    } else {
+                        privateProperties.switchDirection();
+                        Ai.resetTicks("wait");
+                    }
                 }
+            } else if (privateProperties.heroSpotted) {
+
             }
+        }
     }
 
     HealthBar {
@@ -236,11 +236,13 @@ EntityBase {
         id: sprite
         anchors.centerIn: parent
         horizontalMirror: robot.facingLeft
-        horizontalFrameCount: 10
-        verticalFrameCount: 10
-        source: Global.paths.images + "enemies/robot.png"
-        animation: "idle"
+        spriteSheet: SpriteSheet {
+            horizontalFrameCount: 10
+            verticalFrameCount: 10
+            source: Global.paths.images + "enemies/robot.png"
+        }
 
+        animation: "idle"
         y: {
             switch (animation) {
             case "run": -20; break;
@@ -252,76 +254,96 @@ EntityBase {
         animations: [
             SpriteAnimation {
                 name: "dead"
-                frameY: 0
+                spriteStrip: SpriteStrip {
+                    frameY: 0
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "idle"
-                frameY: frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "jump"
-                frameY: 2 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 2 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "jump_melee"
-                frameY: 3 * frameHeight
-                finalFrame: 7
+                spriteStrip: SpriteStrip {
+                    frameY: 3 * frameHeight
+                    finalFrame: 7
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "jump_shoot"
-                finalFrame: 4
-                frameY: 4 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 4
+                    frameY: 4 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "melee"
-                finalFrame: 7
-                frameY: 5 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 7
+                    frameY: 5 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "run"
-                frameY: 6 * frameHeight
-                finalFrame: 7
+                spriteStrip: SpriteStrip {
+                    frameY: 6 * frameHeight
+                    finalFrame: 7
+                }
                 duration: 800
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "run_shoot"
-                finalFrame: 8
-                frameY: 7 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 8
+                    frameY: 7 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "shoot"
-                finalFrame: 3
-                frameY: 8 * frameHeight
+                spriteStrip: SpriteStrip {
+                    finalFrame: 3
+                    frameY: 8 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "slide"
-                frameY: 9 * frameHeight
+                spriteStrip: SpriteStrip {
+                    frameY: 9 * frameHeight
+                }
                 duration: 500
                 loops: Animation.Infinite
             }
@@ -375,14 +397,14 @@ EntityBase {
         }
     }
 
-//    Connections {
-//        target: robot.world
-//        onPreSolve: {
-//            if (contact.fixtureA.categories & Utils.kHero && contact.fixtureA.type === "main_body")
-//                contact.enabled = false;
-//            else if (contact.fixtureB.categories & Utils.kHero && contact.fixtureB.type === "main_body")
-//                contact.enabled = false;
-//        }
-//    }
+    //    Connections {
+    //        target: robot.world
+    //        onPreSolve: {
+    //            if (contact.fixtureA.categories & Utils.kHero && contact.fixtureA.type === "main_body")
+    //                contact.enabled = false;
+    //            else if (contact.fixtureB.categories & Utils.kHero && contact.fixtureB.type === "main_body")
+    //                contact.enabled = false;
+    //        }
+    //    }
 }
 
