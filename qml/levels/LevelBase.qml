@@ -1496,7 +1496,7 @@ TiledScene {
         createInfoSigns();
         createFinishSigns();
         createCheckpointSigns();
-        createRobots();
+        //createRobots();
 
         // Must be created after cannons
         createLaserLevers();

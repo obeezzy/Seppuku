@@ -58,26 +58,45 @@ EntityBase {
        }
     }
 
-    Sprite {
+    Loader {
         anchors.fill: parent
-        source: Global.paths.images + "objectsets/common.png"
-        alias: "switch_" + position
-        aliases: [
-            SpriteAlias {
-                name: "switch_left"
+        sourceComponent: {
+            switch (leverSwitch.position) {
+            case "left":
+                switchLeft
+                break;
+            case "mid":
+                switchMid
+                break;
+            case "right":
+                switchRight
+                break;
+            }
+        }
+
+        Component {
+            id: switchLeft
+            Sprite {
+                spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/common.png" }
                 frameX: 0; frameY: 340; frameWidth: 70; frameHeight: 70
-            },
+            }
+        }
 
-            SpriteAlias {
-                name: "switch_mid"
+        Component {
+            id: switchMid
+            Sprite {
+                spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/common.png" }
                 frameX: 70; frameY: 340; frameWidth: 70; frameHeight: 70
-            },
+            }
+        }
 
-            SpriteAlias {
-                name: "switch_right"
+        Component {
+            id: switchRight
+            Sprite {
+                spriteSheet: SpriteSheet { source: Global.paths.images + "objectsets/common.png" }
                 frameX: 140; frameY: 340; frameWidth: 70; frameHeight: 70
             }
-        ]
+        }
     }
 
     Connections {

@@ -108,7 +108,9 @@ DISTFILES += \
     qml/gui/HelperBalloon.qml \
     qml/entities/MovingLaserCannon.qml \
     qml/common/Ray.qml \
-    qml/common/Limits.qml
+    qml/common/Limits.qml \
+    qml/sprites/LaserSprite.qml \
+    qml/sprites/LaserCannonSprite.qml
 
 HEADERS += \
     src/seppuku.h

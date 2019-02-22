@@ -2,57 +2,32 @@ import QtQuick 2.9
 import QtMultimedia 5.9
 import Bacon2D 1.0
 import Seppuku 1.0
+import QtQml.StateMachine 1.0 as DSM
 import "../singletons"
 
 EntityBase {
     id: ninja
-    width: 30
-    height: ninja.standingHeight
-    bodyType: Body.Dynamic
-    sleepingAllowed: false
-    fixedRotation: true
-    bullet: true
-    z: ninja.wearingDisguise ? Utils.zHeroDisguised : Utils.zHero
 
-    signal selfDestruct
-    signal disguised(bool putOn)
-    signal infoRequested
-    signal utilized(string type)
-    signal teleported // After you have moved through a door
-
-    // Where is the next door location
-    property point nextDoorLocation: Qt.point(-1, -1)
+    // Face forward or backwards?
+    property alias faceForward: sprite.horizontalMirror
     // Name of hero
     property string name: "tomahawk"
-    // Face forward or backwards?
-    property bool faceForward: true
-
     // Current scene
     readonly property Scene scene: parent
     // Location of sprites
     readonly property string filePrefix: Global.paths.images + "hero/" + name + "_"
     // What's the distance moved with each step
     readonly property int xStep: 8
+    // Where is the next door location
+    property point nextDoorLocation: Qt.point(-1, -1)
 
-    readonly property bool inHoverArea: privateProperties.hoverAreaContactCount > 0
+    readonly property bool airborne: privateProperties.groundContactCount === 0
 
-    readonly property bool facingRight: privateProperties.horizontalDirectionState == "right"
-    readonly property bool facingLeft: privateProperties.horizontalDirectionState == "left"
-    readonly property bool facingUp: privateProperties.verticalDirectionState == "up"
-    readonly property bool facingDown: privateProperties.verticalDirectionState == "down"
-
-    readonly property real standingHeight: 60
-    readonly property real crouchingHeight: 38
+    readonly property bool hurting: false
 
     readonly property string deathCause: privateProperties.deathCause
     readonly property real healthStatus: privateProperties.healthStatus
-
-    readonly property string verticalDirectionState: privateProperties.verticalDirectionState
-    readonly property string horizontalDirectionState: privateProperties.horizontalDirectionState
-    readonly property string actionState: privateProperties.actionState
-    readonly property string altitudeState: privateProperties.altitudeState
-    readonly property string rangeState: privateProperties.rangeState
-
+    readonly property bool inHoverArea: privateProperties.hoverAreaContactCount > 0
     readonly property int totalCoinsCollected: privateProperties.totalCoinsCollected
     readonly property int totalKunaiCollected: privateProperties.totalKunaiCollected
     readonly property int totalBlueKeysCollected: privateProperties.totalBlueKeysCollected
@@ -60,40 +35,22 @@ EntityBase {
     readonly property int totalRedKeysCollected: privateProperties.totalRedKeysCollected
     readonly property int totalGreenKeysCollected: privateProperties.totalGreenKeysCollected
 
-    // Is the player on the ground
-    readonly property bool grounded: privateProperties.groundContactCount > 0 && privateProperties.actionState != "clinging"
-    // Am I on the ground?
-    readonly property bool airborne: !ninja.grounded
+    signal selfDestruct
+    signal infoRequested
+    signal utilized
 
-    // Can the hero be seen by the
-    readonly property bool exposed: !ninja.wearingDisguise
-    readonly property bool wearingDisguise: privateProperties.wearingDisguise
+    width: 30
+    height: 60
+    bodyType: Body.Dynamic
+    sleepingAllowed: false
+    fixedRotation: true
+    bullet: true
+    z: Utils.zHero
 
-    readonly property bool inDisguiseRange: privateProperties.inDisguiseRange
-    readonly property bool inInfoRange: privateProperties.inInfoRange
-    readonly property bool inLeverRange: privateProperties.inLeverRange
-    readonly property bool inDoorRange: privateProperties.inDoorRange
-    readonly property bool inCameraMomentRange: privateProperties.inCameraMomentRange
-
-    readonly property var cameraMoment: privateProperties.cameraMoment
+    EntityManager { id: entityManager }
 
     QtObject {
         id: privateProperties
-
-        property string verticalDirectionState: "down"
-        property string horizontalDirectionState: ninja.faceForward ? "right" : "left"
-        property string actionState: "idle"
-        property string altitudeState: ""
-        property string rangeState: ""
-        property var pressedKeys: {
-            "up": false,
-                    "down": false,
-                    "left": false,
-                    "right": false,
-                    "attack": false,
-                    "throw": false,
-                    "use": false
-        }
 
         property int ladderContactCount: 0
         property int groundContactCount: 0
@@ -152,10 +109,46 @@ EntityBase {
             else {
                 privateProperties.healthStatus = 0;
                 privateProperties.deathCause = sender;
-                privateProperties.actionState = "dying";
             }
 
             ouchSound.play();
+        }
+    }
+
+    Item {
+        id: actions
+
+        property QtObject keys: QtObject {
+            property bool upPressed: false
+            property bool downPressed: false
+            property bool leftPressed: false
+            property bool rightPressed: false
+            property bool attackPressed: false
+            property bool tossPressed: false
+            property bool usePressed: false
+        }
+
+        signal goLeft(string eventType)
+        signal goRight(string eventType)
+        signal goUp(string eventType)
+        signal goDown(string eventType)
+        signal attack(string eventType)
+        signal toss(string eventType)
+        signal use(string eventType)
+
+        Connections {
+            onGoLeft: {
+                actions.keys.leftPressed = eventType === "press";
+                if (eventType === "press")
+                    sprite.horizontalMirror = true;
+            }
+            onGoRight: {
+                actions.keys.rightPressed = eventType === "press";
+                if (eventType === "press")
+                    sprite.horizontalMirror = false;
+            }
+            onGoUp: actions.keys.upPressed = eventType === "press";
+            onGoDown: actions.keys.downPressed = eventType === "press";
         }
     }
 
@@ -172,114 +165,16 @@ EntityBase {
             categories: Utils.kHero
             collidesWith: Utils.kAll
 
-            readonly property bool exposed: ninja.exposed
+            readonly property bool exposed: true //ninja.exposed
             readonly property string type: "main_body"
-            readonly property bool dead: privateProperties.actionState == "dead"
+            readonly property bool dead: false
 
             onBeginContact: {
-                if(privateProperties.actionState == "dead")
-                    return;
-                if(other.categories & Utils.kEnemy) {
-                    if(ninja.actionState != "dead" && other.type === "bullet") {
-                        privateProperties.depleteHealth(other.damage, other.sender);
-                        ninja.receivePain();
-                    }
-                }
-                else if(other.categories & Utils.kCollectible) {
-                    if(other.type === "coin" && !other.picked)
-                        addCoin();
-                    else if(other.type === "kunai")
-                        addKunai();
-                    else if(other.type === "key")
-                        addKey(other.color);
-                }
-                else if(other.categories & Utils.kLadder) {
-                    privateProperties.ladderContactCount++;
-                    ninja.gravityScale = 0;
-                    ninja.linearVelocity = Qt.point(0, 0);
 
-                    if (privateProperties.actionState == "sliding")
-                        ninja.stopSliding();
-
-                    privateProperties.actionState = "clinging";
-                }
-                else if(other.categories & Utils.kObstacle) {
-                    if(other.type === "crystal") {
-                        privateProperties.depleteHealth(other.damage, other.sender);
-                        ninja.receivePain();
-                    }
-                    else if(other.type === "rope") {
-                        // do nothing
-                    }
-                }
-                else if(other.categories & Utils.kCovert) {
-                    privateProperties.inDisguiseRange = true;
-                }
-                else if(other.categories & Utils.kHoverArea) {
-                    privateProperties.hoverAreaContactCount++;
-                }
-                else if(other.categories & Utils.kInteractive) {
-                    if(other.type === "info_sign")
-                        privateProperties.inInfoRange = true;
-                    else if(other.type === "lever")
-                        privateProperties.inLeverRange = true;
-                }
-                else if(other.categories & Utils.kLava) {
-                    privateProperties.depleteHealth(1, other.sender);
-                }
-                else if(other.categories & Utils.kDoor) {
-
-                }
-                else if (other.categories & Utils.kCameraMoment) {
-                    privateProperties.cameraMoment = other.cameraMoment;
-                    privateProperties.inCameraMomentRange = true;
-                }
             }
 
             onEndContact: {
-                if(privateProperties.actionState == "dead")
-                    return
-                if(other.categories & Utils.kLadder) {
-                    privateProperties.ladderContactCount--;
 
-                    if(privateProperties.ladderContactCount == 0) {
-                        ninja.gravityScale = 1;
-
-                        if (privateProperties.actionState == "clinging" || privateProperties.actionState == "climbing") {
-                            if (!ninja.grounded || ninja.isRising() || ninja.isFalling())
-                                privateProperties.actionState = "freefall";
-                            else
-                                privateProperties.actionState = "idle";
-                        }
-                    }
-                }
-                else if(other.categories & Utils.kCovert) {
-                    privateProperties.inDisguiseRange = false;
-                }
-                else if(other.categories & Utils.kHoverArea) {
-                    privateProperties.hoverAreaContactCount--;
-
-                    if (privateProperties.hoverAreaContactCount == 0) {
-                        ninja.stopHovering();
-                        hoveringFreefallDelayTimer.stop();
-                        if (ninja.airborne)
-                            privateProperties.actionState = "freefall";
-                        else
-                            privateProperties.actionState = "idle";
-                    }
-
-                }
-                else if(other.categories & Utils.kInteractive) {
-                    if(other.type === "info_sign")
-                        privateProperties.inInfoRange = false;
-                    else if(other.type === "lever")
-                        privateProperties.inLeverRange = false;
-                }
-                else if (other.categories & Utils.kCameraMoment) {
-                    console.log("Hero: Camera moment gone!");
-                    privateProperties.inCameraMomentRange = false;
-                    privateProperties.cameraMoment = null;
-                }
             }
         },
 
@@ -296,9 +191,6 @@ EntityBase {
             readonly property string type: "head"
 
             onBeginContact: {
-                if(privateProperties.actionState == "dead")
-                    return;
-
                 if(other.categories === (Utils.kObstacle | Utils.kGround)) {
                     // Do nothing
                 }
@@ -322,14 +214,8 @@ EntityBase {
             readonly property string type: "ground"
 
             onBeginContact: {
-                if(privateProperties.actionState == "dead")
-                    return;
-
                 if(other.categories & Utils.kGroundTop) {
                     privateProperties.groundContactCount++;
-
-                    if (privateProperties.actionState == "freefall")
-                        privateProperties.actionState = "idle";
                 }
             }
 
@@ -340,95 +226,18 @@ EntityBase {
         }
     ]
 
-    // Die
-    onHealthStatusChanged: {
-        if (privateProperties.healthStatus <= 0) {
-            if(privateProperties.wearingDisguise)
-                ninja.toggleDisguise();
-
-            ninja.stopMovement();
-            privateProperties.actionState = "dying";
-            ninja.gravityScale = 1;
-            privateProperties.healthStatus = 0;
-            ninja.selfDestruct();
-        }
-    }
-
-    onActionStateChanged: {
-        if (sprite.animation == "dying" || sprite.animation == "dead")
-            return;
-
-        switch (privateProperties.actionState) {
-        case "dead":
-            sprite.animation = "dead";
-            break;
-        case "dying":
-            sprite.animation = "die";
-            break;
-        case "hurting":
-            sprite.animation = "hurt";
-            break;
-        case "throwing":
-            sprite.animation = "throw";
-            break;
-        case "primary_attacking":
-            sprite.animation = "attack_main";
-            break;
-        case "crouch_attacking":
-            sprite.animation = "crouch_attack";
-            break;
-        case "jump_attacking":
-            sprite.animation = "jump_attack";
-            break;
-        case "clinging":
-            sprite.animation = "cling";
-            break;
-        case "climbing":
-            sprite.animation = "climb";
-            break;
-        case "running":
-            sprite.animation = "run";
-            break;
-        case "freefall":
-            sprite.animation = "freefall";
-            break;
-        case "sliding":
-            sprite.animation = "slide";
-            break;
-        case "crouching":
-            sprite.animation = "crouch";
-            break;
-        case "rising":
-            sprite.animation = "rise";
-            break;
-        case "hovering":
-            sprite.animation = "hover";
-            break;
-        case "idle":
-            sprite.animation = "idle";
-            break;
-        default:
-            console.warn("Unhandled action state, defaulting to idle...");
-            sprite.animation = "idle";
-            break;
-        }
-
-        console.log("Ninja action:", actionState);
-    }
-
     AnimatedSprite {
         id: sprite
-
         y: {
             switch (animation) {
             case "attack_main": -10; break;
-            case "run": -25; break;
+            case "run": -8; break;
             case "slide": -40; break;
             case "cling":
             case "climb": -6; break;
-            case "crouch": -40; break;
-            case "crouch_attack": -40; break;
-            default: -17; break;
+            case "crouch": -12; break;
+            case "crouch_attack": -12; break;
+            default: -8; break;
             }
         }
 
@@ -439,7 +248,6 @@ EntityBase {
             horizontalFrameCount: 10
             verticalFrameCount: 17
         }
-        horizontalMirror: privateProperties.horizontalDirectionState == "left"
 
         animations: [
             SpriteAnimation {
@@ -450,7 +258,12 @@ EntityBase {
                 }
                 duration: 500
                 loops: 1
-                onFinished: privateProperties.actionState = "idle";
+                onFinished: {
+                    if (actions.keys.leftPressed || actions.keys.rightPressed)
+                        sprite.animation = "run";
+                    else
+                        sprite.animation = "idle";
+                }
             },
 
             SpriteAnimation {
@@ -490,16 +303,7 @@ EntityBase {
                 }
                 duration: 500
                 loops: 1
-
-                onFinished: {
-                    var downPressed = privateProperties.pressedKeys["down"];
-                    if (downPressed)
-                        privateProperties.actionState = "crouching"
-                    else {
-                        ninja.increaseHeight();
-                        privateProperties.actionState = "idle";
-                    }
-                }
+                onFinished: sprite.animation = "crouch";
             },
 
             SpriteAnimation {
@@ -510,8 +314,6 @@ EntityBase {
                 }
                 duration: 500
                 loops: 1
-
-                onFinished: privateProperties.actionState = privateProperties.pressedKeys["down"] ? "crouching" : "idle";
             },
 
             SpriteAnimation {
@@ -522,8 +324,6 @@ EntityBase {
                 }
                 duration: 500
                 loops: 1
-
-                onFinished: privateProperties.actionState = "dead";
             },
 
             SpriteAnimation {
@@ -543,7 +343,7 @@ EntityBase {
                 }
                 duration: 500
                 loops: 1
-                onFinished: privateProperties.actionState = "idle";
+                onFinished: sprite.animation = "idle";
             },
 
             SpriteAnimation {
@@ -560,8 +360,9 @@ EntityBase {
                 spriteStrip: SpriteStrip {
                     frameY: 11 * frameHeight
                 }
-                duration: 500
-                loops: Animation.Infinite
+                duration: 800
+                loops: 1
+                onFinished: sprite.animation = "freefall";
             },
 
             SpriteAnimation {
@@ -573,7 +374,12 @@ EntityBase {
                 duration: 500
                 loops: 1
 
-                onFinished: privateProperties.actionState = "freefall";
+                onFinished: {
+                    if (ninja.airborne)
+                        sprite.animation = "freefall";
+                    else
+                        sprite.animation = (actions.keys.leftPressed || actions.keys.rightPressed) ? "run" : "idle";
+                }
             },
 
             SpriteAnimation {
@@ -585,19 +391,18 @@ EntityBase {
                 duration: 500
                 loops: 1
 
-                onFinished: privateProperties.actionState = "freefall";
+                onFinished: sprite.animation = "freefall";
             },
 
 
             SpriteAnimation {
                 name: "run"
                 spriteStrip: SpriteStrip {
-                    frameY: 7 * frameHeight
+                    frameY: 13 * frameHeight
                     finalFrame: 7
                 }
                 duration: 500
                 loops: Animation.Infinite
-                inverse: privateProperties.horizontalDirectionState == "left"
             },
 
             SpriteAnimation {
@@ -617,7 +422,6 @@ EntityBase {
                 }
                 duration: 500
                 loops: 1
-                onFinished: privateProperties.actionState = "idle";
             },
 
             SpriteAnimation {
@@ -647,8 +451,6 @@ EntityBase {
                 }
                 duration: 500
                 loops: 1
-
-                onFinished: if (privateProperties.actionState == "rising") privateProperties.actionState = "freefall";
             },
 
             SpriteAnimation {
@@ -674,181 +476,280 @@ EntityBase {
         ]
     }
 
-    RayCast {
-        id: attackRay
+    DSM.StateMachine {
+        id: stateMachine
+        running: true
+        childMode: DSM.State.ParallelStates
 
-        property point p1: {
-            if(ninja.facingLeft)
-                Qt.point(ninja.x + ninja.width, ninja.y + ninja.height / 2);
-            else
-                Qt.point(ninja.x, ninja.y + ninja.height / 2);
-        }
-        property point p2: {
-            if(ninja.facingLeft)
-                Qt.point(ninja.x - ninja.width * multiplier, p1.y);
-            else
-                Qt.point(ninja.x + ninja.width + ninja.width * multiplier, p1.y);
-        }
+        DSM.State {
+            id: directionState
+            initialState: actions.keys.leftPressed ? leftDirectionState
+                                                     : actions.keys.rightPressed ? rightDirectionState
+                                                                                   : noDirectionState
 
-        readonly property int multiplier: 2
-        readonly property int pXDiff: Math.abs(p2.x - p1.x)
-        readonly property int pYDiff: Math.abs(p2.y - p1.y)
+            DSM.State {
+                id: leftDirectionState
+                onEntered: {
+                    if (!crouchState.active && !crouchAttackState.active)
+                        ninja.linearVelocity.x = -ninja.xStep;
+                }
 
-        onFixtureReported: {
-            if (fixture.categories & Utils.kEnemy && fixture.type === "main_body") {
+                DSM.SignalTransition {
+                    targetState: rightDirectionState
+                    signal: actions.goRight
+                    guard: eventType === "press"
+                }
+
+                DSM.SignalTransition {
+                    targetState: noDirectionState
+                    signal: actions.goLeft
+                    guard: eventType === "release"
+                }
+            }
+
+            DSM.State {
+                id: rightDirectionState
+                onEntered: {
+                    if (!crouchState.active && !crouchAttackState.active)
+                        ninja.linearVelocity.x = ninja.xStep;
+                }
+
+                DSM.SignalTransition {
+                    targetState: leftDirectionState
+                    signal: actions.goLeft
+                    guard: eventType === "press"
+                }
+
+                DSM.SignalTransition {
+                    targetState: noDirectionState
+                    signal: actions.goRight
+                    guard: eventType === "release"
+                }
+            }
+
+            DSM.State {
+                id: noDirectionState
+                onEntered: ninja.linearVelocity.x = 0;
+
+                DSM.SignalTransition {
+                    targetState: leftDirectionState
+                    signal: actions.goLeft
+                    guard: eventType === "press"
+                }
+
+                DSM.SignalTransition {
+                    targetState: rightDirectionState
+                    signal: actions.goRight
+                    guard: eventType === "press"
+                }
             }
         }
 
-        function cast() {
-            if(privateProperties.actionState == "dead")
-                return;
+        DSM.State {
+            id: spriteState
+            initialState: !ninja.airborne ? idleState : freefallState
 
-            scene.rayCast(this, p1, p2);
-        }
-    }
+            DSM.State {
+                id: idleState
 
-    /***************************** TIMERS *****************************************/
-    Timer {
-        id: rMoveLeftTimer
-        interval: 50
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            if(Global.gameWindow.paused)
-                return;
+                onEntered: {
+                    console.log("IDLE");
+                    sprite.animation = "idle";
+                }
 
-            ninja.linearVelocity.x = privateProperties.actionState == "clinging" ? -ninja.xStep * 1.4 : -ninja.xStep;
-            privateProperties.horizontalDirectionState = "left";
+                DSM.SignalTransition {
+                    targetState: runState
+                    signal: actions.goLeft
+                    guard: eventType === "press"
+                }
 
-            if (privateProperties.actionState != "hovering" && privateProperties.actionState != "clinging") {
-                if(!ninja.airborne)
-                    privateProperties.actionState = "running"
-                else if (privateProperties.actionState != "jump_attacking")
-                    privateProperties.actionState = "freefall";
+                DSM.SignalTransition {
+                    targetState: runState
+                    signal: actions.goRight
+                    guard: eventType === "press"
+                }
+
+                DSM.SignalTransition {
+                    targetState: jumpState
+                    signal: actions.goUp
+                    guard: eventType === "press"
+                }
+
+                DSM.SignalTransition {
+                    targetState: crouchState
+                    signal: actions.goDown
+                    guard: eventType === "press"
+                }
+
+                DSM.SignalTransition {
+                    targetState: attackMainState
+                    signal: actions.attack
+                    guard: eventType === "press"
+                }
             }
-        }
-    }
 
-    Timer {
-        id: rMoveRightTimer
-        interval: 50
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            if(Global.gameWindow.paused)
-                return;
+            DSM.State {
+                id: runState
+                onEntered: {
+                    console.log("RUN");
+                    sprite.animation = "run";
+                }
 
-            ninja.linearVelocity.x = privateProperties.actionState == "clinging" ? ninja.xStep * 1.4: ninja.xStep;
-            privateProperties.horizontalDirectionState = "right";
+                DSM.SignalTransition {
+                    targetState: idleState
+                    signal: actions.goLeft
+                    guard: eventType === "release" && !actions.keys.rightPressed
+                }
 
-            if (privateProperties.actionState != "hovering" && privateProperties.actionState != "clinging") {
-                if (!ninja.airborne)
-                    privateProperties.actionState = "running";
-                else if (privateProperties.actionState != "jump_attacking")
-                    privateProperties.actionState = "freefall";
+                DSM.SignalTransition {
+                    targetState: idleState
+                    signal: actions.goRight
+                    guard: eventType === "release" && !actions.keys.leftPressed
+                }
+
+                DSM.SignalTransition {
+                    targetState: jumpState
+                    signal: actions.goUp
+                    guard: eventType === "press"
+                }
+
+                DSM.SignalTransition {
+                    targetState: freefallState
+                    signal: ninja.onAirborneChanged
+                    guard: ninja.airborne
+                }
             }
-        }
-    }
 
-    // After climb up/down is called, it waits for the hero to move up a bit then stops him
-    Timer {
-        id: rClimbUpTimer
-        interval: 50
-        repeat: true
-        onTriggered: {
-            if(Global.gameWindow.paused)
-                return;
-            if(privateProperties.actionState == "dead")
-                return;
+            DSM.State {
+                id: jumpState
+                onEntered: {
+                    console.log("JUMP");
+                    sprite.animation = "jump";
+                    ninja.applyLinearImpulse(Qt.point(0, -ninja.getMass() * 8), ninja.getWorldCenter());
+                }
 
-            if (privateProperties.ladderContactCount > 0) {
-                var upPressed = privateProperties.pressedKeys["up"];
+                DSM.SignalTransition {
+                    targetState: actions.keys.leftPressed || actions.keys.rightPressed ? runState : idleState
+                    signal: ninja.onAirborneChanged
+                    guard: !ninja.airborne
+                }
 
-                if (upPressed) {
-                    if(ninja.linearVelocity == Qt.point(0, 0))
-                        ninja.applyLinearImpulse(Qt.point(0, -ninja.getMass() * 3), ninja.getWorldCenter());
+                DSM.SignalTransition {
+                    targetState: jumpAttackState
+                    signal: actions.onAttack
+                    guard: ninja.airborne
+                }
+            }
 
-                    privateProperties.verticalDirectionState = "up";
-                    privateProperties.actionState = "climbing";
-                } else {
-                    ninja.linearVelocity = Qt.point(0, 0);
-                    privateProperties.actionState = "clinging";
+            DSM.State {
+                id: jumpAttackState
+
+                onEntered: {
+                    sprite.animation = "jump_attack"
+                    console.info("JUMP ATTACK");
+                }
+
+                DSM.SignalTransition {
+                    targetState: freefallState
+                    signal: sprite.onAnimationChanged
+                    guard: sprite.animation === "freefall"
+                }
+
+                DSM.SignalTransition {
+                    targetState: idleState
+                    signal: ninja.onAirborneChanged
+                    guard: !ninja.airborne
+                }
+
+                DSM.SignalTransition {
+                    targetState: runState
+                    signal: sprite.onAnimationChanged
+                    guard: !ninja.airborne && (actions.keys.leftPressed || actions.keys.rightPressed)
+                }
+            }
+
+            DSM.State {
+                id: freefallState
+                onEntered: {
+                    console.log("FREEFALL");
+                    sprite.animation = "freefall";
+                }
+
+                DSM.SignalTransition {
+                    targetState: actions.keys.leftPressed || actions.keys.rightPressed ? runState : idleState
+                    signal: ninja.onAirborneChanged
+                    guard: !ninja.airborne
+                }
+
+                DSM.SignalTransition {
+                    targetState: jumpAttackState
+                    signal: actions.onAttack
+                    guard: ninja.airborne
+                }
+            }
+
+            DSM.State {
+                id: crouchState
+                onEntered: {
+                    console.log("CROUCH");
+                    sprite.animation = "crouch";
+                }
+
+                DSM.SignalTransition {
+                    targetState: idleState
+                    signal: actions.goDown
+                    guard: eventType === "release"
+                }
+
+                DSM.SignalTransition {
+                    targetState: crouchAttackState
+                    signal: actions.attack
+                    guard: eventType === "press"
+                }
+            }
+
+            DSM.State {
+                id: crouchAttackState
+                onEntered: {
+                    console.log("CROUCH ATTACK");
+                    sprite.animation = "crouch_attack";
+                }
+
+                DSM.SignalTransition {
+                    targetState: crouchState
+                    signal: sprite.onAnimationChanged
+                    guard: sprite.animation === "crouch"
+                }
+
+                DSM.SignalTransition {
+                    targetState: idleState
+                    signal: actions.goDown
+                    guard: eventType === "release"
+                }
+            }
+
+            DSM.State {
+                id: attackMainState
+                onEntered: {
+                    console.log("PRIMARY ATTACK");
+                    sprite.animation = "attack_main";
+                }
+
+                DSM.SignalTransition {
+                    targetState: idleState
+                    signal: sprite.onAnimationChanged
+                    guard: sprite.animation === "idle"
+                }
+
+                DSM.SignalTransition {
+                    targetState: runState
+                    signal: sprite.onAnimationChanged
+                    guard: sprite.animation === "run"
                 }
             }
         }
     }
 
-    Timer {
-        id: rClimbDownTimer
-        interval: 50
-        repeat: true
-        onTriggered: {
-            if(Global.gameWindow.paused)
-                return;
-            if(privateProperties.actionState == "dead")
-                return;
-
-            if (privateProperties.ladderContactCount > 0) {
-                var downPressed = privateProperties.pressedKeys["down"];
-
-                if (downPressed) {
-                    if(ninja.linearVelocity == Qt.point(0, 0))
-                        ninja.applyLinearImpulse(Qt.point(0, ninja.getMass() * 3), ninja.getWorldCenter());
-
-                    privateProperties.verticalDirectionState = "down";
-                    privateProperties.actionState = "climbing";
-                } else {
-                    ninja.linearVelocity = Qt.point(0, 0);
-                    privateProperties.actionState = "clinging";
-                }
-            }
-        }
-    }
-
-    Timer {
-        id: rHoverTimer
-        interval: 50
-        repeat: true
-        onTriggered: {
-            if(Global.gameWindow.paused)
-                return;
-
-            var upPressed = privateProperties.pressedKeys["up"];
-
-            if (upPressed) {
-                ninja.gravityScale = 0;
-                ninja.linearVelocity = Qt.point(0, -5);
-                privateProperties.actionState = "hovering";
-                privateProperties.verticalDirectionState = "up";
-                hoveringFreefallDelayTimer.stop();
-            } else {
-
-            }
-        }
-    }
-
-    Timer {
-        id: hoveringFreefallDelayTimer
-        interval: 200
-        repeat: false
-        onTriggered: privateProperties.actionState = "freefall";
-    }
-
-    Timer {
-        id: attackRayTimer
-        interval: 20
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: attackRay.cast();
-    }
-
-    // Wait for ninja to reach a certain level while jumping before he starts dropping
-    Timer {
-        id: jumpTimer
-        interval: 100
-    }
-
-    /***************************** END TIMERS *****************************************/
 
     /***************************** SOUNDS *****************************************/
     SoundEffect {
@@ -924,507 +825,24 @@ EntityBase {
         if(Global.gameWindow.paused)
             return;
 
-        privateProperties.pressedKeys[name] = type === "press";
-        var downPressed = privateProperties.pressedKeys["down"];
-        var leftPressed = privateProperties.pressedKeys["left"];
-        var rightPressed = privateProperties.pressedKeys["right"];
-
+        console.log("Event:", name, type);
         switch (name) {
         case "left":
-            if (type === "press") {
-                if ((downPressed && leftPressed) || (downPressed && rightPressed))
-                    ninja.startSliding();
-                else
-                    ninja.startMovingLeft();
-            } else {
-                if (privateProperties.actionState == "sliding" && !((downPressed && leftPressed) || (downPressed && rightPressed)))
-                    ninja.stopSliding();
-
-                ninja.stopMovingLeft();
-            }
+            actions.goLeft(type);
             break;
         case "right":
-            if (type === "press") {
-                if (privateProperties.actionState == "crouching" && (downPressed && leftPressed) || (downPressed && rightPressed))
-                    ninja.startSliding();
-                else
-                    ninja.startMovingRight();
-            } else {
-                if (privateProperties.actionState == "sliding" && !((downPressed && leftPressed) || (downPressed && rightPressed)))
-                    ninja.stopSliding();
-
-                ninja.stopMovingRight();
-            }
+            actions.goRight(type);
             break;
         case "up":
-            if (type === "press") {
-                if (privateProperties.actionState == "clinging" || privateProperties.actionState == "climbing")
-                    ninja.startClimbingUp();
-                else if (ninja.inHoverArea)
-                    ninja.startHovering();
-                else
-                    ninja.jump();
-            } else {
-                if (privateProperties.actionState == "hovering")
-                    ninja.stopHovering();
-                else if (privateProperties.actionState == "clinging" || privateProperties.actionState == "climbing")
-                    ninja.stopClimbingUp();
-            }
+            actions.goUp(type);
             break;
         case "down":
-            if (type === "press") {
-                if (privateProperties.actionState == "clinging" || privateProperties.actionState == "climbing")
-                    ninja.startClimbingDown();
-                else if (privateProperties.actionState == "crouching" && ((downPressed && leftPressed) || (downPressed && rightPressed)))
-                    ninja.startSliding();
-                else
-                    ninja.startCrouching();
-            } else {
-                if (privateProperties.actionState == "clinging" || privateProperties.actionState == "climbing")
-                    ninja.stopClimbingDown();
-                else if (privateProperties.actionState == "sliding")
-                    ninja.stopSliding();
-                else if (privateProperties.actionState == "crouching")
-                    ninja.stopCrouching();
-            }
+            actions.goDown(type);
             break;
         case "attack":
-            if (type === "press") {
-                ninja.attack();
-            } else {
-
-            }
-            break;
-        case "throw":
-            if (type === "press") {
-                ninja.throwKunai();
-            } else {
-
-            }
-            break;
-        case "use":
-            if (type === "press") {
-                ninja.use();
-            } else {
-
-            }
+            actions.attack(type);
             break;
         }
-    }
-
-    function startMovingLeft() {
-        switch (privateProperties.actionState) {
-        case "hurting":
-        case "dead":
-        case "sliding":
-            return;
-        }
-
-        rMoveLeftTimer.start();
-    }
-
-    function startMovingRight() {
-        switch (privateProperties.actionState) {
-        case "hurting":
-        case "dead":
-        case "sliding":
-            return;
-        }
-
-        rMoveRightTimer.start();
-    }
-
-    function stopMovingLeft() {
-        if (privateProperties.actionState != "clinging"
-                && privateProperties.actionState != "hovering"
-                && privateProperties.actionState != "crouching") {
-            if (ninja.airborne)
-                privateProperties.actionState = "freefall";
-            else
-                privateProperties.actionState = "idle";
-        }
-
-        rMoveLeftTimer.stop();
-
-        var rightPressed = privateProperties.pressedKeys["right"];
-        if (!rightPressed)
-            ninja.linearVelocity.x = 0;
-    }
-
-    function stopMovingRight() {
-        if (privateProperties.actionState != "clinging"
-                && privateProperties.actionState != "hovering"
-                && privateProperties.actionState != "crouching") {
-            if (ninja.airborne)
-                privateProperties.actionState = "freefall";
-            else
-                privateProperties.actionState = "idle";
-        }
-
-        rMoveRightTimer.stop();
-
-        var leftPressed = privateProperties.pressedKeys["left"]
-        if (!leftPressed)
-            ninja.linearVelocity.x = 0;
-    }
-
-    function stopMovement() {
-        ninja.stopMovingLeft();
-        ninja.stopMovingRight();
-    }
-
-    function jump() {
-        if (ninja.airborne)
-            return;
-        switch (privateProperties.actionState) {
-        case "hurting":
-        case "dead":
-        case "clinging":
-        case "crouching":
-            return;
-        }
-
-        if(ninja.wearingDisguise)
-            toggleDisguise();
-
-        privateProperties.actionState = "rising";
-
-        jumpSound.play();
-        jumpTimer.restart();
-        ninja.linearVelocity.y = 0;
-        ninja.applyLinearImpulse(Qt.point(0, -ninja.getMass() * 9), ninja.getWorldCenter());
-    }
-
-    function startHovering() {
-        if(!ninja.inHoverArea || privateProperties.actionState == "dead")
-            return;
-
-        rHoverTimer.start();
-    }
-
-    function stopHovering() {
-        if(privateProperties.actionState == "dead" || privateProperties.actionState != "hovering")
-            return;
-
-        rHoverTimer.stop();
-        ninja.gravityScale = 1;
-        ninja.linearVelocity = Qt.point(0, 0);
-        privateProperties.verticalDirectionState = "down";
-        hoveringFreefallDelayTimer.restart();
-    }
-
-    function startCrouching() {
-        if (ninja.airborne || ninja.inHoverArea || !ninja.isStationary())
-            return;
-        switch (privateProperties.actionState) {
-        case "hurting":
-        case "clinging":
-        case "hovering":
-        case "dead":
-        case "running":
-            return;
-        }
-
-        if(ninja.wearingDisguise)
-            toggleDisguise();
-
-        var downPressed = privateProperties.pressedKeys["down"];
-        if((privateProperties.actionState == "idle" || privateProperties.actionState == "sliding") && downPressed) {
-            ninja.decreaseHeight();
-            privateProperties.actionState = "crouching";
-        }
-    }
-
-    function stopCrouching() {
-        if (!privateProperties.pressedKeys["down"]) {
-            ninja.increaseHeight();
-            privateProperties.actionState = "idle";
-        }
-    }
-
-    function startSliding() {
-        if(ninja.airborne || ninja.inHoverArea)
-            return;
-        switch (privateProperties.actionState) {
-        case "hurting":
-        case "dead":
-        case "clinging":
-        case "hovering":
-            return;
-        }
-
-        var downPressed = privateProperties.pressedKeys["down"];
-        var leftPressed = privateProperties.pressedKeys["left"];
-        var rightPressed = privateProperties.pressedKeys["right"];
-
-        if ((downPressed && leftPressed) || (downPressed && rightPressed)) {
-            rMoveLeftTimer.stop();
-            rMoveRightTimer.stop();
-
-            if (privateProperties.actionState != "crouching")
-                ninja.increaseHeight();
-
-            privateProperties.actionState = "sliding";
-            ninja.linearVelocity = Qt.point(0, 0);
-
-            if(leftPressed) {
-                privateProperties.horizontalDirectionState = "left";
-                ninja.applyLinearImpulse(Qt.point(-ninja.getMass() * 10, 0), ninja.getWorldCenter());
-            } else if (rightPressed) {
-                privateProperties.horizontalDirectionState = "right";
-                ninja.applyLinearImpulse(Qt.point(ninja.getMass() * 10, 0), ninja.getWorldCenter());
-            }
-        }
-    }
-
-    function stopSliding() {
-        var downPressed = privateProperties.pressedKeys["down"];
-        var leftPressed = privateProperties.pressedKeys["left"];
-        var rightPressed = privateProperties.pressedKeys["right"];
-
-        if (!((downPressed && leftPressed) || (downPressed && rightPressed))) {
-            ninja.increaseHeight();
-
-            console.log(downPressed, leftPressed, rightPressed);
-            if (ninja.airborne)
-                privateProperties.actionState = "freefall";
-            else if (downPressed && !leftPressed && !rightPressed) {
-                ninja.decreaseHeight();
-                privateProperties.actionState = "crouching";
-            }
-            else if (ninja.isMoving())
-                privateProperties.actionState = "running";
-            else {
-                ninja.linearVelocity = Qt.point(0, 0);
-                privateProperties.actionState = "idle";
-            }
-        }
-    }
-
-    function startClimbingUp() {
-        if (privateProperties.actionState == "dead")
-            return;
-
-        rClimbDownTimer.stop();
-        rClimbUpTimer.start();
-    }
-
-    function startClimbingDown() {
-        if (privateProperties.actionState == "dead")
-            return;
-
-        rClimbUpTimer.stop();
-        rClimbDownTimer.start();
-    }
-
-    function stopClimbingUp() {
-        if(ninja.inHoverArea || ninja.airborne || privateProperties.actionState != "climbing")
-            return;
-        switch (privateProperties.actionState) {
-        case "dead":
-        case "clinging":
-        case "hovering":
-            return;
-        }
-
-        rClimbUpTimer.stop();
-        ninja.linearVelocity = Qt.point(0, 0);
-        privateProperties.actionState = "clinging";
-    }
-
-    function stopClimbingDown() {
-        if(ninja.inHoverArea || ninja.airborne || privateProperties.actionState != "climbing")
-            return;
-        switch (privateProperties.actionState) {
-        case "dead":
-        case "clinging":
-        case "hovering":
-            return;
-        }
-
-        rClimbDownTimer.stop();
-        ninja.linearVelocity = Qt.point(0, 0);
-        privateProperties.actionState = "clinging";
-    }
-
-    function attack() {
-        if(ninja.inHoverArea)
-            return;
-        switch (privateProperties.actionState) {
-        case "hurting":
-        case "clinging":
-        case "hovering":
-        case "dead":
-        case "jump_attacking":
-        case "primary_attacking":
-        case "crouch_attacking":
-            return;
-        }
-
-        if(privateProperties.wearingDisguise)
-            ninja.toggleDisguise();
-        else if(ninja.airborne)
-            privateProperties.actionState = "jump_attacking";
-        else if(privateProperties.actionState == "crouching")
-            privateProperties.actionState = "crouch_attacking";
-        else
-            privateProperties.actionState = "primary_attacking";
-
-        swordSwingSound.play();
-    }
-
-    function throwKunai() {
-        if(ninja.airborne)
-            return;
-        switch (privateProperties.actionState) {
-        case "dead":
-        case "clinging":
-        case "throwing":
-        case "dead":
-            return;
-        }
-
-        if(totalKunaiCollected == 0) {
-            dryFireSound.play();
-            return;
-        }
-        if(privateProperties.wearingDisguise)
-            ninja.toggleDisguise();
-
-        privateProperties.actionState = "throwing";
-    }
-
-    function createKunai() {
-        var component = Qt.createComponent("Kunai.qml");
-        var kunai = component.createObject(scene);
-        var impulseX = 10;
-        var rSpeed = 0; //700;
-
-        if(ninja.facingLeft) {
-            kunai.x = ninja.x; //+ 60;
-            kunai.y = ninja.y + ninja.height / 2 - 12;
-            kunai.rotation = 270;
-            kunai.linearVelocity = Qt.point(-impulseX, 0);
-            kunai.angularVelocity = rSpeed;
-        }
-        else {
-            kunai.x = ninja.x + ninja.width; //+ 60
-            kunai.y = ninja.y + ninja.height / 2 - 12;
-            kunai.rotation = 90;
-            kunai.linearVelocity = Qt.point(impulseX, 0);
-            kunai.angularVelocity = -rSpeed;
-        }
-    }
-
-    function use() {
-        if(privateProperties.actionState == "dead")
-            return;
-        if(ninja.inDisguiseRange)
-            ninja.toggleDisguise();
-        else if(ninja.inInfoRange)
-            ninja.infoRequested();
-        else if(ninja.inLeverRange)
-            utilized("lever");
-        else if(ninja.inDoorRange)
-            ninja.goToDoor();
-    }
-
-    function increaseHeight() {
-        if (ninja.height == ninja.standingHeight)
-            return;
-
-        ninja.y -= ninja.standingHeight - ninja.crouchingHeight;
-        ninja.height = ninja.standingHeight;
-    }
-
-    function decreaseHeight() {
-        if (ninja.height == ninja.crouchingHeight)
-            return;
-
-        ninja.height = ninja.crouchingHeight;
-        ninja.y += ninja.standingHeight - ninja.crouchingHeight;
-    }
-
-    function toggleDisguise() {
-        if(!ninja.inDisguiseRange)
-            return;
-
-        ninja.wearingDisguise = !ninja.wearingDisguise;
-        ninja.disguised(ninja.wearingDisguise);
-    }
-
-    function receivePain() {
-        if(privateProperties.actionState == "dead")
-            return;
-
-        if (privateProperties.healthStatus > 0)
-            privateProperties.actionState = "hurting";
-        else {
-            privateProperties.actionState = "dying";
-            ninja.gravityScale = 1;
-        }
-        ninja.linearVelocity = Qt.point(0, 0);
-    }
-
-    function stun(sender) {
-        privateProperties.depleteHealth(.4, sender);
-        ninja.receivePain();
-        ninja.stopHovering();
-    }
-
-    function addCoin() { privateProperties.totalCoinsCollected++; }
-
-    function addKunai() { privateProperties.totalKunaiCollected++; }
-
-    function addKey(color) {
-        switch(color) {
-        case "yellow":
-            privateProperties.totalYellowKeysCollected++;
-            break;
-        case "red":
-            privateProperties.totalRedKeysCollected++;
-            break;
-        case "green":
-            privateProperties.totalGreenKeysCollected++;
-            break;
-        default:
-            privateProperties.totalBlueKeysCollected++;
-            break;
-        }
-    }
-
-    function dropKey(color) {
-        switch(color) {
-        case "yellow":
-            if(privateProperties.totalYellowKeysCollected > 0)
-                privateProperties.totalYellowKeysCollected--;
-            break;
-        case "red":
-            if(privateProperties.totalRedKeysCollected > 0)
-                privateProperties.totalRedKeysCollected--;
-            break;
-        case "green":
-            if(privateProperties.totalGreenKeysCollected > 0)
-                privateProperties.totalGreenKeysCollected--;
-            break
-        default:
-            if(privateProperties.totalBlueKeysCollected > 0)
-                privateProperties.totalBlueKeysCollected--;
-            break;
-        }
-    }
-
-    function comment() { commentSound.play(); }
-
-    function goToDoor() {
-        if(privateProperties.actionState == "dead")
-            return;
-        if(nextDoorLocation == Qt.point(-1, -1))
-            return;
-
-        ninja.x = nextDoorLocation.x;
-        ninja.y = nextDoorLocation.y;
-        ninja.teleported();
     }
 
     function isRising() {

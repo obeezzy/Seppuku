@@ -17,24 +17,6 @@ LaserCannon {
     bodyType: Body.Kinematic
     updateInterval: 60
 
-    spriteAlias: {
-        switch(movingLaserCannon.direction) {
-        case "up":
-            movingLaserCannon.firing ? "laser_up_shoot" : "laser_up";
-            break;
-        case "down":
-            movingLaserCannon.firing ? "laser_down_shoot" : "laser_down";
-            break;
-            // Use laserUpShoot.png so that the laser leg does not show
-        case "left":
-            movingLaserCannon.firing ? "laser_up_shoot" : "laser_up";
-            break;
-        default: // right
-            movingLaserCannon.firing ? "laser_up_shoot" : "laser_up";
-            break;
-        }
-    }
-
     // Rotate image accordingly, since laserUpShoot.png is used when direction is "left" or "right"
     spriteRotation: movingLaserCannon.direction === "left" ? -90 : (movingLaserCannon.direction === "right" ? 90 : 0)
 

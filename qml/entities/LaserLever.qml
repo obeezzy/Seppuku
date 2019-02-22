@@ -4,6 +4,7 @@ import Seppuku 1.0
 import "../singletons"
 import QtMultimedia 5.0
 import "../gui"
+import "../sprites"
 
 EntityBase {
     id: laserLever
@@ -47,52 +48,77 @@ EntityBase {
         }
     }
 
-    Sprite {
+    Loader {
+        id: laserLeverLoader
         anchors.fill: parent
-        source: Global.paths.images + "objectsets/lasers.png"
-        alias: color + "_switch_" + laserLever.position
-        horizontalMirror: laserLever.mirror
-        aliases: [
-            SpriteAlias {
-                name: "blue_switch_off"
-                frameX: 140; frameY: 210; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "blue_switch_on"
-                frameX: 210; frameY: 210; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "green_switch_off"
-                frameX: 280; frameY: 210; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "green_switch_on"
-                frameX: 0; frameY: 280; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "red_switch_off"
-                frameX: 70; frameY: 280; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "red_switch_on"
-                frameX: 140; frameY: 280; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "yellow_switch_off"
-                frameX: 210; frameY: 280; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "yellow_switch_on"
-                frameX: 280; frameY: 280; frameWidth: 70; frameHeight: 70
+        sourceComponent: {
+            switch (laserLever.color + "_switch_" + laserLever.position) {
+            case "blue_switch_off":
+                blueSwitchOff
+                break;
+            case "blue_switch_on":
+                blueSwitchOn
+                break;
+            case "green_switch_off":
+                greenSwitchOff
+                break;
+            case "green_switch_on":
+                greenSwitchOn
+                break;
+            case "red_switch_off":
+                redSwitchOff
+                break;
+            case "red_switch_on":
+                redSwitchOn
+                break;
+            case "yellow_switch_off":
+                yellowSwitchOff
+                break;
+            case "yellow_switch_on":
+                yellowSwitchOn
+                break;
             }
-        ]
+        }
+
+        Component {
+            id: blueSwitchOff
+            LaserSprite { horizontalMirror: laserLever.mirror; frameX: 140; frameY: 210; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: blueSwitchOn
+            LaserSprite { horizontalMirror: laserLever.mirror; frameX: 210; frameY: 210; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: greenSwitchOff
+            LaserSprite { horizontalMirror: laserLever.mirror; frameX: 280; frameY: 210; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: greenSwitchOn
+            LaserSprite { horizontalMirror: laserLever.mirror; frameX: 0; frameY: 280; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: redSwitchOff
+            LaserSprite { horizontalMirror: laserLever.mirror; frameX: 70; frameY: 280; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: redSwitchOn
+            LaserSprite { horizontalMirror: laserLever.mirror; frameX: 140; frameY: 280; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: yellowSwitchOff
+            LaserSprite { horizontalMirror: laserLever.mirror; frameX: 210; frameY: 280; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: yellowSwitchOn
+            LaserSprite { horizontalMirror: laserLever.mirror; frameX: 280; frameY: 280; frameWidth: 70; frameHeight: 70 }
+        }
     }
 
     TimerPie {

@@ -3,6 +3,7 @@ import Bacon2D 1.0
 import QtMultimedia 5.9
 import Seppuku 1.0
 import "../singletons"
+import "../sprites"
 
 EntityBase {
     id: laserCannon
@@ -25,8 +26,7 @@ EntityBase {
     readonly property int rayMargin: 4
     readonly property bool firing: privateProperties.firing
 
-    property alias spriteAlias: laserCannonSprite.alias
-    property alias spriteRotation: laserCannonSprite.rotation
+    property alias spriteRotation: laserCannonSpriteLoader.rotation
     property string direction: "right";
     property string laserColor: "red"
     property int fireInterval: 2000
@@ -41,24 +41,13 @@ EntityBase {
         property real maxFraction: 1
     }
 
-    Sprite {
-        id: laser
+    Loader {
+        id: laserLoader
         width: laserCannon.laserWidth
         height: laserCannon.laserHeight
-        source: Global.paths.images + "objectsets/lasers.png"
-        fillMode: {
-            switch(direction) {
-            case "up":
-            case "down":
-                Bacon2D.TileVertically;
-                break;
-            default:
-                Bacon2D.TileHorizontally;
-            }
-        }
         visible: privateProperties.firing ? 1 : 0
         rotation: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "left":
             case "up":
                 180;
@@ -68,8 +57,9 @@ EntityBase {
                 break;
             }
         }
+
         transformOrigin: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "left":
                 Item.Left
                 break;
@@ -81,7 +71,7 @@ EntityBase {
             }
         }
         x: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "left":
                 4;
                 break;
@@ -93,7 +83,7 @@ EntityBase {
             }
         }
         y: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "up":
                 4;
                 break;
@@ -105,84 +95,172 @@ EntityBase {
             }
         }
 
-        aliases: [
-            SpriteAlias {
-                name: "laser_green_horizontal"
-                frameX: 70; frameY: 70; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_green_vertical"
-                frameX: 140; frameY: 70; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_blue_horizontal"
-                frameX: 70; frameY: 0; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_blue_vertical"
-                frameX: 140; frameY: 0; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_yellow_horizontal"
-                frameX: 210; frameY: 350; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_yellow_vertical"
-                frameX: 280; frameY: 350; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_red_horizontal"
-                frameX: 210; frameY: 140; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_red_vertical"
-                frameX: 280; frameY: 140; frameWidth: 70; frameHeight: 70
-            }
-        ]
-
-        alias: {
-            switch(laserColor) {
+        sourceComponent: {
+            switch(laserCannon.laserColor) {
             case "green":
                 if(direction == "left" || direction == "right")
-                    "laser_green_horizontal"
+                    laserGreenHorizontal
                 else
-                    "laser_green_vertical"
+                    laserGreenVertical
                 break;
             case "blue":
                 if(direction == "left" || direction == "right")
-                    "laser_blue_horizontal"
+                    laserBlueHorizontal
                 else
-                    "laser_blue_vertical"
+                    laserBlueVertical
                 break;
             case "yellow":
                 if(direction == "left" || direction == "right")
-                    "laser_yellow_horizontal"
+                    laserYellowHorizontal
                 else
-                    "laser_yellow_vertical"
+                    laserYellowVertical
                 break;
             default:
                 if(direction == "left" || direction == "right")
-                    "laser_red_horizontal"
+                    laserRedHorizontal
                 else
-                    "laser_red_vertical"
+                    laserRedVertical
                 break;
             }
         }
 
-//        Rectangle {
-//            id: laserBorder
-//            anchors.fill: parent
-//            color: "transparent"
-//            border.width: 3
-//            border.color: "lightsteelblue"
-//        }
+        Component {
+            id: laserGreenHorizontal
+            LaserSprite {
+                fillMode: {
+                    switch(laserCannon.direction) {
+                    case "up":
+                    case "down":
+                        Bacon2D.TileVertically;
+                        break;
+                    default:
+                        Bacon2D.TileHorizontally;
+                    }
+                }
+
+                frameX: 70; frameY: 70; frameWidth: 70; frameHeight: 70
+            }
+        }
+
+        Component {
+            id: laserGreenVertical
+            LaserSprite {
+                fillMode: {
+                    switch(laserCannon.direction) {
+                    case "up":
+                    case "down":
+                        Bacon2D.TileVertically;
+                        break;
+                    default:
+                        Bacon2D.TileHorizontally;
+                    }
+                }
+
+                frameX: 140; frameY: 70; frameWidth: 70; frameHeight: 70
+            }
+        }
+
+        Component {
+            id: laserBlueHorizontal
+            LaserSprite {
+                fillMode: {
+                    switch(laserCannon.direction) {
+                    case "up":
+                    case "down":
+                        Bacon2D.TileVertically;
+                        break;
+                    default:
+                        Bacon2D.TileHorizontally;
+                    }
+                }
+                frameX: 70; frameY: 0; frameWidth: 70; frameHeight: 70
+            }
+        }
+
+        Component {
+            id: laserBlueVertical
+            LaserSprite {
+                fillMode: {
+                    switch(direction) {
+                    case "up":
+                    case "down":
+                        Bacon2D.TileVertically;
+                        break;
+                    default:
+                        Bacon2D.TileHorizontally;
+                    }
+                }
+                frameX: 140; frameY: 0; frameWidth: 70; frameHeight: 70
+            }
+        }
+
+        Component {
+            id: laserYellowHorizontal
+            LaserSprite {
+                fillMode: {
+                    switch(direction) {
+                    case "up":
+                    case "down":
+                        Bacon2D.TileVertically;
+                        break;
+                    default:
+                        Bacon2D.TileHorizontally;
+                    }
+                }
+                frameX: 210; frameY: 350; frameWidth: 70; frameHeight: 70
+            }
+        }
+
+        Component {
+            id: laserYellowVertical
+            LaserSprite {
+                fillMode: {
+                    switch(direction) {
+                    case "up":
+                    case "down":
+                        Bacon2D.TileVertically;
+                        break;
+                    default:
+                        Bacon2D.TileHorizontally;
+                    }
+                }
+                frameX: 280; frameY: 350; frameWidth: 70; frameHeight: 70
+            }
+        }
+
+        Component {
+            id: laserRedHorizontal
+            LaserSprite {
+                fillMode: {
+                    switch(direction) {
+                    case "up":
+                    case "down":
+                        Bacon2D.TileVertically;
+                        break;
+                    default:
+                        Bacon2D.TileHorizontally;
+                    }
+                }
+                frameX: 210; frameY: 140; frameWidth: 70; frameHeight: 70
+            }
+        }
+
+        Component {
+            id: laserRedVertical
+            LaserSprite {
+                fillMode: {
+                    switch(direction) {
+                    case "up":
+                    case "down":
+                        Bacon2D.TileVertically;
+                        break;
+                    default:
+                        Bacon2D.TileHorizontally;
+                    }
+                }
+                frameX: 280; frameY: 140; frameWidth: 70; frameHeight: 70
+            }
+        }
     }
 
     RayCast {
@@ -195,7 +273,7 @@ EntityBase {
         property string closestEntity: ""
 
         property point p1: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "up":
                 Qt.point(laserCannon.x + laserCannon.width / 2 - rayMargin, laserCannon.y);
                 break;
@@ -211,7 +289,7 @@ EntityBase {
             }
         }
         property point p2: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "up":
                 Qt.point(p1.x, laserCannon.y - laserCannon.height * multiplier);
                 break;
@@ -284,95 +362,96 @@ EntityBase {
         }
     }
 
-    Sprite {
-        id: laserCannonSprite
+    Loader {
+        id: laserCannonSpriteLoader
         anchors.fill: parent
-        source: Global.paths.images + "objectsets/lasers.png"
-        alias: {
-            switch(direction) {
+
+        sourceComponent: {
+            switch(laserCannon.direction) {
             case "up":
-                privateProperties.firing ? "laser_up_shoot" : "laser_up";
+                privateProperties.firing ? laserUpShoot : laserUp;
                 break;
             case "down":
-                privateProperties.firing ? "laser_down_shoot" : "laser_down";
+                privateProperties.firing ? laserDownShoot : laserDown;
                 break;
             case "left":
-                privateProperties.firing ? "laser_left_shoot" : "laser_left";
+                privateProperties.firing ? laserLeftShoot : laserLeft;
                 break;
             default: // right
-                privateProperties.firing ? "laser_right_shoot" : "laser_right";
+                privateProperties.firing ? laserRightShoot : laserRight;
                 break;
             }
         }
-        aliases: [
-            SpriteAlias {
-                name: "laser_up_shoot"
-                frameX: 70; frameY: 350; frameWidth: 70; frameHeight: 70
-            },
 
-            SpriteAlias {
-                name: "laser_up"
-                frameX: 0; frameY: 350; frameWidth: 70; frameHeight: 70
-            },
+        Component {
+            id: laserUpShoot
+            LaserSprite { frameX: 70; frameY: 350; frameWidth: 70; frameHeight: 70 }
+        }
 
-            SpriteAlias {
-                name: "laser_down_shoot"
-                frameX: 280; frameY: 0; frameWidth: 70; frameHeight: 70
-            },
+        Component {
+            id: laserUp
+            LaserSprite { frameX: 0; frameY: 350; frameWidth: 70; frameHeight: 70 }
+        }
 
-            SpriteAlias {
-                name: "laser_down"
-                frameX: 210; frameY: 0; frameWidth: 70; frameHeight: 70
-            },
+        Component {
+            id: laserDownShoot
+            LaserSprite { frameX: 280; frameY: 0; frameWidth: 70; frameHeight: 70 }
+        }
 
-            SpriteAlias {
-                name: "laser_left_shoot"
-                frameX: 280; frameY: 70; frameWidth: 70; frameHeight: 70
-            },
+        Component {
+            id: laserDown
+            LaserSprite { frameX: 210; frameY: 0; frameWidth: 70; frameHeight: 70 }
+        }
 
-            SpriteAlias {
-                name: "laser_left"
-                frameX: 210; frameY: 70; frameWidth: 70; frameHeight: 70
-            },
+        Component {
+            id: laserLeftShoot
+            LaserSprite { frameX: 280; frameY: 70; frameWidth: 70; frameHeight: 70 }
+        }
 
-            SpriteAlias {
-                name: "laser_right_shoot"
-                frameX: 70; frameY: 210; frameWidth: 70; frameHeight: 70
-            },
+        Component {
+            id: laserLeft
+            LaserSprite { frameX: 210; frameY: 70; frameWidth: 70; frameHeight: 70 }
+        }
 
-            SpriteAlias {
-                name: "laser_right"
-                frameX: 0; frameY: 210; frameWidth: 70; frameHeight: 70
-            }
-        ]
+        Component {
+            id: laserRightShoot
+            LaserSprite { frameX: 70; frameY: 210; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: laserRight
+            LaserSprite { frameX: 0; frameY: 210; frameWidth: 70; frameHeight: 70 }
+        }
     }
 
-    Sprite {
-        id: hitImage
+    Loader {
+        id: hitImageLoader
         opacity: privateProperties.firing ? 1 : 0
         visible: opacity > 0
-        source: Global.paths.images + "objectsets/lasers.png"
-        z: laser.z + 1
+        z: laserLoader.item.z + 1
+
+        Behavior on opacity { NumberAnimation { } }
+
         x: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "up":
             case "down":
                 0
                 break;
             case "left":
-                -laser.width - width / 2;
+                -laserLoader.item.width - width / 2;
                 break;
             default:
-                laser.width + width / 2;
+                laserLoader.item.width + width / 2;
             }
         }
         y: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "up":
-                -laser.height - height / 2;
+                -laserLoader.item.height - height / 2;
                 break;
             case "down":
-                laser.height + height / 2;
+                laserLoader.item.height + height / 2;
                 break;
             default:
                 0
@@ -380,75 +459,63 @@ EntityBase {
             }
         }
         width: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "up":
             case "down":
-                laser.width;
+                laserLoader.item.width;
                 break;
             default: // left and right
-                laser.height;
+                laserLoader.item.height;
                 break;
             }
         }
         height: {
-            switch(direction) {
+            switch(laserCannon.direction) {
             case "up":
             case "down":
-                laser.width;
+                laserLoader.item.width;
                 break;
             default: // left and right
-                laser.height;
+                laserLoader.item.height;
                 break;
             }
         }
 
-        aliases: [
-            SpriteAlias {
-                name: "laser_blue_burst"
-                frameX: 0; frameY: 0; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_yellow_burst"
-                frameX: 140; frameY: 350; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_green_burst"
-                frameX: 0; frameY: 70; frameWidth: 70; frameHeight: 70
-            },
-
-            SpriteAlias {
-                name: "laser_red_burst"
-                frameX: 140; frameY: 140; frameWidth: 70; frameHeight: 70
-            }
-        ]
-
-        alias: {
-            switch(laserColor) {
+        sourceComponent: {
+            switch(laserCannon.laserColor) {
             case "blue":
-                "laser_blue_burst";
+                laserBlueBurst
                 break;
             case "yellow":
-                "laser_yellow_burst";
+                laserYellowBurst
                 break;
             case "green":
-                "laser_green_burst";
+                laserGreenBurst
                 break;
             default: // red
-                "laser_red_burst";
+                laserRedBurst
             }
         }
 
-//        Rectangle {
-//            id: hitBorder
-//            anchors.fill: parent
-//            color: "transparent"
-//            border.width: 3
-//            border.color: "lightsteelblue"
-//        }
+        Component {
+            id: laserBlueBurst
+            LaserSprite { frameX: 0; frameY: 0; frameWidth: 70; frameHeight: 70 }
+        }
 
-        Behavior on opacity { NumberAnimation { } }
+        Component {
+            id: laserYellowBurst
+            LaserSprite { frameX: 140; frameY: 350; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: laserGreenBurst
+            LaserSprite { frameX: 0; frameY: 70; frameWidth: 70; frameHeight: 70 }
+        }
+
+        Component {
+            id: laserRedBurst
+            LaserSprite { frameX: 140; frameY: 140; frameWidth: 70; frameHeight: 70 }
+        }
     }
 
     SoundEffect {
