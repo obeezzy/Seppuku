@@ -3,9 +3,14 @@ import Bacon2D 1.0
 import Seppuku 1.0
 import "../singletons"
 
-Image {
+Entity {
+    entityType: "winterTree1"
     width: 60
     height: 60
-    source: Global.paths.images + "objects/tree_1.png"
+
+    Image {
+        anchors.fill: parent
+        source: Global.paths.images + "objects/tree_1.png"
+    }
 }
 

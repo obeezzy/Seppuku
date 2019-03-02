@@ -5,12 +5,7 @@ import "../singletons"
 
 EntityBase {
     id: leverSwitch
-    width: 55
-    height: 55
-    sleepingAllowed: false
-    bodyType: Body.Static
-    z: Utils.zInteractive
-    entityType: "lever_switch"
+    entityType: "leverSwitch"
 
     readonly property string type: "lever"
 
@@ -20,6 +15,12 @@ EntityBase {
     property int motionLink: 0
 
     signal newPosition(string position)
+
+    width: 55
+    height: 55
+    sleepingAllowed: false
+    bodyType: Body.Static
+    z: Utils.zInteractive
 
     fixtures: Box {
         width: target.width
@@ -103,7 +104,6 @@ EntityBase {
         target: hero
         onUtilized: {
             if(type == leverSwitch.type && leverSwitch.inRange) {
-                console.log("The leverSwitch got the signal.")
                 switch(position) {
                 case "left":
                     position = leverSwitch.hasCenterPosition ? "mid" : "right";

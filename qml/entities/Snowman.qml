@@ -5,16 +5,24 @@ import "../singletons"
 
 EntityBase {
     id: snowman
-    bodyType: Body.Static
-    width: 60
-    height: 60
-    sleepingAllowed: false
+    entityType: "snowman"
 
     property bool inRange: false
     property bool worn: false
     property int initialY: null
     property alias bounds: bounds
     readonly property int xOffset: hero.x - 12
+    readonly property bool withinBounds: {
+        if(bounds.x == 0 && bounds.width == 0)
+            true;
+        else
+            (snowman.xOffset > bounds.x && ((snowman.xOffset + width) < (bounds.x + bounds.width)));
+    }
+
+    bodyType: Body.Static
+    width: 60
+    height: 60
+    sleepingAllowed: false
     z: Utils.zDisguise
     type: "snowman"
 
@@ -22,13 +30,6 @@ EntityBase {
         id: bounds
         y: 0
         height: 0
-    }
-
-    readonly property bool withinBounds: {
-        if(bounds.x == 0 && bounds.width == 0)
-            true;
-        else
-            (snowman.xOffset > bounds.x && ((snowman.xOffset + width) < (bounds.x + bounds.width)));
     }
 
     fixtures: Box {

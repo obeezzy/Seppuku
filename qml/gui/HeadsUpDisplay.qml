@@ -8,33 +8,35 @@ import "../entities"
 
 Item {
     id: headsUpDisplay
-    implicitWidth: 100
-    implicitHeight: 60
-    z: Utils.zHUD
-
     readonly property Scene scene: parent
-    readonly property Ninja hero: parent.hero
+    readonly property Ninja hero: entityManager.findEntity("ninja", { })
 
     // Hero properties
-    readonly property real healthStatus: hero.healthStatus
-    readonly property int totalCoins: hero.totalCoinsCollected
-    readonly property int totalKunai: hero.totalKunaiCollected
-    readonly property int totalBlueKeysCollected: hero.totalBlueKeysCollected
-    readonly property int totalYellowKeysCollected: hero.totalYellowKeysCollected
-    readonly property int totalRedKeysCollected: hero.totalRedKeysCollected
-    readonly property int totalGreenKeysCollected: hero.totalGreenKeysCollected
+    readonly property real healthStatus: hero && hero.healthStatus
+    readonly property int totalCoins: hero && hero.totalCoinsCollected
+    readonly property int totalKunai: hero && hero.totalKunaiCollected
+    readonly property int totalBlueKeysCollected: hero && hero.totalBlueKeysCollected
+    readonly property int totalYellowKeysCollected: hero && hero.totalYellowKeysCollected
+    readonly property int totalRedKeysCollected: hero && hero.totalRedKeysCollected
+    readonly property int totalGreenKeysCollected: hero && hero.totalGreenKeysCollected
 
     property int elapsedSeconds: 0
     property string elapsedTimeString: "00:00"
 
     signal pauseRequested
 
+    EntityManager { id: entityManager }
+
+    implicitWidth: 100
+    implicitHeight: 60
+    z: Utils.zHUD
+
     Image {
         id: headImage
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.margins: 10
-        source: hero.hurting || (healthStatus == 0) ? (hero.filePrefix + "dead_head.png") : (hero.filePrefix + "head.png")
+        source: hero && (hero.hurting || (healthStatus == 0) ? (hero.filePrefix + "dead_head.png") : (hero.filePrefix + "head.png"))
         width: 70
         fillMode: Image.PreserveAspectFit
     }

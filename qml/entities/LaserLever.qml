@@ -8,11 +8,7 @@ import "../sprites"
 
 EntityBase {
     id: laserLever
-    width: 40
-    height: 40
-    bodyType: Body.Static
-    sleepingAllowed: false
-    z: Utils.zInteractive
+    entityType: "laserLever"
 
     property string color: "blue"
     property string position: "off"
@@ -27,6 +23,12 @@ EntityBase {
 
         property bool inRange: false
     }
+
+    width: 40
+    height: 40
+    bodyType: Body.Static
+    sleepingAllowed: false
+    z: Utils.zInteractive
 
     fixtures: Box {
         width: target.width
@@ -162,23 +164,23 @@ EntityBase {
 
     Connections {
         target: hero
-        onUtilized: {
-            if(type == laserLever.type && privateProperties.inRange)
-            {
-                switch(position) {
-                case "on":
-                    position = "off";
-                    timerPie.start();
-                    break;
-                default:
-                    position = "on";
-                    timerPie.reset();
-                    break;
-                }
+//        onUtilized: {
+//            if(type == laserLever.type && privateProperties.inRange)
+//            {
+//                switch(position) {
+//                case "on":
+//                    position = "off";
+//                    timerPie.start();
+//                    break;
+//                default:
+//                    position = "on";
+//                    timerPie.reset();
+//                    break;
+//                }
 
-                effect.play();
-            }
-        }
+//                effect.play();
+//            }
+//        }
     }
 }
 

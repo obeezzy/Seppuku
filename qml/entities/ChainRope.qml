@@ -17,7 +17,7 @@ Item {
     property real linkDensity: 1
     property int length: 3
 
-    EntityManager { id: entityManager; parentScene: chainRope.scene }
+    EntityManager { id: entityManager }
 
     Component {
         id: linkComponent

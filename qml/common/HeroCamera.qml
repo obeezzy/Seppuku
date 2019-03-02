@@ -6,7 +6,7 @@ import "../entities"
 Viewport {
     id: heroCamera
 
-    property Ninja hero: null
+    property Ninja hero: entityManager.findEntity("ninja")
     readonly property real defaultOffsetMaxX: contentWidth - width
     readonly property real defaultOffsetMaxY: contentHeight - height
     readonly property real defaultOffsetMinX: 0
@@ -22,6 +22,8 @@ Viewport {
     readonly property real camY: privateProperties.camY
 
     readonly property bool heroAtCenter: xOffset == defaultCamX && yOffset == defaultCamY
+
+    EntityManager { id: entityManager }
 
     width: Global.gameWindow.width
     height: Global.gameWindow.height

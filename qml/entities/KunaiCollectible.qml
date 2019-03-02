@@ -6,16 +6,18 @@ import "../singletons"
 
 EntityBase {
     id: kunaiCollectible
+    entityType: "kunaiCollectible"
+
+    property bool picked: false
+
+    EntityManager { id: entityManager }
+
     width: 30
     height: 50
     bodyType: Body.Static
     sleepingAllowed: false
     transformOrigin: Item.Center
     z: Utils.zCollectible
-
-    property bool picked: false
-
-    EntityManager { id: entityManager; parentScene: kunaiCollectible.scene }
 
     fixtures: [
         Box {
@@ -41,12 +43,14 @@ EntityBase {
     AnimatedSprite {
         id: sprite
         animation: "default"
-        source: Global.paths.images + "collectibles/kunai.png"
+        spriteSheet: SpriteSheet {
+            source: Global.paths.images + "collectibles/kunai.png"
+            horizontalFrameCount: 1
+        }
 
         animations: [
             SpriteAnimation {
                 name: "default"
-                frames: 1
                 duration: 500
                 loops: Animation.Infinite
             }

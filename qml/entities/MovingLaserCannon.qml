@@ -5,6 +5,7 @@ import "../singletons"
 
 LaserCannon {
     id: movingLaserCannon
+    entityType: "movingLaserCannon"
 
     property LeverSwitch motionSwitch: null
     property point motionVelocity: Qt.point(0, 5)

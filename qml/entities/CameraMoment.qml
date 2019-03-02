@@ -5,11 +5,6 @@ import "../singletons"
 
 EntityBase {
     id: cameraMoment
-    bodyType: Body.Static
-    width: 60
-    height: 60
-    sleepingAllowed: true
-    sender: "camera_moment"
     entityType: "cameraMoment"
 
     property bool lockedX: true
@@ -18,6 +13,12 @@ EntityBase {
     property bool lockedMaxX: false
     property bool lockedMinY: false
     property bool lockedMaxY: false
+
+    bodyType: Body.Static
+    width: 60
+    height: 60
+    sleepingAllowed: true
+    sender: "camera_moment"
 
     fixtures: Box {
         width: target.width
