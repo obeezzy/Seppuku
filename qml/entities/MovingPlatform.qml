@@ -5,12 +5,7 @@ import "../singletons"
 
 EntityBase {
     id: movingPlatform
-    height: 36
-    bodyType: Body.Kinematic
-    fixedRotation: true
-    sleepingAllowed: false
-    linearVelocity: moving ? (reversing ? reverseVelocity : startVelocity) : Qt.point(0, 0)
-    linearDamping: 10
+    entityType: "movingPlatform"
 
     readonly property string fileLocation: Global.paths.images + "tiles/winter/"
 
@@ -21,6 +16,13 @@ EntityBase {
     property bool moving: false
     property bool reversing: false
     property bool upDirection: startPoint.y > reversePoint.y
+
+    height: 36
+    bodyType: Body.Kinematic
+    fixedRotation: true
+    sleepingAllowed: false
+    linearVelocity: moving ? (reversing ? reverseVelocity : startVelocity) : Qt.point(0, 0)
+    linearDamping: 10
 
     fixtures: Box {
         width: target.width

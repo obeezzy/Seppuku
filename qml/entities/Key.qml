@@ -6,16 +6,11 @@ import "../singletons"
 
 EntityBase {
     id: key
-    width: 40
-    height: 40
-    bodyType: Body.Static
-    sleepingAllowed: false
-    transformOrigin: Item.Center
-    z: Utils.zCollectible
+    entityType: "key"
 
     property string color: "blue"
 
-    EntityManager { id: entityManager; parentScene: key.scene }
+    EntityManager { id: entityManager }
 
     QtObject {
         id: privateProperties
@@ -23,6 +18,13 @@ EntityBase {
         property bool picked: false
         onPickedChanged: if(picked) pickAnimation.start();
     }
+
+    width: 40
+    height: 40
+    bodyType: Body.Static
+    sleepingAllowed: false
+    transformOrigin: Item.Center
+    z: Utils.zCollectible
 
     fixtures: Box {
         width: target.width

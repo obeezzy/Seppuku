@@ -6,19 +6,21 @@ import "../singletons"
 
 EntityBase {
     id: gem
-    width: 40
-    height: 40
-    bodyType: Body.Static
-    sleepingAllowed: false
-    transformOrigin: Item.Center
-    z: Utils.zCollectible
+    entityType: "gem"
 
     property string color: "blue"
     property bool picked: false
 
     signal selfDestruct
 
-    EntityManager { id: entityManager; parentScene: gem.scene }
+    EntityManager { id: entityManager }
+
+    width: 40
+    height: 40
+    bodyType: Body.Static
+    sleepingAllowed: false
+    transformOrigin: Item.Center
+    z: Utils.zCollectible
 
     fixtures: Box {
         width: target.width

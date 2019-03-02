@@ -5,14 +5,7 @@ import "../singletons"
 
 EntityBase {
     id: iceBox
-    bodyType: Body.Dynamic
-    width: 60
-    height: 60
-    sleepingAllowed: true
-    sender: "ice_box"
     entityType: "iceBox"
-
-    EntityManager { id: entityManager; parentScene: iceBox.scene }
 
     property real density: .8
     property real restitution: .5
@@ -20,6 +13,14 @@ EntityBase {
     property var warningSign: null
 
     signal selfDestruct
+
+    EntityManager { id: entityManager; parentScene: iceBox.scene }
+
+    bodyType: Body.Dynamic
+    width: 60
+    height: 60
+    sleepingAllowed: true
+    sender: "ice_box"
 
     fixtures: Box {
         width: target.width

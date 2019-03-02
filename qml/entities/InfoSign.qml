@@ -6,10 +6,7 @@ import "../gui"
 
 EntityBase {
     id: infoSign
-    bodyType: Body.Static
-    width: 60
-    height: 60
-    sleepingAllowed: false
+    entityType: "infoSign"
 
     property bool inRange: false
     property bool messageVisible: false
@@ -22,6 +19,11 @@ EntityBase {
 
     signal messageDisplayed(bool showing)
     signal infoRequested(var properties)
+
+    bodyType: Body.Static
+    width: 60
+    height: 60
+    sleepingAllowed: false
 
     fixtures: Box {
         width: target.width

@@ -5,11 +5,6 @@ import "../singletons"
 
 EntityBase {
     id: doorLock
-    width: 40
-    height: 40
-    bodyType: Body.Static
-    sleepingAllowed: false
-    transformOrigin: Item.Center
     entityType: "doorLock"
 
     property string color: "blue"
@@ -20,6 +15,12 @@ EntityBase {
     signal lockOpened
 
     EntityManager { id: entityManager; parentScene: doorLock.scene }
+
+    width: 40
+    height: 40
+    bodyType: Body.Static
+    sleepingAllowed: false
+    transformOrigin: Item.Center
 
     fixtures: Box {
         width: target.width

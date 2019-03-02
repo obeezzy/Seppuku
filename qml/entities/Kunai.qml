@@ -6,14 +6,16 @@ import "../singletons"
 
 EntityBase {
     id: kunai
+    entityType: "kunai"
+
+    EntityManager { id: entityManager }
+
     width: image.width
     height: image.height
     bodyType: Body.Kinematic
     sleepingAllowed: false
     fixedRotation: false
     type: "kunai"
-
-    EntityManager { id: entityManager; parentScene: kunai.scene }
 
     fixtures: [
         Box {
@@ -49,7 +51,6 @@ EntityBase {
 
                 else if((other.categories & Utils.kInteractive)/* && other.type === "lever" && hero.facingRight && other.mirror*/)
                 {
-                    console.log("Hey there man!!!");
                     kunai.bodyType = Body.Dynamic;
                     kunai.linearVelocity = Qt.point(0, 0);
                     hero.utilized("lever");

@@ -6,11 +6,18 @@ import "../singletons"
 
 EntityBase {
     id: cannon
+    entityType: "cannon"
+
+    readonly property Scene scene: parent
+    property Sensor sensor: null
+    property int bulletLifeSpan: 1000
+    property bool mirror: false
+
+    EntityManager { id: entityManager }
+
     bodyType: Body.Static
     width: 148
     height: 57
-
-    EntityManager { id: entityManager; parentScene: cannon.scene }
 
     fixtures: Box {
         id: cannonFixture
@@ -19,11 +26,6 @@ EntityBase {
         density: .5
         categories: Utils.kGround | Utils.kGroundTop
     }
-
-    readonly property Scene scene: parent
-    property Sensor sensor: null
-    property int bulletLifeSpan: 1000
-    property bool mirror: false
 
     Component {
         id: ball

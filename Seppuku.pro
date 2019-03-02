@@ -110,7 +110,14 @@ DISTFILES += \
     qml/common/Ray.qml \
     qml/common/Limits.qml \
     qml/sprites/LaserSprite.qml \
-    qml/sprites/LaserCannonSprite.qml
+    qml/sprites/LaserCannonSprite.qml \
+    qml/entities/Boundaries.qml \
+    qml/entities/BlockGround.qml \
+    qml/entities/GroundTop.qml \
+    qml/entities/SlopeGround.qml \
+    qml/entities/PentagonGround.qml \
+    qml/entities/FrictionlessGround.qml \
+    qml/entities/Ladder.qml
 
 HEADERS += \
     src/seppuku.h

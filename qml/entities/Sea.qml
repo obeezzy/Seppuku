@@ -6,6 +6,8 @@ import "../singletons"
 
 EntityBase {
     id: entity
+    entityType: "sea"
+
     width: 40
     height: 40
     bodyType: Body.Static
@@ -13,7 +15,6 @@ EntityBase {
     fixedRotation: false
     z: Utils.zLava
     sender: "sea"
-    entityType: "sea"
 
     fixtures: [
         Box {
@@ -34,7 +35,7 @@ EntityBase {
                         drownSound.play();
                 }
             }
-    },
+        },
         // Fish deepest level
         Box {
             sensor: true

@@ -5,13 +5,15 @@ import "../singletons"
 
 EntityBase {
     id: crystal
+    entityType: "crystal"
+
+    property int spriteRotation: 0
+    readonly property string sender: "crystal"
+
     bodyType: Body.Static
     sleepingAllowed: false
     width: 60
     height: 60
-
-    property int spriteRotation: 0
-    readonly property string sender: "crystal"
 
     fixtures: Polygon {
         friction: 1

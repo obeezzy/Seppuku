@@ -3,22 +3,17 @@ import Bacon2D 1.0
 import Seppuku 1.0
 import "../singletons"
 
-PhysicsEntity {
+EntityBase {
     id: woodenDoor
-    width: 70
-    height: 140
-    bodyType: Body.Static
-    sleepingAllowed: false
+    entityType: "woodenDoor"
 
     property bool closed: true
-    readonly property string type: "wooden_door"
 
     // Does this door have a lock?
     property DoorLock lock: null
 
     // what door is this door leading to?
     property variant nextDoor: null
-
 
     QtObject {
         id: privateProperties
@@ -37,6 +32,12 @@ PhysicsEntity {
             }
         }
     }
+
+    width: 70
+    height: 140
+    bodyType: Body.Static
+    sleepingAllowed: false
+    type: "wooden_door"
 
     fixtures: Box {
         width: target.width

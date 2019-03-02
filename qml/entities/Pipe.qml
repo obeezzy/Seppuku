@@ -5,10 +5,7 @@ import "../singletons"
 
 EntityBase {
     id: pipe
-    bodyType: Body.Static
-    width: 120
-    height: 120
-    sleepingAllowed: false
+    entityType: "pipe"
 
     property int windHeight: height * 2
 
@@ -16,6 +13,11 @@ EntityBase {
         id: privateProperties
         property bool heroPresent: false
     }
+
+    bodyType: Body.Static
+    width: 120
+    height: 120
+    sleepingAllowed: false
 
     fixtures: [
         Box {

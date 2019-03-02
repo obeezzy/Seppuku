@@ -8,6 +8,7 @@ import "../common"
 
 EntityBase {
     id: robot
+    entityType: "robot"
 
     property bool faceForward: true
     property var limits: limits
@@ -29,7 +30,6 @@ EntityBase {
     sleepingAllowed: false
     fixedRotation: true
     z: Utils.zEnemy
-    entityType: "robot"
     sender: "robot"
 
     QtObject {

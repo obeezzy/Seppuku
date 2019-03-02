@@ -3,18 +3,20 @@ import Bacon2D 1.0
 import Seppuku 1.0
 import "../singletons"
 
-PhysicsEntity {
-    id: root
-    width: 60
-    height: 60
-    bodyType: Body.Static
-    sleepingAllowed: false
+EntityBase {
+    id: sensor
+    entityType: "sensor"
 
     property int link: 0
     property string design: "wood"
     readonly property string type: "sensor"
 
     signal triggered
+
+    width: 60
+    height: 60
+    bodyType: Body.Static
+    sleepingAllowed: false
 
     Behavior on opacity { NumberAnimation {duration: 250 } }
 
@@ -26,7 +28,7 @@ PhysicsEntity {
         friction: .5
         categories: Utils.kGround | Utils.kGroundTop
 
-        readonly property string type: root.type
+        readonly property string type: sensor.type
 
         onBeginContact: {
             if(other.categories & Utils.kHero)
@@ -34,7 +36,7 @@ PhysicsEntity {
                 if(other.type === "ground")
                 {
                     opacity = .7;
-                    root.triggered();
+                    sensor.triggered();
                 }
             }
         }
@@ -53,7 +55,7 @@ PhysicsEntity {
 
     BorderImage {
         anchors.fill: parent
-        source: Global.paths.images + "sensors/3d_" + root.design + ".png"
+        source: Global.paths.images + "sensors/3d_" + sensor.design + ".png"
         border {
             left: 5; top: 5; right: 5; bottom: 5
         }

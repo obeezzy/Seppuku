@@ -7,15 +7,7 @@ import "../singletons"
 
 EntityBase {
     id: fish
-    width: 40
-    height: 55
-    updateInterval: Ai.updateInterval
-    bodyType: fish.dead || fish.striking ? Body.Dynamic : Body.Static
-    sleepingAllowed: false
-    fixedRotation: true
-    z: Math.max(Utils.zLava, Utils.zEnemy) + 1
-
-    sender: "fish"
+    entityType: "fish"
 
     signal selfDestruct
 
@@ -38,6 +30,16 @@ EntityBase {
         readonly property bool facingRight: !facingLeft
     }
 
+    width: 40
+    height: 55
+    updateInterval: Ai.updateInterval
+    bodyType: fish.dead || fish.striking ? Body.Dynamic : Body.Static
+    sleepingAllowed: false
+    fixedRotation: true
+    z: Math.max(Utils.zLava, Utils.zEnemy) + 1
+
+    sender: "fish"
+
     fixtures: [
         Box {
             id: mainBody
@@ -48,7 +50,7 @@ EntityBase {
             height: target.height
             categories: Utils.kEnemy
             collidesWith: {
-                if(hero != null && (hero.wearingDisguise || hero.dead))
+                if(hero !== null && (hero.wearingDisguise || hero.dead))
                     Utils.kGround | Utils.kWall | Utils.kLava
                 else
                     Utils.kGround | Utils.kHero | Utils.kWall | Utils.kLava
@@ -73,7 +75,10 @@ EntityBase {
 
     AnimatedSprite {
         id: sprite
-        source: Global.paths.images + "pests/fish_swim.png"
+        spriteSheet: SpriteSheet {
+            source: Global.paths.images + "pests/fish_swim.png"
+            horizontalFrameCount: 2
+        }
 //      source: Global.paths.images + "pests/fish_dead.png"
         horizontalMirror: privateProperties.facingRight
         animation: "swim"
@@ -82,14 +87,12 @@ EntityBase {
         animations: [
             SpriteAnimation {
                 name: "swim"
-                frames: 2
                 duration: 500
                 loops: Animation.Infinite
             },
 
             SpriteAnimation {
                 name: "dead"
-                frames: 2
                 duration: 500
                 loops: Animation.Infinite
             }

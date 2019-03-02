@@ -1,10 +1,11 @@
-import QtQuick 2.9
+import QtQuick 2.12
 import Bacon2D 1.0
 import Seppuku 1.0
 import "../singletons"
 
 EntityBase {
     id: checkpointSign
+    entityType: "checkpointSign"
 
     readonly property bool checked: Global.checkpointAvailable && Global.checkpoint.pos === Qt.point(x, y)
 
@@ -33,7 +34,11 @@ EntityBase {
             case Utils.kHero:
                 if(other.type === "main_body") {
                     privateProperties.checked = true;
-                    Global.checkpoint = { "level": Global.currentLevel, "pos": Qt.point(checkpointSign.x, checkpointSign.y), "face_forward": hero.faceForward };
+                    Global.checkpoint = {
+                        "level": Global.currentLevel,
+                        "pos": Qt.point(checkpointSign.x, checkpointSign.y),
+                        "face_forward": hero.faceForward
+                    };
                 }
                 break;
             }

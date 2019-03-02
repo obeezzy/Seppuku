@@ -5,13 +5,15 @@ import "../singletons"
 
 EntityBase {
     id: finishSign
+    entityType: "finishSign"
+
+    property bool checked: false
+    signal levelComplete
+
     bodyType: Body.Static
     width: 60
     height: 60
     sleepingAllowed: false
-
-    property bool checked: false
-    signal levelComplete
 
     fixtures: Box {
         width: target.width

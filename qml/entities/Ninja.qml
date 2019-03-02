@@ -7,6 +7,7 @@ import "../singletons"
 
 EntityBase {
     id: ninja
+    entityType: "ninja"
 
     // Face forward or backwards?
     property alias faceForward: sprite.horizontalMirror
@@ -24,6 +25,8 @@ EntityBase {
     readonly property bool airborne: privateProperties.groundContactCount === 0
 
     readonly property bool hurting: false
+    readonly property bool clinging: false
+    readonly property bool climbing: false
 
     readonly property string deathCause: privateProperties.deathCause
     readonly property real healthStatus: privateProperties.healthStatus
@@ -38,6 +41,13 @@ EntityBase {
     signal selfDestruct
     signal infoRequested
     signal utilized
+
+    x: Global.checkpointAvailable ? Global.checkpoint.pos.x
+                                  : ninja.TiledObjectGroup.instance.getProperty("x")
+    y: Global.checkpointAvailable ? Global.checkpoint.pos.y
+                                  : ninja.TiledObjectGroup.instance.getProperty("y")
+    faceForward: Global.checkpointAvailable ? Global.checkpoint.face_forward
+                                            : TiledObjectGroup.instance.getProperty("face_forward") || true
 
     width: 30
     height: 60

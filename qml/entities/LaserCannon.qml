@@ -7,19 +7,7 @@ import "../sprites"
 
 EntityBase {
     id: laserCannon
-    bodyType: Body.Static
-    width: 98
-    height: 37
-    z: Utils.zLaser
-    sender: "laser_cannon"
     entityType: "laserCannon"
-
-    fixtures: Box {
-        width: target.width
-        height: target.height
-        density: .5
-        categories: Utils.kGround | Utils.kGroundTop
-    }
 
     readonly property int laserWidth: (direction == "left" || direction == "right") ? laserRay.pXDiff * privateProperties.maxFraction : laserCannon.width
     readonly property int laserHeight: (direction == "up" || direction == "down") ? laserRay.pYDiff * privateProperties.maxFraction: laserCannon.height
@@ -39,6 +27,19 @@ EntityBase {
 
         property bool firing: (laserLever != null && laserLever.position == "on") || ceaseInterval == 0
         property real maxFraction: 1
+    }
+
+    bodyType: Body.Static
+    width: 98
+    height: 37
+    z: Utils.zLaser
+    sender: "laser_cannon"
+
+    fixtures: Box {
+        width: target.width
+        height: target.height
+        density: .5
+        categories: Utils.kGround | Utils.kGroundTop
     }
 
     Loader {
